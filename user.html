@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Dogme | 账户中心 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
@@ -25,17 +25,22 @@
 <body class="bg-[#fdfcf9] min-h-screen flex items-center justify-center p-6">
 
     <div class="max-w-md w-full">
-        <button onclick="location.href='测试版.html'" class="mb-8 w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-gray-100">❮</button>
+        <!-- 修复：返回按钮完整且指向 index.html -->
+        <div class="flex items-center mb-6">
+            <button onclick="location.href='index.html'" aria-label="返回首页" class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-gray-100">
+                ❮
+            </button>
+        </div>
 
         <div class="bg-white p-10 rounded-[45px] shadow-2xl text-center border border-gray-50">
-            <img src="user.jpg" class="w-24 h-24 rounded-[32px] mx-auto mb-4 border-4 border-white shadow-lg object-cover">
+            <img src="user.jpg" class="w-24 h-24 rounded-[32px] mx-auto mb-4 border-4 border-white shadow-lg object-cover" alt="用户头像">
             <div class="inline-block bg-gray-100 text-gray-400 text-[10px] font-black px-4 py-1.5 rounded-full mb-8 uppercase tracking-widest">Security Access</div>
 
             <div class="space-y-4">
-                <input type="email" id="login-email" placeholder="您的邮箱" class="w-full p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold text-center transition-all">
-                
+                <input type="email" id="login-email" placeholder="您的邮箱" class="w-full p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold text-gray-800" />
+
                 <div class="flex gap-2">
-                    <input type="text" id="login-code" placeholder="验证码" class="flex-1 p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold text-center">
+                    <input type="text" id="login-code" placeholder="验证码" class="flex-1 p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold text-gray-800" />
                     <button id="send-code-btn" onclick="handleSendCode()" class="px-6 bg-gray-900 text-white rounded-2xl font-black text-xs active-press whitespace-nowrap">发送</button>
                 </div>
 
@@ -52,7 +57,7 @@
 
         function showToast(msg, icon = "🐾") {
             const old = document.querySelector('.toast-msg');
-            if(old) old.remove();
+            if (old) old.remove();
             const toast = document.createElement('div');
             toast.className = 'toast-msg';
             toast.innerHTML = `<span>${icon}</span> ${msg}`;
@@ -64,8 +69,8 @@
         }
 
         async function handleSendCode() {
-            const email = document.getElementById('login-email').value;
-            if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("邮箱格式不正确", "❌");
+            const email = document.getElementById('login-email').value.trim();
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("邮箱格式不正确", "❌");
 
             try {
                 const res = await fetch(`${API_URL}/send-code`, {
@@ -74,13 +79,13 @@
                     body: JSON.stringify({ email })
                 });
                 const data = await res.json();
-                if(res.ok && data.success) {
+                if (res.ok && data.success) {
                     showToast("验证码已发送至您的 Gmail", "✨");
                     startTimer();
                 } else {
                     showToast(data.msg || "发送失败", "❌");
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error("网络请求失败，请检查后端:", e);
                 showToast("连接不到后端，请检查 server.js 是否运行", "⚠️");
             }
@@ -92,15 +97,15 @@
             let s = 60;
             const t = setInterval(() => {
                 btn.innerText = `${s}s`;
-                if(s-- <= 0) { clearInterval(t); btn.innerText = "重发"; btn.disabled = false; }
+                if (s-- <= 0) { clearInterval(t); btn.innerText = "重发"; btn.disabled = false; }
             }, 1000);
         }
 
         async function handleLogin() {
-            const email = document.getElementById('login-email').value;
-            const code = document.getElementById('login-code').value;
+            const email = document.getElementById('login-email').value.trim();
+            const code = document.getElementById('login-code').value.trim();
 
-            if(!code) return showToast("请输入验证码", "🔑");
+            if (!code) return showToast("请输入验证码", "🔑");
 
             try {
                 // 【核心修复】确保这里的路径是 /verify-code，与 server.js 完美对应
@@ -112,7 +117,7 @@
                 
                 const data = await res.json();
 
-                if(res.ok && data.success) {
+                if (res.ok && data.success) {
                     // 1. 存储状态
                     localStorage.setItem('dogme_user_email', email);
                     localStorage.setItem('dogme_user_logged', 'true');
@@ -122,11 +127,11 @@
                     // 2. 延迟跳转确保 LocalStorage 刷新完毕
                     setTimeout(() => { 
                         window.location.replace('Log-in.html'); 
-                    }, 2000);
+                    }, 1200);
                 } else {
                     showToast(data.msg || "验证码错误", "❌");
                 }
-            } catch(e) { 
+            } catch (e) { 
                 console.error("登录失败详情:", e);
                 showToast("网络连接异常，请确保后端在 3000 端口运行", "⚠️"); 
             }
