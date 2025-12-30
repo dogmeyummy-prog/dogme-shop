@@ -1,6 +1,8 @@
 {
   "name": "dogme-shop",
   "version": "1.0.0",
+  "description": "Dogme Shop Backend Service",
+  "main": "api/server.js",
   "scripts": {
     "start": "node api/server.js"
   },
