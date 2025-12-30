@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dogme | 账户中心 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
 <body class="bg-[#fdfcf9] min-h-screen flex items-center justify-center p-6">
 
     <div class="max-w-md w-full">
-        <!-- 返回控件：保留锚点（作为基础链接），并用 JS 做 history.back() + 兜底跳转 -->
+        <!-- 返回控件：锚点 + JS 精确导航，避免闪回 Log-in.html -->
         <div class="flex items-center mb-6">
             <a id="back-link" href="./index.html" aria-label="返回首页" class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-gray-100 inline-flex" role="link">
                 ❮
@@ -52,53 +52,39 @@
     </div>
 
     <script>
-        // 返回按钮逻辑（优先尝试 history.back()，若失败则兜底到 index.html）
+        // 返回按钮逻辑：避免闪回 Log-in.html。优先使用同源且非 Log-in 的 referrer，否则直接替换到 index.html
         (function(){
             const backLink = document.getElementById('back-link');
+            if (!backLink) return;
 
-            function goHomeFallback() {
-                // 优先用相对路径（和文件同目录），在 Vercel/静态托管下通常可用
-                const fallback = './index.html';
-                console.log('[user.html] fallback ->', fallback);
-                try {
-                    // replace 不会在历史记录里留下新记录
-                    window.location.replace(fallback);
-                } catch (e) {
-                    console.warn('[user.html] fallback replace failed, using href assign', e);
-                    window.location.href = fallback;
-                }
-            }
+            backLink.addEventListener('click', function(ev){
+                ev.preventDefault(); // 由 JS 全权控制导航，避免浏览器默认行为带来不确定性
+                console.log('[user.html] back clicked, referrer=', document.referrer);
 
-            backLink.addEventListener('click', function (ev) {
-                // 在控制台打印，便于在 Vercel 上调试
-                console.log('[user.html] back clicked, attempting history.back()');
-                // 先尝试历史回退
+                // 尝试使用 referrer（仅当同源且不是 Log-in.html）
                 try {
-                    // 如果历史长度大于1，通常能回退到上一个页面
-                    if (window.history && window.history.length > 1) {
-                        window.history.back();
-                        // 作为兜底：如果在 300ms 内没有离开当前页面，再用 fallback 跳转
-                        setTimeout(function(){
-                            console.log('[user.html] after back timeout, checking location');
-                            // 如果仍在 user.html，则执行兜底跳转
-                            if (location.pathname.endsWith('user.html') || location.pathname === '/' || location.pathname === '') {
-                                goHomeFallback();
-                            }
-                        }, 300);
-                    } else {
-                        // 历史为空或只有当前页，直接兜底跳转
-                        goHomeFallback();
+                    const ref = document.referrer || '';
+                    if (ref) {
+                        const refUrl = new URL(ref);
+                        const sameOrigin = refUrl.origin === location.origin;
+                        const refFile = refUrl.pathname.split('/').pop().toLowerCase();
+
+                        if (sameOrigin && refFile && !refFile.includes('log-in')) {
+                            // 直接跳回 referrer（replace 避免在历史记录里新增记录）
+                            window.location.replace(ref);
+                            return;
+                        }
                     }
-                } catch (err) {
-                    console.error('[user.html] history.back failed, doing fallback', err);
-                    goHomeFallback();
+                } catch (e) {
+                    console.warn('[user.html] 检查 referrer 时出错：', e);
                 }
-                // 让锚点的默认行为仍然发生（兼容场景），不阻止事件
-                // 如果你想阻止默认请在这里用 ev.preventDefault();
+
+                // 兜底：直接去首页（用 replace 避免在历史记录里增加新条目）
+                window.location.replace('./index.html');
             });
         })();
 
-        // 其余现有脚本（未改）
+        // 其余现有脚本
         const API_URL = "http://localhost:3000";
 
         function showToast(msg, icon = "🐾") {
