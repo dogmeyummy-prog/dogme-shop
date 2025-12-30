@@ -58,7 +58,7 @@
 
     <nav class="flex justify-between items-center px-12 py-6 max-w-[1600px] mx-auto sticky top-0 z-50 bg-white/60 backdrop-blur-md">
         <div class="flex gap-10 items-center">
-            <h1 class="text-3xl font-black text-gray-900 tracking-tighter cursor-pointer" onclick="location.href='测试版.html'">Dogme.</h1>
+            <h1 class="text-3xl font-black text-gray-900 tracking-tighter cursor-pointer" onclick="location.href='index.html'">Dogme.</h1>
             <div class="flex gap-6 items-center">
                 <button onclick="location.href='shopping.html'" class="font-bold text-gray-700 hover:text-orange-500 transition-colors">Shop</button>
                 <button onclick="location.href='promo.html'" class="font-bold text-orange-500 hover:opacity-70 transition-opacity flex items-center gap-1">
@@ -72,7 +72,7 @@
                 <img src="shopping-car.jpg" class="nav-avatar border border-gray-100 shadow-sm" alt="购物车">
                 <div id="cart-count" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</div>
             </div>
-            <img src="user.jpg" onclick="location.href='Log-in.html'" class="nav-avatar hover:ring-2 ring-orange-400" alt="用户">
+            <img src="user.jpg" onclick="location.href='user.html'" class="nav-avatar hover:ring-2 ring-orange-400" alt="用户">
         </div>
     </nav>
 
@@ -84,7 +84,7 @@
                 <div class="flex flex-wrap items-center gap-5">
                     <button onclick="location.href='shopping.html'" class="px-10 h-[68px] bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-orange-600 shadow-xl active-press">前往商店 🛒</button>
                     
-                    <div id="home-user-badge" class="rank-inline-card cursor-pointer active-press" onclick="location.href='Log-in.html'">
+                    <div id="home-user-badge" class="rank-inline-card cursor-pointer active-press" onclick="location.href='user.html'">
                         <div class="flex items-center justify-between gap-4">
                             <span id="rank-name-text" class="text-[13px] font-black text-gray-800">萌新 Dogme</span>
                             <span id="rank-level-tag" class="text-white text-[9px] font-black px-2.5 py-0.5 rounded-full bg-gray-300">V1</span>
@@ -112,7 +112,7 @@
     </div>
 
     <script>
-        // 1. 同步用户等级与经验逻辑
+        // 同步用户数据逻辑保持不变
         function syncUserData() {
             const isLogged = localStorage.getItem('dogme_user_logged');
             let currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
@@ -138,7 +138,7 @@
             document.getElementById('cart-count').innerText = cart.length;
         }
 
-        // 2. 优惠券领取逻辑
+        // 优惠券领取逻辑
         function handleClaim() {
             const isLogged = localStorage.getItem('dogme_user_logged');
             const hasClaimed = localStorage.getItem('dogme_coupon_claimed');
@@ -166,7 +166,7 @@
             });
         }
 
-        // 3. 通用美化弹窗
+        // 通用美化弹窗
         function showPopup({ icon, title, msg, btnText, action, showImg = false }) {
             const existing = document.querySelector('.custom-toast');
             if (existing) existing.remove();
