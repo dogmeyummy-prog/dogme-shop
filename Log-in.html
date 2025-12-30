@@ -10,20 +10,13 @@
         body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; }
         .active-press:active { transform: scale(0.96); }
         .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); }
+        .progress-bar-fill { transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        /* 经验条平滑过渡 */
-        .progress-bar-fill {
-            transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* 物流标签专属动画：保留您要求的微微律动感 */
         @keyframes subtlePulse {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
         }
-        .float-tag-animation {
-            animation: subtlePulse 3s ease-in-out infinite;
-        }
+        .float-tag-animation { animation: subtlePulse 3s ease-in-out infinite; }
     </style>
 </head>
 <body class="pb-20">
@@ -34,7 +27,7 @@
     </nav>
 
     <main class="max-w-md mx-auto px-6 mt-10">
-        <div class="glass-card rounded-[45px] p-10 text-center shadow-xl mb-8 relative overflow-hidden border border-white">
+        <div class="glass-card rounded-[45px] p-10 text-center shadow-xl mb-8 relative overflow-hidden">
             <div class="relative inline-block mb-6">
                 <img src="user.jpg" class="w-28 h-28 rounded-[35px] mx-auto border-4 border-white shadow-lg object-cover">
                 <div id="user-level-tag" class="absolute -bottom-2 -right-2 bg-gray-900 text-white text-[10px] font-black px-3 py-1 rounded-full border-2 border-white">V1</div>
@@ -44,7 +37,7 @@
 
             <div class="mt-8 px-4">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Growth EXP</span>
+                    <span class="text-[10px] font-black text-gray-400 uppercase">Growth EXP</span>
                     <span id="exp-count-text" class="text-[10px] font-black text-gray-800">0 / 100</span>
                 </div>
                 <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -54,15 +47,18 @@
         </div>
 
         <div class="grid grid-cols-2 gap-4 mb-4">
-            <div onclick="location.href='coupon.html'" class="bg-white p-6 rounded-[35px] border border-orange-50 shadow-sm active-press cursor-pointer group">
-                <span class="text-2xl block mb-2 group-hover:scale-110 transition-transform">🎟️</span>
+            <div onclick="location.href='coupon.html'" class="bg-white p-6 rounded-[35px] border border-orange-50 shadow-sm active-press cursor-pointer">
+                <span class="text-2xl block mb-2">🎟️</span>
                 <span class="font-black text-gray-800 block">我的优惠券</span>
                 <span id="coupon-status" class="text-[9px] font-bold text-gray-300 uppercase">尚未领取</span>
             </div>
-            <div onclick="location.href='index.html'" class="bg-gray-900 p-6 rounded-[35px] shadow-lg active-press cursor-pointer text-center group">
-                <span class="text-2xl block mb-2 group-hover:scale-110 transition-transform">🛒</span>
-                <span class="font-black text-white block">去购物</span>
-                <span class="text-[9px] font-bold text-gray-500 uppercase">Go Shopping</span>
+
+            <div id="shop-action-container">
+                <div onclick="location.href='index.html'" class="bg-gray-900 p-6 rounded-[35px] shadow-lg active-press cursor-pointer text-center">
+                    <span class="text-2xl block mb-2">🛒</span>
+                    <span class="font-black text-white block">去购物</span>
+                    <span class="text-[9px] font-bold text-gray-500 uppercase">Shopping</span>
+                </div>
             </div>
         </div>
 
@@ -71,7 +67,7 @@
                 <div class="w-14 h-14 bg-orange-50 rounded-3xl flex items-center justify-center text-3xl">🚚</div>
                 <div class="text-left">
                     <span class="block font-black text-gray-800 text-lg">查看物流</span>
-                    <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Track Your Packages</span>
+                    <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Track Packages</span>
                 </div>
             </div>
             <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300">❯</div>
@@ -82,50 +78,59 @@
         window.onload = () => {
             const isLogged = localStorage.getItem('dogme_user_logged');
             const email = localStorage.getItem('dogme_user_email');
-            const hasClaimed = localStorage.getItem('dogme_coupon_claimed');
-
-            // 1. 安全检查：如果没登录，跳回登录页
+            
             if (isLogged !== 'true' || !email) {
                 window.location.replace('user.html');
                 return;
             }
 
-            // 2. 显示用户邮箱
             document.getElementById('user-display-email').innerText = email;
             
-            // 3. 经验值同步
+            // 1. 处理购买历史逻辑
+            const hasOrder = localStorage.getItem('dogme_has_order'); // 模拟订单标记
+            const actionBtn = document.getElementById('shop-action-container');
+
+            if (hasOrder === 'true') {
+                // 如果有购买历史，显示橙色按钮
+                actionBtn.innerHTML = `
+                    <div onclick="location.href='orders.html'" class="bg-orange-500 p-6 rounded-[35px] shadow-lg shadow-orange-200 active-press cursor-pointer text-center">
+                        <span class="text-2xl block mb-2">📋</span>
+                        <span class="font-black text-white block">购买历史</span>
+                        <span class="text-[9px] font-bold text-orange-200 uppercase">Order History</span>
+                    </div>
+                `;
+            } else {
+                // 如果没有，保持“去购物”按钮
+                actionBtn.innerHTML = `
+                    <div onclick="location.href='index.html'" class="bg-gray-900 p-6 rounded-[35px] shadow-lg active-press cursor-pointer text-center">
+                        <span class="text-2xl block mb-2">🛒</span>
+                        <span class="font-black text-white block">去购物</span>
+                        <span class="text-[9px] font-bold text-gray-500 uppercase">Go Shopping</span>
+                    </div>
+                `;
+            }
+
+            // 2. 同步经验值和优惠券
             const currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
-            const expBar = document.getElementById('exp-bar-fill');
-            const expText = document.getElementById('exp-count-text');
-            const levelTag = document.getElementById('user-level-tag');
-            const rankTitle = document.getElementById('user-rank-title');
-
-            // 动画效果
             setTimeout(() => {
-                const displayPercent = Math.min(currentExp, 100);
-                expBar.style.width = displayPercent + "%";
-                expText.innerText = `${currentExp} / 100`;
-
+                document.getElementById('exp-bar-fill').style.width = Math.min(currentExp, 100) + "%";
+                document.getElementById('exp-count-text').innerText = `${currentExp} / 100`;
                 if (currentExp >= 100) {
-                    levelTag.innerText = "V2";
-                    rankTitle.innerText = "资深 Dogme";
+                    document.getElementById('user-level-tag').innerText = "V2";
+                    document.getElementById('user-rank-title').innerText = "资深 Dogme";
                 }
             }, 300);
 
-            // 4. 优惠券状态同步
-            if (hasClaimed === 'true') {
-                const couponText = document.getElementById('coupon-status');
-                couponText.innerText = "8.0折已激活";
-                couponText.classList.replace('text-gray-300', 'text-orange-500');
+            if (localStorage.getItem('dogme_coupon_claimed') === 'true') {
+                const status = document.getElementById('coupon-status');
+                status.innerText = "8.0折已激活";
+                status.classList.replace('text-gray-300', 'text-orange-500');
             }
         };
 
-        // 登出逻辑
         function handleLogout() {
             if(confirm("确定要退出登录吗？🐾")) {
-                localStorage.removeItem('dogme_user_logged');
-                localStorage.removeItem('dogme_user_email');
-                // 登出后返回首页
+                localStorage.clear();
                 window.location.replace('index.html');
             }
         }
