@@ -46,7 +46,7 @@
     </div>
 
     <script>
-        // 核心修正：从 localhost:3000 改为相对路径 /api，对接 Vercel 云端
+        // 修正为云端相对路径
         const API_URL = "/api"; 
 
         function showToast(msg, icon = "🐾") {
@@ -77,7 +77,7 @@
                 
                 if (data.success) {
                     showToast("验证码已发送", "✨");
-                    startTimer(); // 只要后端返回成功，立刻启动倒计时
+                    startTimer(); // 触发倒计时
                 } else {
                     showToast(data.msg || "发送失败", "❌");
                     btn.innerText = "发送";
@@ -120,7 +120,7 @@
                     localStorage.setItem('dogme_user_email', email);
                     localStorage.setItem('dogme_user_logged', 'true');
                     showToast("欢迎回来！", "🎉");
-                    setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+                    setTimeout(() => { window.location.href = 'Log-in.html'; }, 1000);
                 } else {
                     showToast(data.msg || "验证码错误", "❌");
                 }
