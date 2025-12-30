@@ -25,11 +25,11 @@
 <body class="bg-[#fdfcf9] min-h-screen flex items-center justify-center p-6">
 
     <div class="max-w-md w-full">
-        <!-- 修复：返回按钮完整且指向 index.html -->
+        <!-- 返回控件：保留锚点（作为基础链接），并用 JS 做 history.back() + 兜底跳转 -->
         <div class="flex items-center mb-6">
-            <button onclick="location.href='index.html'" aria-label="返回首页" class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-gray-100">
+            <a id="back-link" href="./index.html" aria-label="返回首页" class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-gray-100 inline-flex" role="link">
                 ❮
-            </button>
+            </a>
         </div>
 
         <div class="bg-white p-10 rounded-[45px] shadow-2xl text-center border border-gray-50">
@@ -52,7 +52,53 @@
     </div>
 
     <script>
-        // 【关键】如果你在手机上测试，请务必将 localhost 改为你电脑的局域网 IP
+        // 返回按钮逻辑（优先尝试 history.back()，若失败则兜底到 index.html）
+        (function(){
+            const backLink = document.getElementById('back-link');
+
+            function goHomeFallback() {
+                // 优先用相对路径（和文件同目录），在 Vercel/静态托管下通常可用
+                const fallback = './index.html';
+                console.log('[user.html] fallback ->', fallback);
+                try {
+                    // replace 不会在历史记录里留下新记录
+                    window.location.replace(fallback);
+                } catch (e) {
+                    console.warn('[user.html] fallback replace failed, using href assign', e);
+                    window.location.href = fallback;
+                }
+            }
+
+            backLink.addEventListener('click', function (ev) {
+                // 在控制台打印，便于在 Vercel 上调试
+                console.log('[user.html] back clicked, attempting history.back()');
+                // 先尝试历史回退
+                try {
+                    // 如果历史长度大于1，通常能回退到上一个页面
+                    if (window.history && window.history.length > 1) {
+                        window.history.back();
+                        // 作为兜底：如果在 300ms 内没有离开当前页面，再用 fallback 跳转
+                        setTimeout(function(){
+                            console.log('[user.html] after back timeout, checking location');
+                            // 如果仍在 user.html，则执行兜底跳转
+                            if (location.pathname.endsWith('user.html') || location.pathname === '/' || location.pathname === '') {
+                                goHomeFallback();
+                            }
+                        }, 300);
+                    } else {
+                        // 历史为空或只有当前页，直接兜底跳转
+                        goHomeFallback();
+                    }
+                } catch (err) {
+                    console.error('[user.html] history.back failed, doing fallback', err);
+                    goHomeFallback();
+                }
+                // 让锚点的默认行为仍然发生（兼容场景），不阻止事件
+                // 如果你想阻止默认请在这里用 ev.preventDefault();
+            });
+        })();
+
+        // 其余现有脚本（未改）
         const API_URL = "http://localhost:3000";
 
         function showToast(msg, icon = "🐾") {
@@ -108,7 +154,6 @@
             if (!code) return showToast("请输入验证码", "🔑");
 
             try {
-                // 【核心修复】确保这里的路径是 /verify-code，与 server.js 完美对应
                 const res = await fetch(`${API_URL}/verify-code`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -118,13 +163,11 @@
                 const data = await res.json();
 
                 if (res.ok && data.success) {
-                    // 1. 存储状态
                     localStorage.setItem('dogme_user_email', email);
                     localStorage.setItem('dogme_user_logged', 'true');
                     
                     showToast("身份验证成功，正在同步数据...", "🎉");
                     
-                    // 2. 延迟跳转确保 LocalStorage 刷新完毕
                     setTimeout(() => { 
                         window.location.replace('Log-in.html'); 
                     }, 1200);
