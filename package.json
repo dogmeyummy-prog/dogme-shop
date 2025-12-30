@@ -1,7 +1,7 @@
 {
   "name": "dogme-shop",
   "version": "1.0.0",
-  "description": "Dogme Shop Backend Service",
+  "description": "Dogme Shop 后端云函数",
   "main": "api/server.js",
   "scripts": {
     "start": "node api/server.js"
