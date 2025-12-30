@@ -46,7 +46,7 @@
     </div>
 
     <script>
-        // 核心修改：对接 Vercel API 路由，不再使用 localhost:3000
+        // 核心修正：已改为指向云端接口
         const API_URL = "/api"; 
 
         function showToast(msg, icon = "🐾") {
@@ -74,7 +74,7 @@
                     showToast("验证码已发送", "✨");
                     startTimer();
                 } else { showToast(data.msg || "发送失败", "❌"); }
-            } catch (e) { showToast("云端接口呼叫中...", "☁️"); }
+            } catch (e) { showToast("无法连接云端服务器", "⚠️"); }
         }
 
         function startTimer() {
@@ -102,9 +102,8 @@
                 if (data.success) {
                     localStorage.setItem('dogme_user_email', email);
                     localStorage.setItem('dogme_user_logged', 'true');
-                    showToast(data.msg || "欢迎回来！", "🎉");
-                    // 登录成功后跳转到你的个人中心页面 (Log-in.html)
-                    setTimeout(() => { window.location.href = 'Log-in.html'; }, 1000);
+                    showToast("身份验证成功！", "🎉");
+                    setTimeout(() => { window.location.href = 'index.html'; }, 1200);
                 } else { showToast(data.msg || "验证码错误", "❌"); }
             } catch (e) { showToast("登录失败", "⚠️"); }
         }
