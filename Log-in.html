@@ -60,7 +60,7 @@
                 <div class="w-14 h-14 bg-orange-50 rounded-3xl flex items-center justify-center text-3xl">🚚</div>
                 <div class="text-left">
                     <span class="block font-black text-gray-800 text-lg">查看物流</span>
-                    <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Track Your Packages</span>
+                    <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Track Packages</span>
                 </div>
             </div>
             <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300">❯</div>
@@ -71,19 +71,23 @@
         window.onload = () => {
             const isLogged = localStorage.getItem('dogme_user_logged');
             const email = localStorage.getItem('dogme_user_email');
+            
             if (isLogged !== 'true' || !email) {
-                window.location.replace('user.html'); // 未登录则强制去登录页
+                window.location.replace('user.html');
                 return;
             }
+            
             document.getElementById('user-display-email').innerText = email;
             
+            // 经验值初始化
             const currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
             document.getElementById('exp-bar-fill').style.width = Math.min(currentExp, 100) + "%";
             document.getElementById('exp-count-text').innerText = `${currentExp} / 100`;
             
             if (localStorage.getItem('dogme_coupon_claimed') === 'true') {
-                document.getElementById('coupon-status').innerText = "8.0折已激活";
-                document.getElementById('coupon-status').classList.replace('text-gray-300', 'text-orange-500');
+                const status = document.getElementById('coupon-status');
+                status.innerText = "8.0折已激活";
+                status.classList.replace('text-gray-300', 'text-orange-500');
             }
         };
 
