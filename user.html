@@ -1,71 +1,44 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dogme | 账户中心 🐾</title>
+    <meta charset="UTF-8" /><title>Dogme | 账户中心 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Quicksand', sans-serif; }
-        @keyframes floatIn {
-            0% { transform: translate(-50%, 30px); opacity: 0; }
-            100% { transform: translate(-50%, 0); opacity: 1; }
-        }
-        .toast-msg {
-            position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%);
-            background: #2D3436; color: white; padding: 16px 32px; border-radius: 20px;
-            font-weight: 900; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            animation: floatIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            display: flex; align-items: center; gap: 12px;
-        }
+        body { font-family: 'Quicksand', sans-serif; background: #fdfcf9; }
+        .toast-msg { position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%); background: #2D3436; color: white; padding: 16px 32px; border-radius: 20px; z-index: 10000; animation: floatIn 0.5s ease forwards; }
+        @keyframes floatIn { 0% { opacity: 0; transform: translate(-50%, 20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
         .active-press:active { transform: scale(0.95); }
     </style>
 </head>
-<body class="bg-[#fdfcf9] min-h-screen flex items-center justify-center p-6">
-
+<body class="min-h-screen flex items-center justify-center p-6">
     <div class="max-w-md w-full">
-        <div class="flex items-center mb-6">
-            <button onclick="window.location.href='index.html'" class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-gray-100">❮</button>
-        </div>
-
         <div class="bg-white p-10 rounded-[45px] shadow-2xl text-center border border-gray-50">
-            <img src="user.jpg" class="w-24 h-24 rounded-[32px] mx-auto mb-4 border-4 border-white shadow-lg object-cover" alt="用户头像">
-            <div class="inline-block bg-gray-100 text-gray-400 text-[10px] font-black px-4 py-1.5 rounded-full mb-8 uppercase tracking-widest">Security Access</div>
-
+            <img src="user.jpg" class="w-24 h-24 rounded-[32px] mx-auto mb-4 shadow-lg object-cover">
             <div class="space-y-4">
-                <input type="email" id="login-email" placeholder="您的 Gmail 地址" class="w-full p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold text-gray-800" />
+                <input type="email" id="login-email" placeholder="Gmail 地址" class="w-full p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold" />
                 <div class="flex gap-2">
-                    <input type="text" id="login-code" placeholder="验证码" class="flex-1 p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold text-gray-800" />
-                    <button id="send-code-btn" onclick="handleSendCode()" class="px-6 bg-gray-900 text-white rounded-2xl font-black text-xs active-press whitespace-nowrap">发送</button>
+                    <input type="text" id="login-code" placeholder="验证码" class="flex-1 p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold" />
+                    <button id="send-code-btn" onclick="handleSendCode()" class="px-6 bg-gray-900 text-white rounded-2xl font-black text-xs active-press">发送</button>
                 </div>
-                <button onclick="handleLogin()" class="w-full py-5 bg-orange-500 text-white rounded-[25px] font-black text-lg active-press shadow-xl mt-4 transition-all">确定登录 / 注册</button>
+                <button onclick="handleLogin()" class="w-full py-5 bg-orange-500 text-white rounded-[25px] font-black text-lg active-press shadow-xl mt-4">确定登录</button>
             </div>
-            <p class="mt-8 text-[10px] text-gray-300 font-bold uppercase tracking-widest">Dogme Global Security Protocol</p>
         </div>
     </div>
 
     <script>
-        // 修正为云端相对路径
         const API_URL = "/api"; 
 
-        function showToast(msg, icon = "🐾") {
-            const old = document.querySelector('.toast-msg');
-            if (old) old.remove();
-            const toast = document.createElement('div');
-            toast.className = 'toast-msg';
-            toast.innerHTML = `<span>${icon}</span> ${msg}`;
-            document.body.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
+        function showToast(msg) {
+            const t = document.createElement('div'); t.className = 'toast-msg'; t.innerText = msg;
+            document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
         }
 
         async function handleSendCode() {
             const email = document.getElementById('login-email').value.trim();
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("邮箱格式不正确", "❌");
+            if (!email.includes('@')) return showToast("邮箱格式错误");
 
             const btn = document.getElementById('send-code-btn');
-            btn.innerText = "发送中...";
-            btn.disabled = true;
+            btn.innerText = "发送中..."; btn.disabled = true;
 
             try {
                 const res = await fetch(`${API_URL}/send-code`, {
@@ -74,41 +47,31 @@
                     body: JSON.stringify({ email })
                 });
                 const data = await res.json();
-                
                 if (data.success) {
-                    showToast("验证码已发送", "✨");
-                    startTimer(); // 触发倒计时
+                    showToast("验证码已发送 ✨");
+                    startTimer();
                 } else {
-                    showToast(data.msg || "发送失败", "❌");
-                    btn.innerText = "发送";
-                    btn.disabled = false;
+                    showToast(data.msg || "发送失败");
+                    btn.innerText = "发送"; btn.disabled = false;
                 }
             } catch (e) {
-                showToast("连接云端失败，请检查部署", "⚠️");
-                btn.innerText = "发送";
-                btn.disabled = false;
+                showToast("连接云端失败 ⚠️");
+                btn.innerText = "发送"; btn.disabled = false;
             }
         }
 
         function startTimer() {
             const btn = document.getElementById('send-code-btn');
-            btn.disabled = true;
             let s = 60;
             const t = setInterval(() => {
-                btn.innerText = `${s}s`;
-                if (s-- <= 0) { 
-                    clearInterval(t); 
-                    btn.innerText = "重发"; 
-                    btn.disabled = false; 
-                }
+                btn.innerText = `${s--}s`;
+                if (s < 0) { clearInterval(t); btn.innerText = "重发"; btn.disabled = false; }
             }, 1000);
         }
 
         async function handleLogin() {
             const email = document.getElementById('login-email').value.trim();
             const code = document.getElementById('login-code').value.trim();
-            if (!code) return showToast("请输入验证码", "🔑");
-
             try {
                 const res = await fetch(`${API_URL}/verify-code`, {
                     method: 'POST',
@@ -119,12 +82,11 @@
                 if (data.success) {
                     localStorage.setItem('dogme_user_email', email);
                     localStorage.setItem('dogme_user_logged', 'true');
-                    showToast("欢迎回来！", "🎉");
-                    setTimeout(() => { window.location.href = 'Log-in.html'; }, 1000);
+                    window.location.href = 'Log-in.html';
                 } else {
-                    showToast(data.msg || "验证码错误", "❌");
+                    showToast("验证码错误 ❌");
                 }
-            } catch (e) { showToast("登录异常", "⚠️"); }
+            } catch (e) { showToast("登录异常"); }
         }
     </script>
 </body>
