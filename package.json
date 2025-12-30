@@ -1,14 +1,7 @@
 {
   "name": "dogme-shop",
   "version": "1.0.0",
-  "description": "Dogme Shop 后端云函数",
-  "main": "api/server.js",
-  "scripts": {
-    "start": "node api/server.js"
-  },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^5.2.1",
-    "nodemailer": "^7.0.11"
+    "nodemailer": "^6.9.0"
   }
 }
