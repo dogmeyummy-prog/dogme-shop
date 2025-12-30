@@ -1,35 +1,37 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" /><title>Dogme | 账户中心 🐾</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dogme | 账户中心 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Quicksand', sans-serif; background: #fdfcf9; }
-        .toast-msg { 
-            position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%); 
-            background: #2D3436; color: white; padding: 16px 32px; border-radius: 20px; 
-            z-index: 10000; font-weight: 700; box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-            animation: floatIn 0.5s ease forwards; 
+        @keyframes floatIn { 0% { transform: translate(-50%, 30px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
+        .toast-msg {
+            position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%);
+            background: #2D3436; color: white; padding: 16px 32px; border-radius: 20px;
+            font-weight: 700; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: floatIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        @keyframes floatIn { 0% { opacity: 0; transform: translate(-50%, 20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
         .active-press:active { transform: scale(0.95); }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-6">
     <div class="max-w-md w-full">
         <div class="bg-white p-10 rounded-[45px] shadow-2xl text-center border border-gray-50">
-            <img src="user.jpg" class="w-24 h-24 rounded-[32px] mx-auto mb-4 shadow-lg object-cover">
-            <h2 class="text-2xl font-black text-gray-800 mb-6">Welcome Back</h2>
+            <img src="user.jpg" class="w-24 h-24 rounded-[32px] mx-auto mb-6 shadow-lg object-cover">
+            <h2 class="text-2xl font-black text-gray-800 mb-8 tracking-tight">Login to Dogme</h2>
             <div class="space-y-4">
-                <input type="email" id="login-email" placeholder="Gmail 地址" class="w-full p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold" />
+                <input type="email" id="login-email" placeholder="Gmail Address" class="w-full p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold" />
                 <div class="flex gap-2">
-                    <input type="text" id="login-code" placeholder="验证码" class="flex-1 p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold" />
+                    <input type="text" id="login-code" placeholder="Code" class="flex-1 p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold text-center" />
                     <button id="send-code-btn" onclick="handleSendCode()" class="px-6 bg-gray-900 text-white rounded-2xl font-black text-xs active-press">发送</button>
                 </div>
                 <button onclick="handleLogin()" class="w-full py-5 bg-orange-500 text-white rounded-[25px] font-black text-lg active-press shadow-xl mt-4">确定登录</button>
             </div>
-            <p class="mt-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Dogme Security 🐾</p>
+            <p class="mt-8 text-[10px] text-gray-300 font-black uppercase tracking-[0.2em]">Safety Guard By Dogme 🐾</p>
         </div>
     </div>
 
@@ -44,7 +46,7 @@
 
         async function handleSendCode() {
             const email = document.getElementById('login-email').value.trim();
-            if (!email.includes('@')) return showToast("请输入有效的邮箱 ❌");
+            if (!email.includes('@')) return showToast("请输入有效的 Gmail 🐾");
 
             const btn = document.getElementById('send-code-btn');
             btn.innerText = "发送中..."; btn.disabled = true;
@@ -57,15 +59,15 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showToast("验证码已发送 ✨");
+                    showToast("验证码已发出 ✨");
                     startTimer();
                 } else {
                     showToast(data.msg || "发送失败");
-                    btn.innerText = "发送"; btn.disabled = false;
+                    btn.innerText = "重发"; btn.disabled = false;
                 }
             } catch (e) {
                 showToast("连接云端失败 ⚠️");
-                btn.innerText = "发送"; btn.disabled = false;
+                btn.innerText = "重发"; btn.disabled = false;
             }
         }
 
@@ -81,7 +83,7 @@
         async function handleLogin() {
             const email = document.getElementById('login-email').value.trim();
             const code = document.getElementById('login-code').value.trim();
-            if(!code) return showToast("请输入验证码 🔑");
+            if (!code) return showToast("请输入验证码 🔑");
 
             try {
                 const res = await fetch(`${API_URL}/verify-code`, {
@@ -93,7 +95,8 @@
                 if (data.success) {
                     localStorage.setItem('dogme_user_email', email);
                     localStorage.setItem('dogme_user_logged', 'true');
-                    window.location.href = 'Log-in.html';
+                    showToast("欢迎回来 🎉");
+                    setTimeout(() => { window.location.href = 'Log-in.html'; }, 1000);
                 } else {
                     showToast("验证码错误 ❌");
                 }
