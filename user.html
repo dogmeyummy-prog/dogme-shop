@@ -46,7 +46,7 @@
     </div>
 
     <script>
-        // 核心修正：已改为指向云端接口
+        // 核心修正：改为云端接口路径
         const API_URL = "/api"; 
 
         function showToast(msg, icon = "🐾") {
@@ -63,6 +63,10 @@
             const email = document.getElementById('login-email').value.trim();
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("邮箱格式不正确", "❌");
 
+            const btn = document.getElementById('send-code-btn');
+            btn.innerText = "发送中...";
+            btn.disabled = true;
+
             try {
                 const res = await fetch(`${API_URL}/send-code`, {
                     method: 'POST',
@@ -72,9 +76,17 @@
                 const data = await res.json();
                 if (data.success) {
                     showToast("验证码已发送", "✨");
-                    startTimer();
-                } else { showToast(data.msg || "发送失败", "❌"); }
-            } catch (e) { showToast("无法连接云端服务器", "⚠️"); }
+                    startTimer(); // 触发倒计时
+                } else {
+                    showToast(data.msg || "发送失败", "❌");
+                    btn.innerText = "发送";
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                showToast("连接云端失败，请检查 Vercel 部署", "⚠️");
+                btn.innerText = "发送";
+                btn.disabled = false;
+            }
         }
 
         function startTimer() {
@@ -104,8 +116,10 @@
                     localStorage.setItem('dogme_user_logged', 'true');
                     showToast("身份验证成功！", "🎉");
                     setTimeout(() => { window.location.href = 'index.html'; }, 1200);
-                } else { showToast(data.msg || "验证码错误", "❌"); }
-            } catch (e) { showToast("登录失败", "⚠️"); }
+                } else {
+                    showToast(data.msg || "验证码错误", "❌");
+                }
+            } catch (e) { showToast("登录异常", "⚠️"); }
         }
     </script>
 </body>
