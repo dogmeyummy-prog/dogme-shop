@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8" /><title>Dogme | 账户中心 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Quicksand', sans-serif; background: #fdfcf9; }
-        .toast-msg { position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%); background: #2D3436; color: white; padding: 16px 32px; border-radius: 20px; z-index: 10000; animation: floatIn 0.5s ease forwards; }
+        .toast-msg { 
+            position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%); 
+            background: #2D3436; color: white; padding: 16px 32px; border-radius: 20px; 
+            z-index: 10000; font-weight: 700; box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            animation: floatIn 0.5s ease forwards; 
+        }
         @keyframes floatIn { 0% { opacity: 0; transform: translate(-50%, 20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
         .active-press:active { transform: scale(0.95); }
     </style>
@@ -14,6 +20,7 @@
     <div class="max-w-md w-full">
         <div class="bg-white p-10 rounded-[45px] shadow-2xl text-center border border-gray-50">
             <img src="user.jpg" class="w-24 h-24 rounded-[32px] mx-auto mb-4 shadow-lg object-cover">
+            <h2 class="text-2xl font-black text-gray-800 mb-6">Welcome Back</h2>
             <div class="space-y-4">
                 <input type="email" id="login-email" placeholder="Gmail 地址" class="w-full p-4 rounded-2xl bg-gray-50 outline-none border-2 border-transparent focus:border-orange-400 font-bold" />
                 <div class="flex gap-2">
@@ -22,6 +29,7 @@
                 </div>
                 <button onclick="handleLogin()" class="w-full py-5 bg-orange-500 text-white rounded-[25px] font-black text-lg active-press shadow-xl mt-4">确定登录</button>
             </div>
+            <p class="mt-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Dogme Security 🐾</p>
         </div>
     </div>
 
@@ -29,13 +37,14 @@
         const API_URL = "/api"; 
 
         function showToast(msg) {
+            const old = document.querySelector('.toast-msg'); if(old) old.remove();
             const t = document.createElement('div'); t.className = 'toast-msg'; t.innerText = msg;
             document.body.appendChild(t); setTimeout(() => t.remove(), 3000);
         }
 
         async function handleSendCode() {
             const email = document.getElementById('login-email').value.trim();
-            if (!email.includes('@')) return showToast("邮箱格式错误");
+            if (!email.includes('@')) return showToast("请输入有效的邮箱 ❌");
 
             const btn = document.getElementById('send-code-btn');
             btn.innerText = "发送中..."; btn.disabled = true;
@@ -72,6 +81,8 @@
         async function handleLogin() {
             const email = document.getElementById('login-email').value.trim();
             const code = document.getElementById('login-code').value.trim();
+            if(!code) return showToast("请输入验证码 🔑");
+
             try {
                 const res = await fetch(`${API_URL}/verify-code`, {
                     method: 'POST',
@@ -86,7 +97,7 @@
                 } else {
                     showToast("验证码错误 ❌");
                 }
-            } catch (e) { showToast("登录异常"); }
+            } catch (e) { showToast("登录异常 ⚠️"); }
         }
     </script>
 </body>
