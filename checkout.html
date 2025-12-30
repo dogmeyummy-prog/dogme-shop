@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dogme Cart | 我的货柜清单 🐾</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="测试版.css">
+    <style>
+        .cart-item { background: white; border-radius: 30px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); border: 1px solid rgba(255,141,54,0.05); }
+        .cart-item:hover { transform: scale(1.02); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+        .checkout-bar { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border-top: 1px solid rgba(0,0,0,0.05); }
+        .active-press:active { transform: scale(0.96); }
+    </style>
+</head>
+<body class="bg-[#fdfcf9] min-h-screen pb-40">
+
+    <nav class="flex justify-between items-center px-6 md:px-12 py-6 sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-orange-50">
+        <div class="flex items-center gap-4">
+            <button onclick="location.href='shopping.html'" class="w-11 h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50">❮</button>
+            <h1 class="text-2xl font-black text-gray-800 tracking-tighter">我的货柜清单</h1>
+        </div>
+        <div id="checkout-rank-status" class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-100">
+            <span id="rank-emoji">🐾</span>
+            <span id="rank-name-display" class="font-black text-xs text-gray-600">加载中...</span>
+        </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto px-6 mt-10">
+        <div id="discount-banner" class="mb-8 p-5 rounded-[30px] bg-gray-900 text-white flex items-center justify-between hidden">
+            <div class="flex items-center gap-4">
+                <div class="text-3xl">💎</div>
+                <div><p id="discount-desc" class="font-black text-sm">等级特权已激活</p></div>
+            </div>
+            <div id="discount-tag" class="px-4 py-2 bg-white/20 rounded-full font-black text-sm italic">-0%</div>
+        </div>
+
+        <div id="empty-cart" class="hidden text-center py-20">
+            <div class="text-8xl mb-6">🛒</div>
+            <h2 class="text-2xl font-black text-gray-400">货柜空空如也</h2>
+        </div>
+
+        <div id="cart-list" class="space-y-4"></div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 right-0 checkout-bar p-6 md:px-20 z-50">
+        <div class="max-w-3xl mx-auto flex items-center justify-between">
+            <div>
+                <span id="original-price" class="text-gray-400 text-sm line-through font-bold hidden">$0.00</span>
+                <p id="total-price" class="text-4xl font-black text-gray-800">$0.00</p>
+            </div>
+            <button id="pay-btn" onclick="goToPay()" class="px-12 py-5 bg-gray-900 text-white rounded-[28px] font-black text-xl active-press shadow-2xl hover:bg-orange-600 transition-all">
+                前往支付 🐾
+            </button>
+        </div>
+    </footer>
+
+    <script src="dogme-core.js"></script>
+    <script>
+        let cart = JSON.parse(localStorage.getItem('dogme_cart')) || [];
+
+        function getRankBenefit() {
+            const info = LevelSystem.getLevelInfo();
+            let discount = 1; // 默认不打折
+            // 等级折扣逻辑
+            if (info.rank >= 10) discount = 0.8;
+            else if (info.rank >= 9) discount = 0.85;
+            else if (info.rank >= 6) discount = 0.9;
+            else if (info.rank >= 3) discount = 0.95;
+            return { discount, info };
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-list');
+            const benefit = getRankBenefit();
+            document.getElementById('rank-name-display').innerText = benefit.info.name;
+            document.getElementById('rank-emoji').innerText = benefit.info.rank >= 10 ? '👑' : '🐾';
+
+            if (cart.length === 0) {
+                document.getElementById('empty-cart').classList.remove('hidden');
+                document.getElementById('cart-list').innerHTML = '';
+                document.getElementById('total-price').innerText = "$0.00";
+                return;
+            }
+
+            let subtotal = 0;
+            container.innerHTML = cart.map((item, index) => {
+                subtotal += item.price;
+                return `<div class="cart-item p-6 flex items-center justify-between">
+                    <div class="flex items-center gap-6"><div class="text-5xl">${item.emoji}</div>
+                    <div><h3 class="font-black text-gray-800">${item.name}</h3><p class="text-gray-400 font-bold">$${item.price.toFixed(2)}</p></div></div>
+                    <button onclick="removeItem(${index})" class="text-gray-300 font-bold">✕</button>
+                </div>`;
+            }).join('');
+            
+            // 计算最终价格：确保它不会超过原价
+            const finalPrice = subtotal * benefit.discount;
+            document.getElementById('total-price').innerText = `$${finalPrice.toFixed(2)}`;
+
+            // UI 逻辑适配：只有当真正有折扣产生（小于1）时才显示折扣 UI
+            const originalPriceEl = document.getElementById('original-price');
+            const discountBanner = document.getElementById('discount-banner');
+            
+            if(benefit.discount < 1) {
+                originalPriceEl.innerText = `$${subtotal.toFixed(2)}`;
+                originalPriceEl.classList.remove('hidden');
+                discountBanner.classList.remove('hidden');
+                document.getElementById('discount-tag').innerText = `-${Math.round((1-benefit.discount)*100)}%`;
+                document.getElementById('discount-desc').innerText = `作为 ${benefit.info.name}，您已享受专享折扣！`;
+            } else {
+                // 如果没有折扣，隐藏相关元素，确保总计显示的就是商品价格
+                originalPriceEl.classList.add('hidden');
+                discountBanner.classList.add('hidden');
+            }
+        }
+
+        function goToPay() {
+            if (cart.length === 0) return;
+            localStorage.setItem('dogme_pending_total', document.getElementById('total-price').innerText);
+            location.href = 'pay.html';
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('dogme_cart', JSON.stringify(cart));
+            renderCart();
+            if (typeof DogmeCore !== 'undefined') DogmeCore.updateCartCount();
+        }
+
+        window.onload = renderCart;
+    </script>
+</body>
+</html>

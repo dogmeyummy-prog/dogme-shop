@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dogme Shop | 全球货柜 🐾</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="测试版.css">
+    <style>
+        body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; overflow-x: hidden; }
+        .active-press:active { transform: scale(0.95); }
+
+        /* 商品卡片样式 */
+        .product-card {
+            background: white; border-radius: 35px; padding: 24px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+
+        /* 导航栏图标按钮通用样式 */
+        .nav-icon-btn {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            overflow: visible; /* 必须设为 visible，否则右上角的红点会被裁切 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid #F3F4F6;
+            position: relative;
+        }
+        .nav-icon-btn:hover { border-color: #FF8D36; }
+        .nav-icon-btn img { 
+            width: 100%; height: 100%; 
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        
+        /* --- 核心优化：红点移动到右上角 --- */
+        .count-badge {
+            position: absolute; 
+            top: -6px;    /* 向上偏移，使其悬浮在边框外 */
+            right: -6px;  /* 向右偏移，使其悬浮在边框外 */
+            background: #ff4757; 
+            color: white;
+            min-width: 18px; 
+            height: 18px; 
+            border-radius: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 10px; 
+            font-weight: 900; 
+            border: 2px solid white; /* 白色描边增加辨识度 */
+            box-shadow: 0 2px 6px rgba(255, 71, 87, 0.3);
+            z-index: 20;
+        }
+
+        /* 抛物线动画 */
+        .flying-particle {
+            position: fixed; z-index: 1000; pointer-events: none; font-size: 24px;
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s;
+        }
+
+        .exp-container { width: 100px; height: 6px; background: rgba(0,0,0,0.05); border-radius: 10px; overflow: hidden; }
+        #exp-fill { height: 100%; width: 0%; transition: width 1s ease; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <nav class="flex justify-between items-center px-6 md:px-12 py-4 sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-50">
+        <div class="flex items-center gap-4">
+            <button onclick="location.href='测试版.html'" class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center active-press text-orange-500 font-bold border border-gray-100">❮</button>
+            <div>
+                <span id="rank-name-display" class="font-black text-xs block text-gray-400">Loading...</span>
+                <div class="exp-container mt-1"><div id="exp-fill"></div></div>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div id="cart-target" onclick="location.href='checkout.html'" class="nav-icon-btn active-press">
+                <img src="shopping-car.jpg" alt="Cart">
+                <div id="cart-count-badge" class="count-badge">0</div>
+            </div>
+            <div class="nav-icon-btn active-press" onclick="location.href='Log-in.html'">
+                <img src="user.jpg" alt="User">
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 mt-12">
+        <header class="mb-12">
+            <h1 class="text-4xl font-black text-gray-900 tracking-tighter mb-2">全球货柜 🐾</h1>
+            <p class="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Global Selection Store</p>
+        </header>
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </main>
+
+    <div id="shop-coupon-tag" onclick="location.href='promo.html'" class="fixed bottom-10 right-8 z-[100] cursor-pointer group">
+        <div class="w-16 h-16 bg-white/90 backdrop-blur-md border border-orange-100 rounded-2xl shadow-xl flex flex-col items-center justify-center transition-all group-hover:bg-orange-500 group-hover:text-white active-press">
+            <span class="text-2xl group-hover:scale-110 transition-transform">🎟️</span>
+            <div class="absolute -top-2 -right-2 bg-orange-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-md">PROMO</div>
+            <span class="text-[7px] font-black uppercase mt-0.5 opacity-60 group-hover:opacity-100">限时八折</span>
+        </div>
+    </div>
+
+    <script src="dogme-core.js"></script>
+    <script>
+        const products = [
+            { name: "和风樱花虾片", price: 12.50, emoji: "🌸", tag: "Hot" },
+            { name: "宇治抹茶大福", price: 18.00, emoji: "🍵", tag: "New" },
+            { name: "炭烤鱿鱼丝", price: 22.00, emoji: "🦑", tag: "Classic" },
+            { name: "手作黑糖牛乳", price: 15.00, emoji: "🧋", tag: "Best" },
+            { name: "北海道牛乳糖", price: 9.90, emoji: "🍬", tag: "Sale" },
+            { name: "咸蛋黄锅巴", price: 14.50, emoji: "🍘", tag: "Hot" }
+        ];
+
+        function render() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <div class="relative mb-6 bg-gray-50 rounded-[30px] h-44 flex items-center justify-center text-6xl shadow-inner">
+                        ${p.emoji}
+                        <span class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm">${p.tag}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="font-black text-gray-800">${p.name}</h3>
+                            <p class="font-black text-orange-500">$${p.price.toFixed(2)}</p>
+                        </div>
+                        <button onclick="addToCart(event, '${p.name}', ${p.price}, '${p.emoji}')" class="w-12 h-12 bg-gray-900 text-white rounded-2xl flex items-center justify-center text-xl active-press hover:bg-orange-500 transition-all shadow-lg">+</button>
+                    </div>
+                </div>
+            `).join('');
+            syncStatus();
+        }
+
+        function addToCart(event, name, price, emoji) {
+            const startBtn = event.currentTarget;
+            const targetCart = document.getElementById('cart-target');
+            const startRect = startBtn.getBoundingClientRect();
+            const endRect = targetCart.getBoundingClientRect();
+
+            const particle = document.createElement('div');
+            particle.className = 'flying-particle';
+            particle.innerText = emoji;
+            particle.style.left = startRect.left + 'px';
+            particle.style.top = startRect.top + 'px';
+            document.body.appendChild(particle);
+
+            requestAnimationFrame(() => {
+                particle.style.transform = `translate(${endRect.left - startRect.left}px, ${endRect.top - startRect.top}px) scale(0.5) rotate(360deg)`;
+                particle.style.opacity = '0';
+            });
+            setTimeout(() => { particle.remove(); syncStatus(); }, 800);
+
+            let cart = JSON.parse(localStorage.getItem('dogme_cart')) || [];
+            cart.push({id: Date.now(), name, price, emoji});
+            localStorage.setItem('dogme_cart', JSON.stringify(cart));
+            localStorage.setItem('dogme_user_exp', parseFloat(localStorage.getItem('dogme_user_exp') || '0') + 2);
+        }
+
+        function syncStatus() {
+            if (typeof LevelSystem !== 'undefined') {
+                const info = LevelSystem.getLevelInfo();
+                const display = document.getElementById('rank-name-display');
+                display.innerText = info.name;
+                display.style.color = info.color;
+                const fill = document.getElementById('exp-fill');
+                fill.style.width = info.progress + '%';
+                fill.style.backgroundColor = info.color;
+            }
+            const cart = JSON.parse(localStorage.getItem('dogme_cart')) || [];
+            document.getElementById('cart-count-badge').innerText = cart.length;
+        }
+        window.onload = render;
+    </script>
+</body>
+</html>

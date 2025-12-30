@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dogme | 全球精选零食超市 🐾</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --dogme-theme: #FF8D36; }
+        body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; overflow-x: hidden; }
+        
+        .top-utility-bar { background: #2D3436; color: white; font-size: 12px; padding: 8px 48px; text-align: center; letter-spacing: 1px; font-weight: 700; }
+        .nav-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; cursor: pointer; transition: all 0.3s ease; }
+        
+        /* Logo大图浮动效果 */
+        .image-side { 
+            flex: 1.2; height: 65vh; border-radius: 60px; overflow: hidden; 
+            box-shadow: 0 40px 80px rgba(0,0,0,0.1);
+            animation: floating 4s ease-in-out infinite; 
+        }
+        @keyframes floating { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+
+        .rank-inline-card {
+            height: 68px; min-width: 195px; background: white;
+            border: 2px solid #F3F4F6; border-radius: 22px;
+            padding: 0 18px; display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .hero-title { background: linear-gradient(90deg, #2D3436 0%, var(--dogme-theme) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: clamp(3rem, 6vw, 5rem); font-weight: 900; line-height: 1; }
+
+        /* 弹窗动画 */
+        @keyframes modalIn {
+            0% { transform: translate(-50%, -40%) scale(0.9); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        .custom-toast {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 1000; width: 340px; background: white; border-radius: 40px;
+            padding: 35px; box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+            text-align: center; border: 1px solid #f1f1f1;
+            animation: modalIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .active-press:active { transform: scale(0.96); }
+        .glow-effect { animation: pulseGlow 2s infinite; }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 141, 54, 0.4); }
+            50% { box-shadow: 0 0 20px 10px rgba(255, 141, 54, 0.1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-utility-bar">
+        <span>📢 Dogme 全球速递：今日新上架 12 款人气限定 🐾</span>
+    </div>
+
+    <nav class="flex justify-between items-center px-12 py-6 max-w-[1600px] mx-auto sticky top-0 z-50 bg-white/60 backdrop-blur-md">
+        <div class="flex gap-10 items-center">
+            <h1 class="text-3xl font-black text-gray-900 tracking-tighter cursor-pointer" onclick="location.href='测试版.html'">Dogme.</h1>
+            <div class="flex gap-6 items-center">
+                <button onclick="location.href='shopping.html'" class="font-bold text-gray-700 hover:text-orange-500 transition-colors">Shop</button>
+                <button onclick="location.href='promo.html'" class="font-bold text-orange-500 hover:opacity-70 transition-opacity flex items-center gap-1">
+                    Promo <span class="text-[10px] bg-orange-100 px-1.5 py-0.5 rounded-lg">HOT</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex gap-6 items-center">
+            <div onclick="location.href='checkout.html'" class="relative cursor-pointer active-press">
+                <img src="shopping-car.jpg" class="nav-avatar border border-gray-100 shadow-sm" alt="购物车">
+                <div id="cart-count" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</div>
+            </div>
+            <img src="user.jpg" onclick="location.href='Log-in.html'" class="nav-avatar hover:ring-2 ring-orange-400" alt="用户">
+        </div>
+    </nav>
+
+    <main class="max-w-[1600px] mx-auto px-12 pb-20">
+        <section class="flex flex-col md:flex-row items-center min-h-[75vh] gap-12 mt-10">
+            <div class="flex-1">
+                <h2 class="hero-title tracking-tighter mb-8">Global<br>Snacks Super.</h2>
+                
+                <div class="flex flex-wrap items-center gap-5">
+                    <button onclick="location.href='shopping.html'" class="px-10 h-[68px] bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-orange-600 shadow-xl active-press">前往商店 🛒</button>
+                    
+                    <div id="home-user-badge" class="rank-inline-card cursor-pointer active-press" onclick="location.href='Log-in.html'">
+                        <div class="flex items-center justify-between gap-4">
+                            <span id="rank-name-text" class="text-[13px] font-black text-gray-800">萌新 Dogme</span>
+                            <span id="rank-level-tag" class="text-white text-[9px] font-black px-2.5 py-0.5 rounded-full bg-gray-300">V1</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-gray-100 rounded-full mt-2.5 overflow-hidden">
+                            <div id="exp-mini-bar" class="h-full bg-orange-500 transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                        <p id="exp-text" class="text-[8px] font-bold text-gray-300 mt-1 uppercase tracking-widest">EXP: 0 / 100</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="image-side">
+                <img src="logo.jpg" class="w-full h-full object-cover" alt="Logo">
+            </div>
+        </section>
+    </main>
+
+    <div id="limited-offer-tag" onclick="handleClaim()" class="fixed bottom-10 right-10 z-[100] cursor-pointer group">
+        <div class="glow-effect w-24 h-24 bg-gradient-to-br from-orange-400 to-orange-600 rounded-[2.5rem] shadow-2xl flex flex-col items-center justify-center border-4 border-white transform transition-all duration-500 group-hover:scale-110 active-press">
+            <span class="text-xs font-black text-white uppercase tracking-tighter mb-1">限时优惠</span>
+            <span class="text-3xl">🎟️</span>
+            <span class="text-[9px] font-bold text-white mt-1 bg-black/20 px-2 py-0.5 rounded-full">领八折券</span>
+        </div>
+    </div>
+
+    <script>
+        // 1. 同步用户等级与经验逻辑
+        function syncUserData() {
+            const isLogged = localStorage.getItem('dogme_user_logged');
+            let currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
+            
+            const rankName = document.getElementById('rank-name-text');
+            const rankTag = document.getElementById('rank-level-tag');
+            const expBar = document.getElementById('exp-mini-bar');
+            const expText = document.getElementById('exp-text');
+
+            if (isLogged === 'true') {
+                let level = Math.floor(currentExp / 100) + 1;
+                let displayExp = currentExp % 100;
+                if (level > 9) level = 9;
+
+                rankName.innerText = level >= 9 ? "传奇 Dogme" : "进阶 Dogme";
+                rankTag.innerText = "V" + level;
+                rankTag.className = `text-white text-[9px] font-black px-2.5 py-0.5 rounded-full ${level >= 9 ? 'bg-orange-500' : 'bg-gray-400'}`;
+                expBar.style.width = displayExp + "%";
+                expText.innerText = `EXP: ${displayExp} / 100`;
+            }
+
+            const cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
+            document.getElementById('cart-count').innerText = cart.length;
+        }
+
+        // 2. 优惠券领取逻辑
+        function handleClaim() {
+            const isLogged = localStorage.getItem('dogme_user_logged');
+            const hasClaimed = localStorage.getItem('dogme_coupon_claimed');
+
+            if (isLogged !== 'true') {
+                showPopup({
+                    icon: "🔐", title: "安全检查", msg: "请先登录账户 🐾",
+                    btnText: "去登录", action: () => { location.href = 'user.html'; }
+                });
+                return;
+            }
+
+            if (hasClaimed === 'true') {
+                showPopup({
+                    icon: "🎟️", title: "温馨提示", msg: "您已领取过该优惠券！",
+                    showImg: true, btnText: "去购物", action: () => { location.href = 'shopping.html'; }
+                });
+                return;
+            }
+
+            localStorage.setItem('dogme_coupon_claimed', 'true');
+            showPopup({
+                icon: "🎉", title: "领取成功！", msg: "专属八折优惠券已到账。",
+                showImg: true, btnText: "查看券包", action: () => { location.href = 'coupon.html'; }
+            });
+        }
+
+        // 3. 通用美化弹窗
+        function showPopup({ icon, title, msg, btnText, action, showImg = false }) {
+            const existing = document.querySelector('.custom-toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.innerHTML = `
+                <div class="text-5xl mb-4">${icon}</div>
+                <h3 class="font-black text-gray-900 text-xl mb-2">${title}</h3>
+                <p class="text-gray-400 text-sm font-bold mb-6">${msg}</p>
+                ${showImg ? `<img src="coupon.jpg" class="w-full h-32 object-cover rounded-[25px] mb-6 border">` : ''}
+                <div class="flex gap-3">
+                    <button onclick="this.parentElement.parentElement.remove()" class="flex-1 py-4 bg-gray-100 text-gray-400 rounded-2xl font-black text-xs active-press">关闭</button>
+                    <button id="popup-action-btn" class="flex-[1.5] py-4 bg-orange-500 text-white rounded-2xl font-black text-xs active-press shadow-lg shadow-orange-200">${btnText}</button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            document.getElementById('popup-action-btn').onclick = action;
+        }
+
+        window.onload = syncUserData;
+        window.onfocus = syncUserData;
+    </script>
+</body>
+</html>
