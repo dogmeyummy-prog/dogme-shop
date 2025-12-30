@@ -1,4 +1,4 @@
-index.html<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -10,23 +10,12 @@ index.html<!DOCTYPE html>
         body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; }
         .active-press:active { transform: scale(0.96); }
         .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); }
-        
-        .progress-bar-fill {
-            transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* 物流标签专属动画：微微律动感 */
-        @keyframes subtlePulse {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        .float-tag-animation {
-            animation: subtlePulse 3s ease-in-out infinite;
-        }
+        .progress-bar-fill { transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes subtlePulse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .float-tag-animation { animation: subtlePulse 3s ease-in-out infinite; }
     </style>
 </head>
 <body class="pb-20">
-
     <nav class="flex justify-between items-center px-8 py-6 sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-orange-50">
         <button onclick="location.href='index.html'" class="w-11 h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50">❮</button>
         <h1 class="text-xl font-black text-gray-900 tracking-tighter">My Dogme.</h1>
@@ -39,7 +28,6 @@ index.html<!DOCTYPE html>
                 <img src="user.jpg" class="w-28 h-28 rounded-[35px] mx-auto border-4 border-white shadow-lg object-cover">
                 <div id="user-level-tag" class="absolute -bottom-2 -right-2 bg-gray-400 text-white text-[10px] font-black px-3 py-1 rounded-full border-2 border-white">V1</div>
             </div>
-            
             <h2 id="user-display-email" class="text-lg font-black text-gray-800 tracking-tight">载入中...</h2>
             <p id="user-rank-title" class="text-[10px] font-black text-orange-500 uppercase tracking-widest mt-1">萌新 Dogme</p>
 
@@ -69,31 +57,13 @@ index.html<!DOCTYPE html>
 
         <div onclick="location.href='tracking.html'" class="float-tag-animation w-full bg-white p-6 rounded-[40px] border border-orange-100 shadow-xl shadow-orange-100/50 flex items-center justify-between active-press cursor-pointer mb-8">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-orange-50 rounded-3xl flex items-center justify-center text-3xl">
-                    🚚
-                </div>
+                <div class="w-14 h-14 bg-orange-50 rounded-3xl flex items-center justify-center text-3xl">🚚</div>
                 <div class="text-left">
                     <span class="block font-black text-gray-800 text-lg">查看物流</span>
                     <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Track Your Packages</span>
                 </div>
             </div>
-            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300">
-                ❯
-            </div>
-        </div>
-
-        <div class="bg-white rounded-[35px] p-8 border border-gray-100">
-            <h3 class="font-black text-sm text-gray-800 mb-6">账户安全资产</h3>
-            <div class="space-y-5">
-                <div class="flex justify-between items-center text-[11px] font-bold">
-                    <span class="text-gray-400">邮箱绑定</span>
-                    <span class="text-green-500">已加密 🔐</span>
-                </div>
-                <div class="flex justify-between items-center text-[11px] font-bold">
-                    <span class="text-gray-400">会员特权</span>
-                    <span class="text-orange-500">首单八折可用</span>
-                </div>
-            </div>
+            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300">❯</div>
         </div>
     </main>
 
@@ -101,32 +71,17 @@ index.html<!DOCTYPE html>
         window.onload = () => {
             const isLogged = localStorage.getItem('dogme_user_logged');
             const email = localStorage.getItem('dogme_user_email');
-            const hasClaimed = localStorage.getItem('dogme_coupon_claimed');
-
             if (isLogged !== 'true' || !email) {
-                window.location.replace('user.html');
+                window.location.replace('user.html'); // 未登录则强制去登录页
                 return;
             }
-
             document.getElementById('user-display-email').innerText = email;
             
-            // 经验值同步逻辑
             const currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
-            const expBar = document.getElementById('exp-bar-fill');
-            const expText = document.getElementById('exp-count-text');
-            const levelTag = document.getElementById('user-level-tag');
-            const rankTitle = document.getElementById('user-rank-title');
-
-            const displayPercent = Math.min(currentExp, 100);
-            expBar.style.width = displayPercent + "%";
-            expText.innerText = `${currentExp} / 100`;
-
-            if (currentExp < 100) {
-                levelTag.innerText = "V1";
-                rankTitle.innerText = "萌新 Dogme";
-            }
-
-            if (hasClaimed === 'true') {
+            document.getElementById('exp-bar-fill').style.width = Math.min(currentExp, 100) + "%";
+            document.getElementById('exp-count-text').innerText = `${currentExp} / 100`;
+            
+            if (localStorage.getItem('dogme_coupon_claimed') === 'true') {
                 document.getElementById('coupon-status').innerText = "8.0折已激活";
                 document.getElementById('coupon-status').classList.replace('text-gray-300', 'text-orange-500');
             }
