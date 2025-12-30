@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="测试版.css">
     <style>
+        body { font-family: 'Quicksand', sans-serif; }
         @keyframes floatIn {
             0% { transform: translate(-50%, 30px); opacity: 0; }
             100% { transform: translate(-50%, 0); opacity: 1; }
@@ -25,9 +26,8 @@
 <body class="bg-[#fdfcf9] min-h-screen flex items-center justify-center p-6">
 
     <div class="max-w-md w-full">
-        <!-- 返回控件：改为立即执行的 inline onclick（replace 到站点根并带 from=user），避免历史回退或事件竞态导致闪回 Log-in.html -->
         <div class="flex items-center mb-6">
-            <button id="back-btn" onclick="(function(){try{console.log('[user.html] immediate back -> /?from=user'); window.location.replace(window.location.origin + '/?from=user');}catch(e){window.location.replace('./index.html');}})()" aria-label="返回首页" class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-gray-100 inline-flex">
+            <button id="back-btn" onclick="window.location.href='index.html'" aria-label="返回首页" class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-gray-100">
                 ❮
             </button>
         </div>
@@ -52,8 +52,7 @@
     </div>
 
     <script>
-        // 其余现有脚本
-        const API_URL = "http://localhost:3000";
+        const API_URL = "http://localhost:3000"; // 确保你的 server.js 正在运行
 
         function showToast(msg, icon = "🐾") {
             const old = document.querySelector('.toast-msg');
@@ -80,14 +79,13 @@
                 });
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    showToast("验证码已发送至您的 Gmail", "✨");
+                    showToast("验证码已发送", "✨");
                     startTimer();
                 } else {
                     showToast(data.msg || "发送失败", "❌");
                 }
             } catch (e) {
-                console.error("网络请求失败，请检查后端:", e);
-                showToast("连接不到后端，请检查 server.js 是否运行", "⚠️");
+                showToast("无法连接后端服务器", "⚠️");
             }
         }
 
@@ -120,17 +118,17 @@
                     localStorage.setItem('dogme_user_email', email);
                     localStorage.setItem('dogme_user_logged', 'true');
                     
-                    showToast("身份验证成功，正在同步数据...", "🎉");
+                    showToast("身份验证成功！", "🎉");
                     
+                    // 修复点：成功后跳转到商城主页 index.html
                     setTimeout(() => { 
-                        window.location.replace('Log-in.html'); 
+                        window.location.href = 'index.html'; 
                     }, 1200);
                 } else {
                     showToast(data.msg || "验证码错误", "❌");
                 }
             } catch (e) { 
-                console.error("登录失败详情:", e);
-                showToast("网络连接异常，请确保后端在 3000 端口运行", "⚠️"); 
+                showToast("登录失败，请检查网络", "⚠️"); 
             }
         }
     </script>
