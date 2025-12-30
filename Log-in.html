@@ -12,10 +12,7 @@
         .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); }
         .progress-bar-fill { transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        @keyframes subtlePulse {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
+        @keyframes subtlePulse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
         .float-tag-animation { animation: subtlePulse 3s ease-in-out infinite; }
     </style>
 </head>
@@ -50,19 +47,19 @@
             <div onclick="location.href='coupon.html'" class="bg-white p-6 rounded-[35px] border border-orange-50 shadow-sm active-press cursor-pointer">
                 <span class="text-2xl block mb-2">🎟️</span>
                 <span class="font-black text-gray-800 block">我的优惠券</span>
-                <span id="coupon-status" class="text-[9px] font-bold text-gray-300 uppercase">尚未领取</span>
+                <span id="coupon-status" class="text-[9px] font-bold text-gray-300 uppercase tracking-widest">尚未领取</span>
             </div>
 
             <div id="shop-action-container">
                 <div onclick="location.href='index.html'" class="bg-gray-900 p-6 rounded-[35px] shadow-lg active-press cursor-pointer text-center">
                     <span class="text-2xl block mb-2">🛒</span>
                     <span class="font-black text-white block">去购物</span>
-                    <span class="text-[9px] font-bold text-gray-500 uppercase">Shopping</span>
+                    <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Shopping</span>
                 </div>
             </div>
         </div>
 
-        <div onclick="location.href='tracking.html'" class="float-tag-animation w-full bg-white p-6 rounded-[40px] border border-orange-100 shadow-xl shadow-orange-100/50 flex items-center justify-between active-press cursor-pointer mb-8">
+        <div onclick="location.href='tracking.html'" class="float-tag-animation w-full bg-white p-6 rounded-[40px] border border-orange-100 shadow-xl shadow-orange-100/50 flex items-center justify-between active-press cursor-pointer">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 bg-orange-50 rounded-3xl flex items-center justify-center text-3xl">🚚</div>
                 <div class="text-left">
@@ -70,7 +67,7 @@
                     <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Track Packages</span>
                 </div>
             </div>
-            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300">❯</div>
+            <div class="text-gray-300">❯</div>
         </div>
     </main>
 
@@ -87,30 +84,19 @@
             document.getElementById('user-display-email').innerText = email;
             
             // 1. 处理购买历史逻辑
-            const hasOrder = localStorage.getItem('dogme_has_order'); // 模拟订单标记
-            const actionBtn = document.getElementById('shop-action-container');
-
+            const hasOrder = localStorage.getItem('dogme_has_order');
+            const actionContainer = document.getElementById('shop-action-container');
             if (hasOrder === 'true') {
-                // 如果有购买历史，显示橙色按钮
-                actionBtn.innerHTML = `
+                actionContainer.innerHTML = `
                     <div onclick="location.href='orders.html'" class="bg-orange-500 p-6 rounded-[35px] shadow-lg shadow-orange-200 active-press cursor-pointer text-center">
                         <span class="text-2xl block mb-2">📋</span>
                         <span class="font-black text-white block">购买历史</span>
-                        <span class="text-[9px] font-bold text-orange-200 uppercase">Order History</span>
-                    </div>
-                `;
-            } else {
-                // 如果没有，保持“去购物”按钮
-                actionBtn.innerHTML = `
-                    <div onclick="location.href='index.html'" class="bg-gray-900 p-6 rounded-[35px] shadow-lg active-press cursor-pointer text-center">
-                        <span class="text-2xl block mb-2">🛒</span>
-                        <span class="font-black text-white block">去购物</span>
-                        <span class="text-[9px] font-bold text-gray-500 uppercase">Go Shopping</span>
+                        <span class="text-[9px] font-bold text-orange-100 uppercase tracking-widest">History</span>
                     </div>
                 `;
             }
 
-            // 2. 同步经验值和优惠券
+            // 2. 同步经验值和等级
             const currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
             setTimeout(() => {
                 document.getElementById('exp-bar-fill').style.width = Math.min(currentExp, 100) + "%";
@@ -121,6 +107,7 @@
                 }
             }, 300);
 
+            // 3. 同步优惠券状态
             if (localStorage.getItem('dogme_coupon_claimed') === 'true') {
                 const status = document.getElementById('coupon-status');
                 status.innerText = "8.0折已激活";
