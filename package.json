@@ -1,8 +1,6 @@
 {
   "name": "dogme-shop",
   "version": "1.1.0",
-  "description": "Dogme Shop 账户与支付后端",
-  "main": "api/server.js",
   "dependencies": {
     "nodemailer": "^6.9.0",
     "stripe": "^14.0.0"
