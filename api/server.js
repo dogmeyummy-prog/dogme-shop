@@ -79,7 +79,7 @@ export default async function handler(req, res) {
                 payment_method_types: ['card'],
                 line_items: [{
                     price_data: {
-                        currency: 'usd',
+                        currency: 'cad',
                         product_data: { name: 'Dogme Order 🐾' },
                         unit_amount: Math.round(amount * 100), 
                     },
