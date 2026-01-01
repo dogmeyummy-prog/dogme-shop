@@ -1,100 +1,93 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dogme | 账户中心 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Quicksand', sans-serif; background: #fdfcf9; }
         .active-press:active { transform: scale(0.95); }
-        @keyframes floatIn { 0% { transform: translate(-50%, 20px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
         .toast-msg {
             position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%);
-            background: #2D3436; color: white; padding: 14px 28px; border-radius: 20px;
-            font-size: 13px; font-weight: 700; z-index: 10000; animation: floatIn 0.3s ease forwards;
+            background: #2D3436; color: white; padding: 16px 32px; border-radius: 20px;
+            font-weight: 700; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: floatIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        /* 🌟 精准居中校正 */
-        .back-arrow-container {
+        @keyframes floatIn { from { transform: translate(-50%, 30px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+        .back-arrow-btn {
             width: 44px; height: 44px; border-radius: 50%; background: white;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #f1f1f1;
+            cursor: pointer; transition: all 0.3s ease;
         }
-        .back-icon-fix { transform: translateX(-1px); } /* 补偿 SVG 视觉重心 */
-        
-        .login-card { background: white; border-radius: 40px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.02); }
-        .avatar-box { width: 90px; height: 90px; border-radius: 30px; border: 4px solid #f7f7f7; margin: 0 auto 24px; overflow: hidden; }
+        .user-avatar { width: 90px; height: 90px; border-radius: 30px; object-fit: cover; margin: 0 auto 24px; border: 4px solid #f7f7f7; }
+        input { background: #f7f7f7; border: 2px solid transparent; transition: 0.3s; }
+        input:focus { border-color: #FF8D36; background: white; outline: none; }
     </style>
 </head>
-<body class="p-6">
-    <nav class="max-w-xl mx-auto flex mb-12">
-        <div onclick="location.href='index.html'" class="back-arrow-container active-press">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="back-icon-fix">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
+<body class="p-6 min-h-screen flex flex-col">
+    <nav class="max-w-xl mx-auto w-full mb-12">
+        <div onclick="location.href='index.html'" class="back-arrow-btn active-press">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform: translateX(-1px);"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </div>
     </nav>
-
-    <main class="max-w-md mx-auto">
-        <div class="login-card text-center">
-            <div class="avatar-box">
-                <img src="user.jpg" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/90'">
-            </div>
-            <h2 class="text-2xl font-black mb-8">验证身份</h2>
-            
-            <div class="space-y-4">
-                <input type="email" id="email" placeholder="输入邮箱" class="w-full py-4 px-6 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-orange-500 transition-all">
+    <main class="max-w-md mx-auto w-full flex-1 flex flex-col justify-center">
+        <div class="bg-white rounded-[40px] p-10 text-center shadow-sm">
+            <img src="user.jpg" class="user-avatar shadow-md" onerror="this.src='https://via.placeholder.com/90?text=🐾'">
+            <h2 class="text-3xl font-black mb-2">欢迎回来</h2>
+            <p class="text-gray-400 font-bold mb-8 text-sm">请输入邮箱获取登录验证码</p>
+            <div class="space-y-4 text-left">
+                <input type="email" id="email" placeholder="您的邮箱地址" class="w-full py-4 px-6 rounded-2xl font-bold">
                 <div class="flex gap-2">
-                    <input type="text" id="code" placeholder="验证码" class="flex-1 py-4 px-6 bg-gray-50 rounded-2xl font-bold text-center">
+                    <input type="text" id="code" placeholder="验证码" class="flex-1 py-4 px-6 rounded-2xl font-bold text-center tracking-widest">
                     <button id="send-btn" onclick="sendCode()" class="px-6 bg-gray-900 text-white rounded-2xl font-black text-xs active-press">获取</button>
                 </div>
                 <button onclick="login()" class="w-full py-5 bg-orange-500 text-white rounded-[25px] font-black shadow-lg shadow-orange-100 mt-4 active-press">开启之旅</button>
             </div>
         </div>
     </main>
-
     <script>
-        const API = "/api/server"; // 🌟 关键：直接指向后端入口
-
+        const API = "/api/server";
         function showToast(m) {
             const t = document.createElement('div'); t.className = 'toast-msg'; t.innerText = m;
             document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
         }
-
         async function sendCode() {
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
+            if(!email.includes('@')) return showToast("邮箱格式错误 📧");
             const btn = document.getElementById('send-btn');
-            btn.disabled = true;
-
+            btn.disabled = true; btn.innerText = "...";
             try {
-                const res = await fetch(API, {
+                const res = await fetch(`${API}/send-code`, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ action: 'send-code', email })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
                 });
-                const data = await res.json();
-                if(data.success) { showToast("发送成功 ✨"); } 
-                else { showToast(data.msg); btn.disabled = false; }
-            } catch(e) { showToast("云端未响应 ⚠️"); btn.disabled = false; }
+                if(res.ok) { showToast("验证码已发出 ✨"); startTimer(); }
+                else { showToast("发送失败"); btn.disabled = false; btn.innerText = "获取"; }
+            } catch(e) { showToast("连接云端失败 ⚠️"); btn.disabled = false; }
         }
-
+        function startTimer() {
+            const btn = document.getElementById('send-btn'); let s = 60;
+            const t = setInterval(() => { btn.innerText = `${s--}s`; if(s<0){ clearInterval(t); btn.innerText="重发"; btn.disabled=false; } }, 1000);
+        }
         async function login() {
-            const email = document.getElementById('email').value;
-            const code = document.getElementById('code').value;
+            const email = document.getElementById('email').value.trim();
+            const code = document.getElementById('code').value.trim();
             try {
-                const res = await fetch(API, {
+                const res = await fetch(`${API}/verify-code`, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ action: 'verify-code', email, code })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, code })
                 });
-                const data = await res.json();
-                if(data.success) {
-                    localStorage.setItem('dogme_user_logged', 'true');
+                if(res.ok) {
                     localStorage.setItem('dogme_user_email', email);
-                    location.href = 'Log-in.html';
+                    localStorage.setItem('dogme_user_logged', 'true');
+                    showToast("欢迎回来 🎉");
+                    setTimeout(() => location.href = 'Log-in.html', 1000);
                 } else { showToast("验证码错误 ❌"); }
-            } catch(e) { showToast("登录异常"); }
+            } catch(e) { showToast("登录异常 ⚠️"); }
         }
     </script>
 </body>
