@@ -28,7 +28,10 @@
         }
         .back-arrow-btn:hover { background: #f9f9f9; transform: translateX(-5px); }
         
-        .login-card { background: white; border-radius: 40px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.03); }
+        /* 登录卡片与头像 */
+        .login-card { background: white; border-radius: 40px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.03); position: relative; }
+        .user-avatar { width: 80px; height: 80px; border-radius: 25px; object-fit: cover; margin: 0 auto 24px; border: 3px solid #f7f7f7; }
+        
         input { background: #f7f7f7; border: 2px solid transparent; transition: all 0.3s; }
         input:focus { border-color: #FF8D36; background: white; outline: none; }
     </style>
@@ -38,9 +41,7 @@
     <nav class="max-w-xl mx-auto w-full flex justify-between items-center mb-12">
         <div class="flex items-center gap-4">
             <div onclick="smartBack()" class="back-arrow-btn active-press">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             </div>
             
             <div class="flex bg-gray-100 rounded-full p-1 shadow-inner text-[10px] font-black">
@@ -53,7 +54,8 @@
 
     <main class="max-w-md mx-auto w-full flex-1 flex flex-col justify-center">
         <div class="login-card text-center">
-            <div class="text-5xl mb-6">🐾</div>
+            <img src="user.jpg" alt="User Avatar" class="user-avatar shadow-sm" onerror="this.src='https://via.placeholder.com/80?text=🐾'">
+            
             <h2 data-t="login_welcome" class="text-3xl font-black text-gray-900 mb-2">欢迎回来</h2>
             <p data-t="login_subtitle" class="text-gray-400 font-bold mb-8 text-sm">请输入邮箱获取登录验证码</p>
 
@@ -74,19 +76,18 @@
 
     <script src="i18n.js"></script>
     <script>
-        // 1. 智能返回逻辑
+        // 1. 智能返回逻辑：如果来源是站内则返回，否则回首页
         function smartBack() {
             const referrer = document.referrer;
-            // 如果有来源页面，且来源不是当前页，就返回上一页；否则回首页
-            if (referrer && referrer !== window.location.href) {
+            if (referrer && referrer.includes(window.location.hostname) && !referrer.includes('user.html')) {
                 window.history.back();
             } else {
                 window.location.href = 'index.html';
             }
         }
 
-        // 2. 原有 API 逻辑 (解决无法连接云端问题)
-        const API_URL = '/api'; // 对应 vercel api/server.js
+        // 2. 原有 API 逻辑
+        const API_URL = '/api'; 
 
         function showToast(m) {
             const t = document.createElement('div');
@@ -99,10 +100,8 @@
         async function handleSendCode() {
             const email = document.getElementById('login-email').value.trim();
             if (!email) return showToast("请输入邮箱 📧");
-
             const btn = document.getElementById('send-code-btn');
             btn.disabled = true;
-
             try {
                 const res = await fetch(`${API_URL}/send-code`, {
                     method: 'POST',
@@ -132,7 +131,6 @@
             const email = document.getElementById('login-email').value.trim();
             const code = document.getElementById('login-code').value.trim();
             if (!code) return showToast("请输入验证码 🔑");
-
             try {
                 const res = await fetch(`${API_URL}/verify-code`, {
                     method: 'POST',
@@ -145,9 +143,7 @@
                     localStorage.setItem('dogme_user_logged', 'true');
                     showToast("欢迎回来 🎉");
                     setTimeout(() => { window.location.href = 'index.html'; }, 1000);
-                } else {
-                    showToast("验证码错误 ❌");
-                }
+                } else { showToast("验证码错误 ❌"); }
             } catch (e) { showToast("登录异常 ⚠️"); }
         }
     </script>
