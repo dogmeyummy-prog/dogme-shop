@@ -1,8 +1,6 @@
 const nodemailer = require('nodemailer');
-// 自动读取你在 Vercel 设置的环境变量 STRIPE_SECRET_KEY
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-// 1. 邮件传输配置
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -14,19 +12,20 @@ const transporter = nodemailer.createTransport({
 let activeCodes = {}; 
 
 export default async function handler(req, res) {
-    // 启用跨域头
+    // 1. 跨域与预检请求处理
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') return res.status(200).end();
 
-    const url = req.url || "";
+    // 2. 路径解析修复
+    const url = req.url.split('?')[0];
 
-    // --- 接口 A：发送装饰后的验证码邮件 ---
+    // --- 接口：发送美化验证码邮件 ---
     if (url.includes('send-code')) {
         const { email } = req.body || {};
-        if (!email) return res.status(400).json({ success: false, msg: '邮箱地址缺失' });
+        if (!email) return res.status(400).json({ success: false, msg: '邮箱缺失' });
 
         const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
         activeCodes[email] = {
@@ -34,33 +33,43 @@ export default async function handler(req, res) {
             expires: Date.now() + 5 * 60 * 1000 
         };
 
-        const mailOptions = {
-            from: '"Dogme Security 🐾" <dogme.yummy@gmail.com>',
-            to: email,
-            subject: `[Dogme] ${generatedCode} 是您的验证码 🐾`,
-            html: `
-            <div style="background-color: #fdfcf9; padding: 40px; font-family: sans-serif; text-align: center;">
-                <div style="max-width: 400px; margin: 0 auto; background: #ffffff; border-radius: 40px; padding: 40px; border: 1px solid #f0f0f0;">
-                    <div style="font-size: 50px; margin-bottom: 20px;">🐾</div>
-                    <h2 style="color: #2D3436; font-size: 24px; font-weight: 900; margin-bottom: 10px;">身份验证</h2>
-                    <p style="color: #636E72; font-size: 14px; margin-bottom: 30px;">欢迎回到 Dogme！请使用下方的验证码完成登录。</p>
-                    <div style="background: #FFF9F5; border: 2px dashed #FF8D36; border-radius: 25px; padding: 20px; margin-bottom: 30px;">
-                        <span style="font-size: 36px; font-weight: 900; color: #FF8D36; letter-spacing: 8px;">${generatedCode}</span>
-                    </div>
-                    <p style="color: #B2BEC3; font-size: 11px;">验证码 5 分钟内有效</p>
-                </div>
-            </div>`
-        };
-
         try {
-            await transporter.sendMail(mailOptions);
+            await transporter.sendMail({
+                from: '"Dogme Security 🐾" <dogme.yummy@gmail.com>',
+                to: email,
+                subject: `${generatedCode} 是您的 Dogme 登录验证码`,
+                // 🌟 美化后的邮件 HTML 模板
+                html: `
+                <div style="background-color: #fdfcf9; padding: 40px 20px; font-family: 'Quicksand', sans-serif; text-align: center;">
+                    <div style="max-width: 400px; margin: 0 auto; background: white; border-radius: 40px; padding: 40px; border: 1px solid #f1f1f1; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+                        <div style="font-size: 50px; margin-bottom: 10px;">🐾</div>
+                        <h1 style="color: #1a1a1a; font-size: 28px; margin: 0; font-weight: 900;">Dogme.</h1>
+                        <p style="color: #a0a0a0; font-size: 14px; font-weight: bold; margin-top: 5px;">全球精选美味零食</p>
+                        
+                        <div style="margin: 30px 0; padding: 20px; background: #fff8f3; border-radius: 25px;">
+                            <p style="color: #FF8D36; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;">您的登录验证码</p>
+                            <span style="font-size: 42px; font-weight: 900; color: #1a1a1a; letter-spacing: 8px;">${generatedCode}</span>
+                        </div>
+                        
+                        <p style="color: #666; font-size: 13px; line-height: 1.6;">
+                            请在 5 分钟内输入此验证码以开启您的 Dogme 之旅。<br>
+                            如果这不是您本人操作，请忽略此邮件。
+                        </p>
+                        
+                        <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                            <p style="color: #ccc; font-size: 10px; font-weight: bold; text-transform: uppercase;">Dogme Canada © 2026</p>
+                        </div>
+                    </div>
+                </div>
+                `
+            });
             return res.status(200).json({ success: true });
-        } catch (error) {
+        } catch (e) {
             return res.status(500).json({ success: false, msg: '邮件发送失败' });
         }
     }
 
-    // --- 接口 B：验证登录 ---
+    // --- 接口：验证码校验 ---
     if (url.includes('verify-code')) {
         const { email, code } = req.body || {};
         const record = activeCodes[email];
@@ -68,33 +77,8 @@ export default async function handler(req, res) {
             delete activeCodes[email];
             return res.status(200).json({ success: true });
         }
-        return res.status(401).json({ success: false, msg: '验证码无效' });
+        return res.status(401).json({ success: false, msg: '验证码无效或已过期' });
     }
 
-    // --- 接口 C：创建真实支付会话 (Stripe) ---
-    if (url.includes('create-checkout-session')) {
-        const { amount, email } = req.body;
-        try {
-            const session = await stripe.checkout.sessions.create({
-                payment_method_types: ['card'],
-                line_items: [{
-                    price_data: {
-                        currency: 'cad',
-                        product_data: { name: 'Dogme Order 🐾' },
-                        unit_amount: Math.round(amount * 100), 
-                    },
-                    quantity: 1,
-                }],
-                mode: 'payment',
-                customer_email: email,
-                success_url: `${req.headers.origin}/pay.html?status=success&amount=${amount}`,
-                cancel_url: `${req.headers.origin}/pay.html?status=cancel`,
-            });
-            return res.status(200).json({ url: session.url });
-        } catch (e) {
-            return res.status(500).json({ error: e.message });
-        }
-    }
-
-    return res.status(404).end();
+    return res.status(404).json({ msg: "Endpoint not found" });
 }
