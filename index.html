@@ -10,13 +10,10 @@
         :root { --dogme-theme: #FF8D36; }
         body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; overflow-x: hidden; }
         
-        /* 顶部通告栏 - 增加加拿大本地化信息 */
         .top-utility-bar { background: #2D3436; color: white; font-size: 11px; padding: 8px 48px; text-align: center; letter-spacing: 1px; font-weight: 700; }
-        
-        /* 导航头像及交互 */
         .nav-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; cursor: pointer; transition: all 0.3s ease; }
         
-        /* 核心浮动动画 */
+        /* 保留的核心浮动动画 */
         .image-side { 
             flex: 1.2; height: 65vh; border-radius: 60px; overflow: hidden; 
             box-shadow: 0 40px 80px rgba(0,0,0,0.1);
@@ -24,7 +21,6 @@
         }
         @keyframes floating { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
 
-        /* 经验值内嵌卡片 */
         .rank-inline-card {
             height: 68px; min-width: 195px; background: white;
             border: 2px solid #F3F4F6; border-radius: 22px;
@@ -33,17 +29,16 @@
 
         .hero-title { background: linear-gradient(90deg, #2D3436 0%, var(--dogme-theme) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: clamp(3rem, 6vw, 5rem); font-weight: 900; line-height: 1; }
 
-        /* 弹窗动画 */
-        @keyframes modalIn {
-            0% { transform: translate(-50%, -40%) scale(0.9); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-        }
         .custom-toast {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             z-index: 1000; width: 340px; background: white; border-radius: 40px;
             padding: 35px; box-shadow: 0 30px 60px rgba(0,0,0,0.15);
             text-align: center; border: 1px solid #f1f1f1;
             animation: modalIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes modalIn {
+            0% { transform: translate(-50%, -40%) scale(0.9); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
 
         .active-press:active { transform: scale(0.96); }
@@ -57,41 +52,47 @@
 <body>
 
     <div class="top-utility-bar">
-        <span>🇨🇦 Dogme 加拿大：今日新上架多款人气零食，全境包邮送达 🐾</span>
+        <span data-t="top_bar">🇨🇦 Dogme 加拿大：今日新上架多款人气零食，全境包邮送达 🐾</span>
     </div>
 
     <nav class="flex justify-between items-center px-12 py-6 max-w-[1600px] mx-auto sticky top-0 z-50 bg-white/60 backdrop-blur-md">
         <div class="flex gap-10 items-center">
             <h1 class="text-3xl font-black text-gray-900 tracking-tighter cursor-pointer" onclick="location.href='index.html'">Dogme.</h1>
             <div class="flex gap-6 items-center">
-                <button onclick="location.href='shopping.html'" class="font-bold text-gray-700 hover:text-orange-500 transition-colors">所有商品</button>
-                <button onclick="location.href='promo.html'" class="font-bold text-orange-500 hover:opacity-70 transition-opacity flex items-center gap-1">
+                <button data-t="nav_shop" onclick="location.href='shopping.html'" class="font-bold text-gray-700 hover:text-orange-500 transition-colors">所有商品</button>
+                <button data-t="nav_promo" onclick="location.href='promo.html'" class="font-bold text-orange-500 hover:opacity-70 transition-opacity flex items-center gap-1">
                     优惠专区 <span class="text-[10px] bg-orange-100 px-1.5 py-0.5 rounded-lg">SALE</span>
                 </button>
             </div>
         </div>
         
         <div class="flex gap-6 items-center">
+            <div class="flex bg-gray-100 rounded-full p-1 shadow-inner text-[10px] font-black">
+                <button onclick="switchLanguage('zh')" class="px-2 py-1 rounded-full hover:bg-white transition-all">CN</button>
+                <button onclick="switchLanguage('en')" class="px-2 py-1 rounded-full hover:bg-white transition-all">EN</button>
+                <button onclick="switchLanguage('fr')" class="px-2 py-1 rounded-full hover:bg-white transition-all">FR</button>
+            </div>
+
             <div onclick="location.href='checkout.html'" class="relative cursor-pointer active-press">
-                <img src="shopping-car.jpg" class="nav-avatar border border-gray-100 shadow-sm" alt="购物车">
+                <img src="shopping-car.jpg" class="nav-avatar border border-gray-100 shadow-sm" alt="Cart">
                 <div id="cart-count" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</div>
             </div>
-            <img src="user.jpg" onclick="location.href='user.html'" class="nav-avatar hover:ring-2 ring-orange-400" alt="用户">
+            <img src="user.jpg" onclick="location.href='user.html'" class="nav-avatar hover:ring-2 ring-orange-400" alt="User">
         </div>
     </nav>
 
     <main class="max-w-[1600px] mx-auto px-12 pb-20">
         <section class="flex flex-col md:flex-row items-center min-h-[75vh] gap-12 mt-10">
             <div class="flex-1">
-                <h2 class="hero-title tracking-tighter mb-8">Tasty Snacks<br>From Global.</h2>
-                <p class="text-gray-400 font-medium text-lg mb-10 max-w-md">专为在加拿大的你准备，每一口都是惊喜。🐾</p>
+                <h2 data-t="hero_title" class="hero-title tracking-tighter mb-8">Tasty Snacks<br>From Global.</h2>
+                <p data-t="hero_subtitle" class="text-gray-400 font-medium text-lg mb-10 max-w-md">专为在加拿大的你准备，每一口都是惊喜。🐾</p>
                 
                 <div class="flex flex-wrap items-center gap-5">
-                    <button onclick="location.href='shopping.html'" class="px-10 h-[68px] bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-orange-600 shadow-xl active-press">立即购 🛒</button>
+                    <button data-t="btn_buy" onclick="location.href='shopping.html'" class="px-10 h-[68px] bg-gray-900 text-white rounded-2xl font-black text-lg hover:bg-orange-600 shadow-xl active-press">立即购 🛒</button>
                     
                     <div id="home-user-badge" class="rank-inline-card cursor-pointer active-press" onclick="location.href='user.html'">
                         <div class="flex items-center justify-between gap-4">
-                            <span id="rank-name-text" class="text-[13px] font-black text-gray-800">未登录 🐾</span>
+                            <span id="rank-name-text" data-t="rank_unlogged" class="text-[13px] font-black text-gray-800">未登录 🐾</span>
                             <span id="rank-level-tag" class="text-white text-[9px] font-black px-2.5 py-0.5 rounded-full bg-gray-300">V0</span>
                         </div>
                         <div class="w-full h-1.5 bg-gray-100 rounded-full mt-2.5 overflow-hidden">
@@ -112,28 +113,28 @@
         <div class="glow-effect w-24 h-24 bg-gradient-to-br from-orange-400 to-orange-600 rounded-[2.5rem] shadow-2xl flex flex-col items-center justify-center border-4 border-white transform transition-all duration-500 group-hover:scale-110 active-press">
             <span class="text-xs font-black text-white uppercase tracking-tighter mb-1">Coupon</span>
             <span class="text-3xl">🎟️</span>
-            <span class="text-[9px] font-bold text-white mt-1 bg-black/20 px-2 py-0.5 rounded-full">领8折券</span>
+            <span data-t="coupon_tag" class="text-[9px] font-bold text-white mt-1 bg-black/20 px-2 py-0.5 rounded-full">领8折券</span>
         </div>
     </div>
 
+    <script src="i18n.js"></script>
     <script>
-        // 核心同步逻辑
         function syncUserData() {
             const isLogged = localStorage.getItem('dogme_user_logged');
             let currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
-            
             const rankName = document.getElementById('rank-name-text');
             const rankTag = document.getElementById('rank-level-tag');
             const expBar = document.getElementById('exp-mini-bar');
             const expText = document.getElementById('exp-text');
 
             if (isLogged === 'true') {
-                // 每100经验一级，V1-V9
                 let level = Math.floor(currentExp / 100) + 1;
                 let displayExp = currentExp % 100;
                 if (level > 9) level = 9;
 
-                rankName.innerText = level >= 5 ? "进阶 Dogme" : "萌新 Dogme";
+                // 登录后不再使用 data-t 翻译，改用动态逻辑
+                rankName.removeAttribute('data-t'); 
+                rankName.innerText = level >= 5 ? (localStorage.getItem('dogme_lang') === 'fr' ? "Pro Dogme" : "Advance Dogme") : (localStorage.getItem('dogme_lang') === 'fr' ? "Nouveau Dogme" : "Newbie Dogme");
                 rankTag.innerText = "V" + level;
                 rankTag.className = `text-white text-[9px] font-black px-2.5 py-0.5 rounded-full bg-orange-500`;
                 expBar.style.width = displayExp + "%";
@@ -144,57 +145,34 @@
             document.getElementById('cart-count').innerText = cart.length;
         }
 
-        // 优惠券领取逻辑
         function handleClaim() {
             const isLogged = localStorage.getItem('dogme_user_logged');
-            const hasClaimed = localStorage.getItem('dogme_coupon_claimed');
-
             if (isLogged !== 'true') {
-                showPopup({
-                    icon: "🔐", title: "安全检查", msg: "请先登录账户 🐾",
-                    btnText: "去登录", action: () => { location.href = 'user.html'; }
-                });
+                showPopup({ icon: "🔐", title: "Wait!", msg: "Please login first 🐾", btnText: "Login", action: () => { location.href = 'user.html'; } });
                 return;
             }
-
-            if (hasClaimed === 'true') {
-                showPopup({
-                    icon: "🎟️", title: "温馨提示", msg: "您已领取过该优惠券！",
-                    showImg: true, btnText: "去购物", action: () => { location.href = 'shopping.html'; }
-                });
-                return;
-            }
-
             localStorage.setItem('dogme_coupon_claimed', 'true');
-            showPopup({
-                icon: "🎉", title: "领取成功！", msg: "专属八折优惠券已存入账户。",
-                showImg: true, btnText: "查看券包", action: () => { location.href = 'coupon.html'; }
-            });
+            showPopup({ icon: "🎉", title: "Success!", msg: "20% OFF Coupon added!", showImg: true, btnText: "Go Shop", action: () => { location.href = 'shopping.html'; } });
         }
 
-        // 通用美化弹窗
         function showPopup({ icon, title, msg, btnText, action, showImg = false }) {
-            const existing = document.querySelector('.custom-toast');
-            if (existing) existing.remove();
-
             const toast = document.createElement('div');
             toast.className = 'custom-toast';
             toast.innerHTML = `
                 <div class="text-5xl mb-4">${icon}</div>
                 <h3 class="font-black text-gray-900 text-xl mb-2">${title}</h3>
                 <p class="text-gray-400 text-sm font-bold mb-6">${msg}</p>
-                ${showImg ? `<img src="coupon.jpg" class="w-full h-32 object-cover rounded-[25px] mb-6 border">` : ''}
-                <div class="flex gap-3">
-                    <button onclick="this.parentElement.parentElement.remove()" class="flex-1 py-4 bg-gray-100 text-gray-400 rounded-2xl font-black text-xs active-press">关闭</button>
-                    <button id="popup-action-btn" class="flex-[1.5] py-4 bg-orange-500 text-white rounded-2xl font-black text-xs active-press shadow-lg shadow-orange-200">${btnText}</button>
-                </div>
+                <button id="popup-action-btn" class="w-full py-4 bg-orange-500 text-white rounded-2xl font-black text-xs active-press shadow-lg shadow-orange-200">${btnText}</button>
             `;
             document.body.appendChild(toast);
             document.getElementById('popup-action-btn').onclick = action;
         }
 
-        window.onload = syncUserData;
-        window.onfocus = syncUserData; // 解决从支付页面回跳时自动刷新等级
+        window.onload = () => {
+            syncUserData();
+            if (typeof applyLanguage === 'function') applyLanguage(); // 确保加载时应用翻译
+        };
+        window.onfocus = syncUserData;
     </script>
 </body>
 </html>
