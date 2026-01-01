@@ -16,15 +16,30 @@
         }
         .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
         .nav-icon-btn { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; cursor: pointer; transition: all 0.3s ease; border: 1px solid #f1f1f1; }
+        
+        /* 返回箭头专属样式 */
+        .back-arrow-btn {
+            width: 44px; height: 44px; border-radius: 50%; background: white;
+            display: flex; items-center justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #f1f1f1;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .back-arrow-btn:hover { background: #f9f9f9; transform: translateX(-5px); }
+        
         .cart-particle { position: fixed; z-index: 1000; pointer-events: none; transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); }
     </style>
 </head>
 <body class="p-6 md:p-12">
 
     <nav class="max-w-7xl mx-auto flex justify-between items-center mb-12">
-        <div class="flex items-center gap-6">
-            <h1 class="text-3xl font-black tracking-tighter cursor-pointer" onclick="location.href='index.html'">Dogme.</h1>
-            <div class="flex bg-gray-100 rounded-full p-1 shadow-inner text-[10px] font-black">
+        <div class="flex items-center gap-4">
+            <div onclick="location.href='index.html'" class="back-arrow-btn active-press">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </div>
+
+            <h1 class="text-3xl font-black tracking-tighter cursor-pointer ml-2" onclick="location.href='index.html'">Dogme.</h1>
+            
+            <div class="flex bg-gray-100 rounded-full p-1 shadow-inner text-[10px] font-black ml-4">
                 <button onclick="switchLanguage('zh')" class="px-2 py-1 rounded-full hover:bg-white transition-all">CN</button>
                 <button onclick="switchLanguage('en')" class="px-2 py-1 rounded-full hover:bg-white transition-all">EN</button>
                 <button onclick="switchLanguage('fr')" class="px-2 py-1 rounded-full hover:bg-white transition-all">FR</button>
@@ -62,12 +77,10 @@
             { id: 4, name: "White Lover", price: 18.00, emoji: "❄️", img: "snack4.jpg" }
         ];
 
-        // 核心渲染函数
         window.render = function() {
             const grid = document.getElementById('product-grid');
+            if(!grid) return;
             const lang = localStorage.getItem('dogme_lang') || 'zh';
-            
-            // 安全地从 translations 获取文案
             let btnText = 'ADD TO CART +';
             if (typeof translations !== 'undefined' && translations[lang]) {
                 btnText = translations[lang]['btn_add'] || btnText;
@@ -134,7 +147,6 @@
             if(expFill) expFill.style.width = (currentExp % 100) + '%';
         }
 
-        // 启动渲染
         window.render();
     </script>
 </body>
