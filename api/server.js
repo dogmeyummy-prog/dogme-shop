@@ -5,7 +5,7 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'dogme.yummy@gmail.com',
-        pass: 'clpdgkvddjavwyns' // 请确保这是 16 位应用专用密码
+        pass: 'clpdgkvddjavwyns' // 🔑 确保这是 16 位 App Password
     }
 });
 
@@ -21,8 +21,8 @@ export default async function handler(req, res) {
     const url = req.url || "";
     const body = req.body || {};
 
-    // 🌟 路径兼容逻辑：支持 /api/server, /api/send-code 等多种触发方式
-    if (url.includes('send-code') || body.action === 'send-code') {
+    // --- 接口 A：发送美化邮件 ---
+    if (url.includes('send-code')) {
         const { email } = body;
         if (!email) return res.status(400).json({ success: false, msg: '邮箱缺失' });
 
@@ -33,34 +33,60 @@ export default async function handler(req, res) {
             await transporter.sendMail({
                 from: '"Dogme Security 🐾" <dogme.yummy@gmail.com>',
                 to: email,
-                subject: `[Dogme] 您的验证码是 ${code}`,
+                subject: `[Dogme] ${code} 是您的验证码`,
                 html: `
-                <div style="background:#fdfcf9;padding:40px;font-family:sans-serif;text-align:center;">
-                    <div style="max-width:400px;margin:0 auto;background:#fff;border-radius:40px;padding:40px;border:1px solid #f0f0f0;">
-                        <div style="font-size:50px;margin-bottom:20px;">🐾</div>
-                        <h2 style="color:#1a1a1a;">欢迎来到 Dogme</h2>
-                        <div style="background:#FFF9F5;border:2px dashed #FF8D36;border-radius:25px;padding:25px;margin:25px 0;">
-                            <span style="font-size:36px;font-weight:900;color:#FF8D36;letter-spacing:8px;">${code}</span>
+                <div style="background:#fdfcf9;padding:40px;text-align:center;font-family:sans-serif;">
+                    <div style="max-width:400px;margin:0 auto;background:#fff;border-radius:40px;padding:40px;border:1px solid #f1f1f1;">
+                        <div style="font-size:50px;margin-bottom:10px;">🐾</div>
+                        <h2 style="color:#1a1a1a;margin-bottom:5px;">Dogme.</h2>
+                        <div style="background:#FFF9F5;border:2px dashed #FF8D36;border-radius:25px;padding:25px;margin:20px 0;">
+                            <p style="color:#FF8D36;font-size:12px;font-weight:bold;margin-bottom:10px;text-transform:uppercase;">您的验证码</p>
+                            <span style="font-size:38px;font-weight:900;color:#1a1a1a;letter-spacing:8px;">${code}</span>
                         </div>
-                        <p style="color:#999;font-size:12px;">验证码 5 分钟内有效，请勿泄露。</p>
+                        <p style="color:#a0a0a0;font-size:12px;">验证码 5 分钟内有效，请勿泄露。</p>
                     </div>
                 </div>`
             });
             return res.status(200).json({ success: true });
         } catch (e) {
-            return res.status(500).json({ success: false, msg: e.message });
+            return res.status(500).json({ success: false, msg: "邮件发送失败: " + e.message });
         }
     }
 
-    if (url.includes('verify-code') || body.action === 'verify-code') {
+    // --- 接口 B：校验登录 ---
+    if (url.includes('verify-code')) {
         const { email, code } = body;
         const record = activeCodes[email];
         if (record && record.code === String(code) && Date.now() < record.expires) {
             delete activeCodes[email];
             return res.status(200).json({ success: true });
         }
-        return res.status(401).json({ success: false, msg: '验证码错误或已过期' });
+        return res.status(401).json({ success: false, msg: '验证码无效或已过期' });
     }
 
-    return res.status(404).json({ msg: "Path Not Found", currentPath: url });
+    // --- 接口 C：Stripe 支付 ---
+    if (url.includes('create-checkout-session')) {
+        try {
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: [{
+                    price_data: {
+                        currency: 'cad',
+                        product_data: { name: 'Dogme Order 🐾' },
+                        unit_amount: Math.round(body.amount * 100),
+                    },
+                    quantity: 1,
+                }],
+                mode: 'payment',
+                customer_email: body.email,
+                success_url: `${req.headers.origin}/pay.html?status=success&amount=${body.amount}`,
+                cancel_url: `${req.headers.origin}/pay.html?status=cancel`,
+            });
+            return res.status(200).json({ url: session.url });
+        } catch (e) {
+            return res.status(500).json({ error: e.message });
+        }
+    }
+
+    return res.status(404).json({ msg: "Not Found" });
 }
