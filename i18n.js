@@ -1,10 +1,9 @@
 /**
  * Dogme Shop - 多语言国际化控制中心 🐾
- * 支持：中文 (zh), 英文 (en), 法语 (fr)
+ * 整合了首页、购物页及登录页的所有文案
  */
 
 const translations = {
-    // --- 中文 ---
     'zh': {
         'top_bar': '🇨🇦 Dogme 加拿大：今日新上架多款人气零食，全境包邮送达 🐾',
         'nav_shop': '所有商品',
@@ -14,109 +13,73 @@ const translations = {
         'btn_buy': '立即购 🛒',
         'rank_unlogged': '未登录 🐾',
         'coupon_tag': '领8折券',
-        // 登录页 (user.html) 扩展内容
+        // 购物页补充
+        'shop_title': '全球货柜 🐾',
+        'shop_subtitle': '精选全球零食，直邮加拿大全境。🐾',
+        'btn_add_cart': '加入购物车 +',
+        // 登录页
         'login_welcome': '欢迎回来 🐾',
         'login_subtitle': '请输入邮箱获取登录验证码',
-        'email_placeholder': '您的邮箱地址',
-        'code_placeholder': '6位验证码',
         'btn_get_code': '获取验证码',
         'btn_login': '开启 Dogme 之旅'
     },
-
-    // --- 英文 ---
     'en': {
-        'top_bar': '🇨🇦 Dogme Canada: New snacks added today! Free shipping nationwide 🐾',
+        'top_bar': '🇨🇦 Dogme Canada: Free shipping nationwide on all new snacks 🐾',
         'nav_shop': 'Shop All',
-        'nav_promo': 'Promotions',
+        'nav_promo': 'Promos',
         'hero_title': 'Tasty Snacks<br>From Global.',
-        'hero_subtitle': 'Specially picked for you in Canada. Every bite is a surprise. 🐾',
-        'btn_buy': 'Buy Now 🛒',
-        'rank_unlogged': 'Not Logged In 🐾',
+        'hero_subtitle': 'Specially picked for you in Canada. 🐾',
+        'btn_buy': 'Shop Now 🛒',
+        'rank_unlogged': 'Guest 🐾',
         'coupon_tag': '20% OFF',
-        // Login Page
+        'shop_title': 'Global Snacks 🐾',
+        'shop_subtitle': 'Worldwide selection, delivered across Canada. 🐾',
+        'btn_add_cart': 'ADD TO CART +',
         'login_welcome': 'Welcome Back 🐾',
-        'login_subtitle': 'Enter your email to receive a login code',
-        'email_placeholder': 'Your email address',
-        'code_placeholder': '6-digit code',
+        'login_subtitle': 'Enter email to receive your login code',
         'btn_get_code': 'Get Code',
-        'btn_login': 'Start Dogme Journey'
+        'btn_login': 'Start Journey'
     },
-
-    // --- 法语 (针对加拿大魁北克等地区) ---
     'fr': {
-        'top_bar': '🇨🇦 Dogme Canada: Nouveaux snacks aujourd\'hui! Livraison gratuite 🐾',
+        'top_bar': '🇨🇦 Dogme Canada: Livraison gratuite partout au pays 🐾',
         'nav_shop': 'Boutique',
         'nav_promo': 'Promotions',
         'hero_title': 'Snacks Savoureux<br>du Monde.',
-        'hero_subtitle': 'Spécialement choisi pour vous au Canada. Une surprise à chaque bouchée. 🐾',
+        'hero_subtitle': 'Sélectionnés pour vous au Canada. 🐾',
         'btn_buy': 'Acheter 🛒',
         'rank_unlogged': 'Non connecté 🐾',
         'coupon_tag': '20% RABAIS',
-        // Page de connexion
-        'login_welcome': 'Bienvenue 🐾',
-        'login_subtitle': 'Entrez votre courriel pour recevoir un code',
-        'email_placeholder': 'Votre adresse courriel',
-        'code_placeholder': 'Code à 6 chiffres',
-        'btn_get_code': 'Obtenir le code',
-        'btn_login': 'Commencer l\'aventure'
-    }
-    // 在 translations 字典中添加
-    'zh': {
-    // ...
-        'shop_title': '全球货柜 🐾',
-        'shop_subtitle': '精选全球零食，直邮加拿大全境。🐾',
-        'btn_add_cart': '加入购物车 +'
-    },
-    'en': {
-    // ...
-        'shop_title': 'Global Snacks 🐾',
-        'shop_subtitle': 'Specially picked for you in Canada. 🐾',
-        'btn_add_cart': 'ADD TO CART +'
-    },
-    'fr': {
-    // ...
         'shop_title': 'Snacks Mondiaux 🐾',
-        'shop_subtitle': 'Sélectionnés pour vous au Canada. 🐾',
-        'btn_add_cart': 'AJOUTER AU PANIER +'
+        'shop_subtitle': 'Livraison partout au Canada. 🐾',
+        'btn_add_cart': 'AJOUTER +',
+        'login_welcome': 'Bienvenue 🐾',
+        'login_subtitle': 'Entrez votre courriel pour le code',
+        'btn_get_code': 'Obtenir le code',
+        'btn_login': 'Commencer'
     }
 };
 
-/**
- * 核心切换函数
- * @param {string} lang - 语言代码 'zh', 'en', 'fr'
- */
 function switchLanguage(lang) {
-    // 1. 保存选择到本地存储
     localStorage.setItem('dogme_lang', lang);
-    
-    // 2. 更新 HTML 根元素的语言属性
     document.documentElement.lang = lang;
     
-    // 3. 遍历并替换所有带有 data-t 属性的元素
     document.querySelectorAll('[data-t]').forEach(el => {
         const key = el.getAttribute('data-t');
         if (translations[lang] && translations[lang][key]) {
-            // 如果是输入框，修改 placeholder
             if (el.tagName === 'INPUT') {
                 el.placeholder = translations[lang][key];
             } else {
-                // 否则修改 innerHTML (支持渲染 <br> 等标签)
                 el.innerHTML = translations[lang][key];
             }
         }
     });
 
-    // 4. 特殊处理：如果页面上有同步用户数据的函数，则触发它
-    if (typeof syncUserData === 'function') {
-        syncUserData();
-    }
+    // 关键修复：切换语言时同步更新等级名称 (如 V1 萌新 -> Newbie)
+    if (typeof syncUserData === 'function') syncUserData();
+    if (typeof syncStatus === 'function') syncStatus(); 
 }
 
-/**
- * 页面加载完成后的初始化
- */
 document.addEventListener('DOMContentLoaded', () => {
-    // 默认读取存储的语言，如果没有则根据浏览器语言判断或默认为中文
     const savedLang = localStorage.getItem('dogme_lang') || 'zh';
     switchLanguage(savedLang);
 });
