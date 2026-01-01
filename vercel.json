@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/send-code", "destination": "/api/server" },
-    { "source": "/api/verify-code", "destination": "/api/server" }
+    { "source": "/api/(.*)", "destination": "/api/server" }
   ]
 }
