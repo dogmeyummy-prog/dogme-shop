@@ -9,150 +9,92 @@
     <style>
         body { font-family: 'Quicksand', sans-serif; background: #fdfcf9; }
         .active-press:active { transform: scale(0.95); }
-        
-        /* 黑色提示框 */
-        @keyframes floatIn { 0% { transform: translate(-50%, 30px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
+        @keyframes floatIn { 0% { transform: translate(-50%, 20px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
         .toast-msg {
             position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%);
-            background: #2D3436; color: white; padding: 16px 32px; border-radius: 20px;
-            font-weight: 700; z-index: 10000; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            animation: floatIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            background: #2D3436; color: white; padding: 14px 28px; border-radius: 20px;
+            font-size: 13px; font-weight: 700; z-index: 10000; animation: floatIn 0.3s ease forwards;
         }
-
-        /* 🌟 精准居中校正的返回按钮 */
-        .back-arrow-btn {
+        /* 🌟 精准居中校正 */
+        .back-arrow-container {
             width: 44px; height: 44px; border-radius: 50%; background: white;
-            display: flex; align-items: center; justify-content: center; /* 核心对齐 */
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #f1f1f1;
-            cursor: pointer; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer;
         }
-        .back-arrow-btn:hover { background: #f9f9f9; transform: translateX(-5px); }
-        .back-icon { transform: translateX(-1px); } /* 针对 SVG 形状的视觉重心微调 */
+        .back-icon-fix { transform: translateX(-1px); } /* 补偿 SVG 视觉重心 */
         
-        .login-card { background: white; border-radius: 45px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.03); border: 1px solid #fcfcfc; }
-        .user-avatar { width: 90px; height: 90px; border-radius: 30px; object-fit: cover; margin: 0 auto 24px; border: 4px solid #f7f7f7; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-        
-        input { background: #f7f7f7; border: 2px solid transparent; transition: all 0.3s; }
-        input:focus { border-color: #FF8D36; background: white; outline: none; }
+        .login-card { background: white; border-radius: 40px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.02); }
+        .avatar-box { width: 90px; height: 90px; border-radius: 30px; border: 4px solid #f7f7f7; margin: 0 auto 24px; overflow: hidden; }
     </style>
 </head>
-<body class="p-6 flex flex-col min-h-screen">
-
-    <nav class="max-w-xl mx-auto w-full flex justify-between items-center mb-12">
-        <div class="flex items-center gap-4">
-            <div onclick="smartBack()" class="back-arrow-btn active-press">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900 back-icon">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-            </div>
-            
-            <div class="flex bg-gray-100 rounded-full p-1 shadow-inner text-[10px] font-black">
-                <button onclick="switchLanguage('zh')" class="px-2 py-1 rounded-full hover:bg-white transition-all">CN</button>
-                <button onclick="switchLanguage('en')" class="px-2 py-1 rounded-full hover:bg-white transition-all">EN</button>
-                <button onclick="switchLanguage('fr')" class="px-2 py-1 rounded-full hover:bg-white transition-all">FR</button>
-            </div>
+<body class="p-6">
+    <nav class="max-w-xl mx-auto flex mb-12">
+        <div onclick="location.href='index.html'" class="back-arrow-container active-press">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="back-icon-fix">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
         </div>
     </nav>
 
-    <main class="max-w-md mx-auto w-full flex-1 flex flex-col justify-center">
+    <main class="max-w-md mx-auto">
         <div class="login-card text-center">
-            <img src="user.jpg" alt="Avatar" class="user-avatar" onerror="this.src='https://via.placeholder.com/90?text=🐾'">
-            
-            <h2 data-t="login_welcome" class="text-3xl font-black text-gray-900 mb-2">欢迎回来</h2>
-            <p data-t="login_subtitle" class="text-gray-400 font-bold mb-8 text-sm">请输入邮箱获取登录验证码</p>
-
-            <div class="space-y-4 text-left">
-                <input type="email" id="login-email" placeholder="您的邮箱地址" class="w-full py-4 px-6 rounded-2xl font-bold">
-                
-                <div class="flex gap-2">
-                    <input type="text" id="login-code" placeholder="验证码" class="flex-1 py-4 px-6 rounded-2xl font-bold text-center tracking-widest">
-                    <button id="send-code-btn" onclick="handleSendCode()" class="px-6 bg-gray-900 text-white rounded-2xl font-black text-[10px] active-press">获取</button>
-                </div>
-
-                <button onclick="handleLogin()" class="w-full py-5 bg-orange-500 text-white rounded-[25px] font-black shadow-lg shadow-orange-100 mt-4 active-press">
-                    开启 Dogme 之旅
-                </button>
+            <div class="avatar-box">
+                <img src="user.jpg" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/90'">
             </div>
-            <p class="mt-8 text-[10px] text-gray-300 font-black uppercase tracking-[0.2em]">Safety Guard By Dogme 🐾</p>
+            <h2 class="text-2xl font-black mb-8">验证身份</h2>
+            
+            <div class="space-y-4">
+                <input type="email" id="email" placeholder="输入邮箱" class="w-full py-4 px-6 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-orange-500 transition-all">
+                <div class="flex gap-2">
+                    <input type="text" id="code" placeholder="验证码" class="flex-1 py-4 px-6 bg-gray-50 rounded-2xl font-bold text-center">
+                    <button id="send-btn" onclick="sendCode()" class="px-6 bg-gray-900 text-white rounded-2xl font-black text-xs active-press">获取</button>
+                </div>
+                <button onclick="login()" class="w-full py-5 bg-orange-500 text-white rounded-[25px] font-black shadow-lg shadow-orange-100 mt-4 active-press">开启之旅</button>
+            </div>
         </div>
     </main>
 
-    <script src="i18n.js"></script>
     <script>
-        const API_URL = '/api'; 
-
-        function smartBack() {
-            const referrer = document.referrer;
-            if (referrer && referrer.includes(window.location.hostname) && !referrer.includes('user.html')) {
-                window.history.back();
-            } else {
-                window.location.href = 'index.html';
-            }
-        }
+        const API = "/api/server"; // 🌟 关键：直接指向后端入口
 
         function showToast(m) {
-            const old = document.querySelector('.toast-msg'); if(old) old.remove();
             const t = document.createElement('div'); t.className = 'toast-msg'; t.innerText = m;
             document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
         }
 
-        async function handleSendCode() {
-            const email = document.getElementById('login-email').value.trim();
-            if (!email.includes('@')) return showToast("请输入有效的邮箱 📧");
-            
-            const btn = document.getElementById('send-code-btn');
-            btn.innerText = "..."; btn.disabled = true;
+        async function sendCode() {
+            const email = document.getElementById('email').value;
+            const btn = document.getElementById('send-btn');
+            btn.disabled = true;
 
             try {
-                const res = await fetch(`${API_URL}/send-code`, {
+                const res = await fetch(API, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ action: 'send-code', email })
                 });
                 const data = await res.json();
-                if (data.success) {
-                    showToast("验证码已发出 ✨");
-                    startTimer();
-                } else {
-                    showToast(data.msg || "发送失败");
-                    btn.innerText = "获取"; btn.disabled = false;
-                }
-            } catch (e) {
-                showToast("连接云端失败 ⚠️");
-                btn.innerText = "重试"; btn.disabled = false;
-            }
+                if(data.success) { showToast("发送成功 ✨"); } 
+                else { showToast(data.msg); btn.disabled = false; }
+            } catch(e) { showToast("云端未响应 ⚠️"); btn.disabled = false; }
         }
 
-        function startTimer() {
-            const btn = document.getElementById('send-code-btn');
-            let s = 60;
-            const t = setInterval(() => {
-                btn.innerText = `${s--}s`;
-                if (s < 0) { clearInterval(t); btn.innerText = "重发"; btn.disabled = false; }
-            }, 1000);
-        }
-
-        async function handleLogin() {
-            const email = document.getElementById('login-email').value.trim();
-            const code = document.getElementById('login-code').value.trim();
-            if (!code) return showToast("请输入验证码 🔑");
-
+        async function login() {
+            const email = document.getElementById('email').value;
+            const code = document.getElementById('code').value;
             try {
-                const res = await fetch(`${API_URL}/verify-code`, {
+                const res = await fetch(API, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, code })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ action: 'verify-code', email, code })
                 });
                 const data = await res.json();
-                if (data.success) {
-                    localStorage.setItem('dogme_user_email', email);
+                if(data.success) {
                     localStorage.setItem('dogme_user_logged', 'true');
-                    showToast("欢迎回来 🎉");
-                    setTimeout(() => { window.location.href = 'Log-in.html'; }, 1000);
-                } else {
-                    showToast("验证码错误 ❌");
-                }
-            } catch (e) { showToast("登录异常 ⚠️"); }
+                    localStorage.setItem('dogme_user_email', email);
+                    location.href = 'Log-in.html';
+                } else { showToast("验证码错误 ❌"); }
+            } catch(e) { showToast("登录异常"); }
         }
     </script>
 </body>
