@@ -60,6 +60,25 @@ const translations = {
         'btn_get_code': 'Obtenir le code',
         'btn_login': 'Commencer l\'aventure'
     }
+    // 在 translations 字典中添加
+    'zh': {
+    // ...
+        'shop_title': '全球货柜 🐾',
+        'shop_subtitle': '精选全球零食，直邮加拿大全境。🐾',
+        'btn_add_cart': '加入购物车 +'
+    },
+    'en': {
+    // ...
+        'shop_title': 'Global Snacks 🐾',
+        'shop_subtitle': 'Specially picked for you in Canada. 🐾',
+        'btn_add_cart': 'ADD TO CART +'
+    },
+    'fr': {
+    // ...
+        'shop_title': 'Snacks Mondiaux 🐾',
+        'shop_subtitle': 'Sélectionnés pour vous au Canada. 🐾',
+        'btn_add_cart': 'AJOUTER AU PANIER +'
+    }
 };
 
 /**
