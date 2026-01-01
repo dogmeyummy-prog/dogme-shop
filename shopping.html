@@ -6,7 +6,6 @@
     <title>Dogme Shop | 全球货柜 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="测试版.css">
     <style>
         body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; overflow-x: hidden; }
         .active-press:active { transform: scale(0.95); }
@@ -22,113 +21,131 @@
             width: 44px; height: 44px; border-radius: 12px; object-fit: cover;
             cursor: pointer; transition: all 0.3s ease; border: 1px solid #f1f1f1;
         }
+
+        /* 购物车抛物线粒子 */
+        .cart-particle {
+            position: fixed; z-index: 1000; pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
     </style>
 </head>
-<body>
+<body class="p-6 md:p-12">
 
-    <nav class="flex justify-between items-center px-8 py-6 max-w-[1400px] mx-auto">
-        <div class="flex items-center gap-8">
-            <h1 class="text-2xl font-black tracking-tighter cursor-pointer" onclick="location.href='index.html'">Dogme.</h1>
+    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-12">
+        <div class="flex items-center gap-6">
+            <h1 class="text-3xl font-black tracking-tighter cursor-pointer" onclick="location.href='index.html'">Dogme.</h1>
             <div class="flex bg-gray-100 rounded-full p-1 shadow-inner text-[10px] font-black">
                 <button onclick="switchLanguage('zh')" class="px-2 py-1 rounded-full hover:bg-white transition-all">CN</button>
                 <button onclick="switchLanguage('en')" class="px-2 py-1 rounded-full hover:bg-white transition-all">EN</button>
                 <button onclick="switchLanguage('fr')" class="px-2 py-1 rounded-full hover:bg-white transition-all">FR</button>
             </div>
         </div>
-
+        
         <div class="flex items-center gap-4">
-            <div class="relative cursor-pointer active-press" onclick="location.href='checkout.html'">
-                <img src="shopping-car.jpg" class="nav-icon-btn" alt="Cart">
+            <div class="hidden md:flex flex-col items-end mr-4">
+                <span id="rank-name-display" class="text-[10px] font-black uppercase tracking-widest text-gray-400">Loading...</span>
+                <div class="w-24 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
+                    <div id="exp-fill" class="h-full bg-orange-500 transition-all duration-1000" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div onclick="location.href='checkout.html'" class="relative active-press" id="cart-target">
+                <img src="shopping-car.jpg" class="nav-icon-btn shadow-sm" alt="Cart">
                 <div id="cart-count-badge" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</div>
             </div>
             <img src="user.jpg" onclick="location.href='user.html'" class="nav-icon-btn hover:ring-2 ring-orange-400" alt="User">
         </div>
     </nav>
 
-    <main class="max-w-[1400px] mx-auto px-8 py-10">
-        <div class="mb-12">
-            <h2 data-t="shop_title" class="text-4xl font-black text-gray-900 mb-2">全球精选货柜 🐾</h2>
-            <p data-t="shop_subtitle" class="text-gray-400 font-bold">这里的每一款零食，都经过我们的严格试吃。</p>
-        </div>
+    <header class="max-w-7xl mx-auto mb-12">
+        <h2 data-t="shop_title" class="text-5xl font-black text-gray-900 mb-4">Global Snacks.</h2>
+        <p data-t="shop_subtitle" class="text-gray-400 font-bold">精选全球零食，直邮加拿大全境。🐾</p>
+    </header>
 
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            </div>
-    </main>
+    <main id="product-grid" class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        </main>
 
     <script src="i18n.js"></script>
     <script>
-        // 商品数据
+        // 商品数据 (建议：这里的名称可以后期加入 i18n.js 字典)
         const products = [
-            { id: 1, name: '脆脆鲨鱼饼', name_en: 'Shark Crackers', name_fr: 'Craquelins Requin', price: 5.99, emoji: '🦈', color: '#E0F2FE' },
-            { id: 2, name: '草莓冻干', name_en: 'Dried Strawberry', name_fr: 'Fraises Séchées', price: 8.50, emoji: '🍓', color: '#FEE2E2' },
-            { id: 3, name: '抹茶夹心饼', name_en: 'Matcha Cookie', name_fr: 'Biscuit Matcha', price: 12.00, emoji: '🍵', color: '#DCFCE7' },
-            { id: 4, name: '炭烧腰果', name_en: 'Roasted Cashews', name_fr: 'Noix de Cajou', price: 15.90, emoji: '🥜', color: '#FEF3C7' }
+            { id: 1, name: "Calbee Honey Butter", price: 4.50, emoji: "🍯", img: "snack1.jpg" },
+            { id: 2, name: "Lay's Truffle", price: 3.99, emoji: "🍄", img: "snack2.jpg" },
+            { id: 3, name: "Pocky Sakura", price: 2.50, emoji: "🌸", img: "snack3.jpg" },
+            { id: 4, name: "White Lover", price: 18.00, emoji: "❄️", img: "snack4.jpg" }
         ];
 
         function render() {
             const grid = document.getElementById('product-grid');
-            const lang = localStorage.getItem('dogme_lang') || 'zh';
-
-            grid.innerHTML = products.map(p => {
-                // 根据当前语言选择显示的名称
-                let displayName = p.name;
-                if(lang === 'en') displayName = p.name_en;
-                if(lang === 'fr') displayName = p.name_fr;
-
-                return `
-                <div class="product-card">
-                    <div class="h-48 rounded-[25px] flex items-center justify-center text-6xl mb-6" style="background-color: ${p.color}">
-                        ${p.emoji}
-                    </div>
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h3 class="font-black text-gray-900 text-lg">${displayName}</h3>
-                            <p class="text-[10px] font-bold text-gray-300 uppercase tracking-widest">Global Select</p>
+            grid.innerHTML = products.map(p => `
+                <div class="product-card group">
+                    <div class="relative h-64 mb-6 rounded-[25px] overflow-hidden bg-gray-50">
+                        <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='logo.jpg'">
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-sm">
+                            <span class="text-lg">${p.emoji}</span>
                         </div>
-                        <span class="font-black text-orange-500 text-xl">$${p.price.toFixed(2)}</span>
                     </div>
-                    <button onclick="addToCart('${p.name}', ${p.price}, '${p.emoji}', this)" 
-                            class="w-full py-4 bg-gray-50 hover:bg-gray-900 hover:text-white rounded-2xl font-black text-sm transition-all active-press">
-                            + ADD
+                    <h3 class="font-black text-gray-900 text-xl mb-1">${p.name}</h3>
+                    <p class="text-orange-500 font-black mb-6">$${p.price.toFixed(2)} <span class="text-[10px] text-gray-300 ml-1">CAD</span></p>
+                    <button onclick="addToCart(event, '${p.name}', ${p.price}, '${p.emoji}')" class="w-full py-4 bg-gray-50 text-gray-900 rounded-2xl font-black text-sm hover:bg-gray-900 hover:text-white transition-all active-press">
+                        ADD TO CART +
                     </button>
                 </div>
-                `;
-            }).join('');
+            `).join('');
             syncStatus();
         }
 
-        // 加入购物车并增加经验值
-        function addToCart(name, price, emoji, btn) {
-            // 按钮点击动效
-            const originalText = btn.innerText;
-            btn.innerText = "ADDED! ✨";
-            setTimeout(() => btn.innerText = originalText, 1000);
+        function addToCart(event, name, price, emoji) {
+            // 1. 抛物线粒子动画逻辑
+            const btn = event.currentTarget;
+            const startRect = btn.getBoundingClientRect();
+            const targetRect = document.getElementById('cart-target').getBoundingClientRect();
+            
+            const particle = document.createElement('div');
+            particle.className = 'cart-particle text-2xl';
+            particle.innerHTML = emoji;
+            particle.style.left = startRect.left + 'px';
+            particle.style.top = startRect.top + 'px';
+            document.body.appendChild(particle);
 
-            // 存储数据
+            requestAnimationFrame(() => {
+                const diffX = targetRect.left - startRect.left;
+                const diffY = targetRect.top - startRect.top;
+                particle.style.transform = `translate(${diffX}px, ${diffY}px) scale(0.5) rotate(360deg)`;
+                particle.style.opacity = '0';
+            });
+            setTimeout(() => { particle.remove(); syncStatus(); }, 800);
+
+            // 2. 存入本地存储并增加经验值
             let cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
             cart.push({ id: Date.now(), name, price, emoji });
             localStorage.setItem('dogme_cart', JSON.stringify(cart));
-
-            // 增加经验值逻辑：每次加购+2
+            
             let exp = parseFloat(localStorage.getItem('dogme_user_exp') || '0');
             localStorage.setItem('dogme_user_exp', exp + 2);
-            
-            syncStatus();
         }
 
         function syncStatus() {
+            // 同步购物车数量
             const cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
             document.getElementById('cart-count-badge').innerText = cart.length;
+
+            // 同步经验值条 (复用 index.html 的等级逻辑)
+            let currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
+            let level = Math.floor(currentExp / 100) + 1;
+            let displayExp = currentExp % 100;
+            
+            const display = document.getElementById('rank-name-display');
+            const lang = localStorage.getItem('dogme_lang') || 'zh';
+            
+            // 简单的页内翻译逻辑，确保等级名称随语言变化
+            const names = { 'zh': '等级', 'en': 'Level', 'fr': 'Niveau' };
+            display.innerText = `${names[lang] || 'Level'} V${level > 9 ? 9 : level}`;
+            document.getElementById('exp-fill').style.width = displayExp + '%';
         }
 
-        // 当语言改变时重新渲染商品列表
-        const originalSwitchLanguage = window.switchLanguage;
-        window.switchLanguage = function(lang) {
-            if(originalSwitchLanguage) originalSwitchLanguage(lang);
-            render(); // 重新渲染列表以更新商品名称
-        };
-
         window.onload = render;
+        window.onfocus = syncStatus;
     </script>
 </body>
 </html>
