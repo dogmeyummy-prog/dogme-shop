@@ -15,6 +15,7 @@
             animation: floatIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
         @keyframes floatIn { from { transform: translate(-50%, 30px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+        /* 🌟 修复后的返回按钮：绝对居中 */
         .back-arrow-btn {
             width: 44px; height: 44px; border-radius: 50%; background: white;
             display: flex; align-items: center; justify-content: center;
@@ -32,6 +33,7 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform: translateX(-1px);"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </div>
     </nav>
+
     <main class="max-w-md mx-auto w-full flex-1 flex flex-col justify-center">
         <div class="bg-white rounded-[40px] p-10 text-center shadow-sm">
             <img src="user.jpg" class="user-avatar shadow-md" onerror="this.src='https://via.placeholder.com/90?text=🐾'">
@@ -47,46 +49,69 @@
             </div>
         </div>
     </main>
+
     <script>
         const API = "/api/server";
+
         function showToast(m) {
             const t = document.createElement('div'); t.className = 'toast-msg'; t.innerText = m;
             document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
         }
+
         async function sendCode() {
             const email = document.getElementById('email').value.trim();
             if(!email.includes('@')) return showToast("邮箱格式错误 📧");
             const btn = document.getElementById('send-btn');
             btn.disabled = true; btn.innerText = "...";
+
             try {
-                const res = await fetch(`${API}/send-code`, {
+                const res = await fetch(API, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
+                    body: JSON.stringify({ action: 'send-code', email }) // 🌟 显式传递 action
                 });
-                if(res.ok) { showToast("验证码已发出 ✨"); startTimer(); }
-                else { showToast("发送失败"); btn.disabled = false; btn.innerText = "获取"; }
-            } catch(e) { showToast("连接云端失败 ⚠️"); btn.disabled = false; }
+                const data = await res.json();
+                if(data.success) {
+                    showToast("验证码已发出 ✨");
+                    startTimer();
+                } else {
+                    showToast(data.msg || "发送失败");
+                    btn.disabled = false; btn.innerText = "获取";
+                }
+            } catch(e) {
+                showToast("连接云端失败 ⚠️");
+                btn.disabled = false;
+            }
         }
+
         function startTimer() {
             const btn = document.getElementById('send-btn'); let s = 60;
-            const t = setInterval(() => { btn.innerText = `${s--}s`; if(s<0){ clearInterval(t); btn.innerText="重发"; btn.disabled=false; } }, 1000);
+            const t = setInterval(() => {
+                btn.innerText = `${s--}s`;
+                if(s < 0) { clearInterval(t); btn.innerText = "重发"; btn.disabled = false; }
+            }, 1000);
         }
+
         async function login() {
             const email = document.getElementById('email').value.trim();
             const code = document.getElementById('code').value.trim();
+            if(!code) return showToast("请输入验证码");
+
             try {
-                const res = await fetch(`${API}/verify-code`, {
+                const res = await fetch(API, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, code })
+                    body: JSON.stringify({ action: 'verify-code', email, code })
                 });
-                if(res.ok) {
+                const data = await res.json();
+                if(data.success) {
                     localStorage.setItem('dogme_user_email', email);
                     localStorage.setItem('dogme_user_logged', 'true');
                     showToast("欢迎回来 🎉");
                     setTimeout(() => location.href = 'Log-in.html', 1000);
-                } else { showToast("验证码错误 ❌"); }
+                } else {
+                    showToast(data.msg || "验证码错误 ❌");
+                }
             } catch(e) { showToast("登录异常 ⚠️"); }
         }
     </script>
