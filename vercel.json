@@ -1,8 +1,7 @@
 {
   "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "/api/server.js"
-    }
+    { "source": "/api/send-code", "destination": "/api/server" },
+    { "source": "/api/verify-code", "destination": "/api/server" },
+    { "source": "/api/create-checkout-session", "destination": "/api/server" }
   ]
 }
