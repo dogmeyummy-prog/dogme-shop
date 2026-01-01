@@ -10,7 +10,7 @@
         body { font-family: 'Quicksand', sans-serif; background: #fdfcf9; }
         .active-press:active { transform: scale(0.95); }
         
-        /* 吐司弹窗样式 */
+        /* 黑色 Toast 提示 */
         @keyframes floatIn { 0% { transform: translate(-50%, 30px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
         .toast-msg {
             position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%);
@@ -19,7 +19,7 @@
             animation: floatIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        /* 返回箭头 */
+        /* 智能返回箭头样式 */
         .back-arrow-btn {
             width: 44px; height: 44px; border-radius: 50%; background: white;
             display: flex; items-center justify-content: center;
@@ -37,9 +37,12 @@
 
     <nav class="max-w-xl mx-auto w-full flex justify-between items-center mb-12">
         <div class="flex items-center gap-4">
-            <div onclick="location.href='index.html'" class="back-arrow-btn active-press">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <div onclick="smartBack()" class="back-arrow-btn active-press">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
             </div>
+            
             <div class="flex bg-gray-100 rounded-full p-1 shadow-inner text-[10px] font-black">
                 <button onclick="switchLanguage('zh')" class="px-2 py-1 rounded-full hover:bg-white transition-all">CN</button>
                 <button onclick="switchLanguage('en')" class="px-2 py-1 rounded-full hover:bg-white transition-all">EN</button>
@@ -55,22 +58,14 @@
             <p data-t="login_subtitle" class="text-gray-400 font-bold mb-8 text-sm">请输入邮箱获取登录验证码</p>
 
             <div class="space-y-4 text-left">
-                <div>
-                    <input type="email" id="login-email" data-t="email_placeholder" placeholder="您的邮箱地址" 
-                           class="w-full py-4 px-6 rounded-2xl font-bold">
-                </div>
+                <input type="email" id="login-email" data-t="email_placeholder" placeholder="您的邮箱地址" class="w-full py-4 px-6 rounded-2xl font-bold">
                 
                 <div class="flex gap-2">
-                    <input type="text" id="login-code" data-t="code_placeholder" placeholder="验证码" 
-                           class="flex-1 py-4 px-6 rounded-2xl font-bold text-center tracking-[0.2em]">
-                    <button id="send-code-btn" onclick="handleSendCode()" data-t="btn_get_code"
-                            class="px-6 bg-gray-900 text-white rounded-2xl font-black text-xs active-press disabled:opacity-50">
-                        获取
-                    </button>
+                    <input type="text" id="login-code" data-t="code_placeholder" placeholder="验证码" class="flex-1 py-4 px-6 rounded-2xl font-bold text-center tracking-widest">
+                    <button id="send-code-btn" onclick="handleSendCode()" data-t="btn_get_code" class="px-6 bg-gray-900 text-white rounded-2xl font-black text-xs active-press">获取</button>
                 </div>
 
-                <button onclick="handleLogin()" data-t="btn_login" 
-                        class="w-full py-5 bg-orange-500 text-white rounded-[25px] font-black shadow-lg shadow-orange-100 mt-4 active-press">
+                <button onclick="handleLogin()" data-t="btn_login" class="w-full py-5 bg-orange-500 text-white rounded-[25px] font-black shadow-lg shadow-orange-100 mt-4 active-press">
                     开启 Dogme 之旅
                 </button>
             </div>
@@ -79,8 +74,19 @@
 
     <script src="i18n.js"></script>
     <script>
-        // 修正后的 API 路径：Vercel 部署会自动映射 api 文件夹
-        const API_URL = '/api'; 
+        // 1. 智能返回逻辑
+        function smartBack() {
+            const referrer = document.referrer;
+            // 如果有来源页面，且来源不是当前页，就返回上一页；否则回首页
+            if (referrer && referrer !== window.location.href) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // 2. 原有 API 逻辑 (解决无法连接云端问题)
+        const API_URL = '/api'; // 对应 vercel api/server.js
 
         function showToast(m) {
             const t = document.createElement('div');
@@ -92,11 +98,10 @@
 
         async function handleSendCode() {
             const email = document.getElementById('login-email').value.trim();
-            if (!email || !email.includes('@')) return showToast("请输入正确的邮箱 📧");
+            if (!email) return showToast("请输入邮箱 📧");
 
             const btn = document.getElementById('send-code-btn');
             btn.disabled = true;
-            btn.innerText = "...";
 
             try {
                 const res = await fetch(`${API_URL}/send-code`, {
@@ -107,12 +112,9 @@
                 if (res.ok) {
                     showToast("验证码已发送 🚀");
                     startTimer();
-                } else {
-                    throw new Error();
-                }
+                } else { throw new Error(); }
             } catch (e) {
                 showToast("连接云端失败 ⚠️");
-                btn.innerText = "重试";
                 btn.disabled = false;
             }
         }
@@ -122,11 +124,7 @@
             let s = 60;
             const t = setInterval(() => {
                 btn.innerText = `${s--}s`;
-                if (s < 0) { 
-                    clearInterval(t); 
-                    btn.innerText = "重发"; 
-                    btn.disabled = false; 
-                }
+                if (s < 0) { clearInterval(t); btn.innerText = "重发"; btn.disabled = false; }
             }, 1000);
         }
 
@@ -139,26 +137,18 @@
                 const res = await fetch(`${API_URL}/verify-code`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, code } )
+                    body: JSON.stringify({ email, code })
                 });
                 const data = await res.json();
                 if (data.success) {
                     localStorage.setItem('dogme_user_email', email);
                     localStorage.setItem('dogme_user_logged', 'true');
                     showToast("欢迎回来 🎉");
-                    // 登录成功后跳转到你的 Log-in.html 或 index.html
                     setTimeout(() => { window.location.href = 'index.html'; }, 1000);
                 } else {
                     showToast("验证码错误 ❌");
                 }
-            } catch (e) { 
-                showToast("登录异常 ⚠️"); 
-            }
-        }
-
-        // 配合 i18n.js 的同步函数
-        window.syncStatus = function() {
-            console.log("User Page Language Switched");
+            } catch (e) { showToast("登录异常 ⚠️"); }
         }
     </script>
 </body>
