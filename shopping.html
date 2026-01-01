@@ -42,7 +42,7 @@
                 <img src="shopping-car.jpg" class="nav-icon-btn shadow-sm">
                 <div id="cart-count-badge" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</div>
             </div>
-            <img src="user.jpg" onclick="location.href='user.html'" class="nav-icon-btn hover:ring-2 ring-orange-400">
+            <img src="user.jpg" onclick="location.href='user.html'" class="nav-icon-btn">
         </div>
     </nav>
 
@@ -51,8 +51,7 @@
         <p data-t="shop_subtitle" class="text-gray-400 font-bold">精选全球零食，直邮加拿大全境。🐾</p>
     </header>
 
-    <main id="product-grid" class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        </main>
+    <main id="product-grid" class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></main>
 
     <script src="i18n.js"></script>
     <script>
@@ -63,11 +62,16 @@
             { id: 4, name: "White Lover", price: 18.00, emoji: "❄️", img: "snack4.jpg" }
         ];
 
-        // 渲染函数：增加了对 i18n 按钮文案的支持
-        function render() {
+        // 核心渲染函数
+        window.render = function() {
             const grid = document.getElementById('product-grid');
             const lang = localStorage.getItem('dogme_lang') || 'zh';
-            const btnText = translations[lang]['btn_add'] || 'ADD TO CART +';
+            
+            // 安全地从 translations 获取文案
+            let btnText = 'ADD TO CART +';
+            if (typeof translations !== 'undefined' && translations[lang]) {
+                btnText = translations[lang]['btn_add'] || btnText;
+            }
 
             grid.innerHTML = products.map(p => `
                 <div class="product-card group">
@@ -88,7 +92,6 @@
             syncStatus();
         }
 
-        // 加入购物车并触发动画
         function addToCart(event, name, price, emoji) {
             const btn = event.currentTarget;
             const startRect = btn.getBoundingClientRect();
@@ -115,20 +118,24 @@
             localStorage.setItem('dogme_user_exp', parseFloat(localStorage.getItem('dogme_user_exp') || '0') + 2);
         }
 
-        function syncStatus() {
+        window.syncStatus = function() {
             const cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
-            document.getElementById('cart-count-badge').innerText = cart.length;
+            const badge = document.getElementById('cart-count-badge');
+            if(badge) badge.innerText = cart.length;
 
             let currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
             let level = Math.floor(currentExp / 100) + 1;
             const lang = localStorage.getItem('dogme_lang') || 'zh';
             const levelLabel = { 'zh': '等级', 'en': 'Level', 'fr': 'Niveau' }[lang];
             
-            document.getElementById('rank-name-display').innerText = `${levelLabel} V${level > 9 ? 9 : level}`;
-            document.getElementById('exp-fill').style.width = (currentExp % 100) + '%';
+            const rankDisplay = document.getElementById('rank-name-display');
+            if(rankDisplay) rankDisplay.innerText = `${levelLabel} V${level > 9 ? 9 : level}`;
+            const expFill = document.getElementById('exp-fill');
+            if(expFill) expFill.style.width = (currentExp % 100) + '%';
         }
 
-        window.onload = render;
+        // 启动渲染
+        window.render();
     </script>
 </body>
 </html>
