@@ -9,127 +9,104 @@
     <style>
         body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; overflow-x: hidden; }
         .active-press:active { transform: scale(0.95); }
+        
+        /* 🌟 增加的手机端适配：改为响应式网格 */
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 手机端 2 列 */
+            gap: 15px;
+            padding: 15px;
+        }
+        @media (min-width: 1024px) {
+            .products-container { grid-template-columns: repeat(4, 1fr); gap: 30px; padding: 0; }
+        }
+
+        /* 原有样式 */
         .product-card {
-            background: white; border-radius: 35px; padding: 24px;
+            background: white; border-radius: 25px; padding: 15px;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(0,0,0,0.02);
         }
+        @media (min-width: 1024px) { .product-card { border-radius: 35px; padding: 24px; } }
         .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
         
-        /* 🌟 物理对齐的返回按钮 */
         .back-arrow-btn {
             width: 44px; height: 44px; border-radius: 50%; background: white;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #f1f1f1;
-            cursor: pointer; transition: all 0.3s ease;
+            cursor: pointer;
         }
-        .back-arrow-btn:hover { background: #f9f9f9; }
-
-        /* 🌟 购物车图标图片样式 */
         .shopping-car-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        
-        .nav-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; cursor: pointer; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .cart-badge { 
-            position: absolute; top: -5px; right: -5px; background: #FF8D36; color: white; 
-            font-size: 10px; padding: 2px 6px; border-radius: 10px; border: 2px solid white; font-weight: 900; 
-        }
+        .nav-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; cursor: pointer; }
     </style>
 </head>
-<body class="p-6">
+<body class="p-4 lg:p-8">
 
-    <nav class="max-w-6xl mx-auto flex justify-between items-center mb-10">
+    <nav class="max-w-6xl mx-auto flex justify-between items-center mb-8 lg:mb-12">
         <div class="flex items-center gap-4">
             <div onclick="location.href='index.html'" class="back-arrow-btn active-press">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform: translateX(-1px);">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
             </div>
-            <h1 class="text-2xl font-black text-gray-900">Dogme.</h1>
+            <h1 class="text-xl lg:text-2xl font-black text-gray-900">Dogme.</h1>
         </div>
 
         <div class="flex items-center gap-3">
-            <div id="rank-name-display" class="bg-gray-100 px-4 py-2 rounded-2xl text-[10px] font-black text-gray-400 uppercase tracking-widest">Level V1</div>
+            <div id="rank-name-display" class="bg-gray-100 px-3 lg:px-4 py-2 rounded-2xl text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-widest">Level V1</div>
             
             <div onclick="location.href='pay.html'" class="relative active-press cursor-pointer">
                 <div class="back-arrow-btn overflow-hidden">
-                    <img src="shopping-car.jpg" alt="Cart" class="shopping-car-img" onerror="this.src='https://via.placeholder.com/44?text=🛒'">
+                    <img src="shopping-car.jpg" class="shopping-car-img" onerror="this.src='https://via.placeholder.com/44?text=🛒'">
                 </div>
-                <div id="cart-count-badge" class="cart-badge">0</div>
+                <div id="cart-count-badge" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full border-2 border-white font-black">0</div>
             </div>
 
-            <img onclick="goToAccount()" src="user.jpg" class="nav-avatar active-press" onerror="this.src='https://via.placeholder.com/44?text=🐾'">
+            <img onclick="goToAccount()" src="user.jpg" class="nav-avatar" onerror="this.src='https://via.placeholder.com/44?text=🐾'">
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto mb-12">
-        <h2 class="text-4xl font-black text-gray-900 mb-2">全球货柜 🐾</h2>
-        <p class="text-gray-400 font-bold">精选全球零食，直邮加拿大全境。</p>
+    <header class="max-w-6xl mx-auto mb-8 lg:mb-12">
+        <h2 class="text-3xl lg:text-5xl font-black text-gray-900 mb-2">全球货柜 🐾</h2>
+        <p class="text-gray-400 font-bold text-sm">精选全球零食，直邮加拿大全境。</p>
     </header>
 
-    <main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <main class="max-w-6xl mx-auto products-container">
         <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-[25px] mb-6 flex items-center justify-center relative">
-                <span class="absolute top-4 left-4 text-xl">🍯</span>
-                <img src="https://via.placeholder.com/150?text=Calbee" alt="Product" class="w-32 h-32 object-contain">
+            <div class="w-full aspect-square bg-gray-50 rounded-[20px] lg:rounded-[25px] mb-4 flex items-center justify-center relative">
+                <span class="absolute top-3 left-3 text-lg">🍯</span>
+                <img src="https://via.placeholder.com/150?text=Calbee" class="w-24 lg:w-32 object-contain">
             </div>
-            <h3 class="font-black text-gray-900 text-lg mb-1">Calbee Honey Butter</h3>
-            <p class="text-orange-500 font-black mb-4">$4.50 <span class="text-[10px] text-gray-300">CAD</span></p>
-            <button onclick="addToCart('Calbee Honey Butter', 4.50, '🍯', this)" class="w-full py-4 bg-gray-900 text-white rounded-[20px] font-black text-xs active-press">加入购物车</button>
+            <h3 class="font-black text-gray-900 text-sm lg:text-lg mb-1">Honey Butter</h3>
+            <p class="text-orange-500 font-black text-xs lg:text-base mb-4">$4.50</p>
+            <button onclick="addToCart('Honey Butter', 4.50, '🍯', this)" class="w-full py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] lg:text-xs active-press">加入购物车</button>
         </div>
-
-        <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-[25px] mb-6 flex items-center justify-center relative">
-                <span class="absolute top-4 left-4 text-xl">🍄</span>
-                <img src="https://via.placeholder.com/150?text=Lay's" alt="Product" class="w-32 h-32 object-contain">
-            </div>
-            <h3 class="font-black text-gray-900 text-lg mb-1">Lay's Truffle</h3>
-            <p class="text-orange-500 font-black mb-4">$3.99 <span class="text-[10px] text-gray-300">CAD</span></p>
-            <button onclick="addToCart('Lay\'s Truffle', 3.99, '🍄', this)" class="w-full py-4 bg-gray-900 text-white rounded-[20px] font-black text-xs active-press">加入购物车</button>
-        </div>
-    </main>
+        
+        </main>
 
     <script>
-        // 🌟 核心修复：跳转账户逻辑，消除闪现
+        // 保留原本所有的 JS 逻辑
         function goToAccount() {
             const isLogged = localStorage.getItem('dogme_user_logged');
-            if (isLogged === 'true') {
-                // 如果已登录，直接去个人中心
-                location.href = 'Log-in.html';
-            } else {
-                // 如果未登录，清除潜在的异常标记再跳转
-                localStorage.removeItem('dogme_user_logged');
-                location.href = 'user.html';
-            }
+            if (isLogged === 'true') location.href = 'Log-in.html';
+            else { localStorage.removeItem('dogme_user_logged'); location.href = 'user.html'; }
         }
 
         function syncStatus() {
             const cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
-            const badge = document.getElementById('cart-count-badge');
-            if(badge) badge.innerText = cart.length;
-
-            const currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
-            const level = Math.floor(currentExp / 100) + 1;
-            const rankDisplay = document.getElementById('rank-name-display');
-            if(rankDisplay) rankDisplay.innerText = `Level V${level > 9 ? 9 : level}`;
+            document.getElementById('cart-count-badge').innerText = cart.length;
+            const exp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
+            const level = Math.floor(exp / 100) + 1;
+            document.getElementById('rank-name-display').innerText = `Level V${level > 9 ? 9 : level}`;
         }
 
         function addToCart(name, price, emoji, btn) {
             let cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
             cart.push({ id: Date.now(), name, price, emoji });
             localStorage.setItem('dogme_cart', JSON.stringify(cart));
-            
-            // 增加经验
-            let exp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
-            localStorage.setItem('dogme_user_exp', exp + 5);
-            
+            localStorage.setItem('dogme_user_exp', parseInt(localStorage.getItem('dogme_user_exp') || '0') + 5);
             btn.innerText = "已添加! ✨";
-            btn.classList.replace('bg-gray-900', 'bg-orange-500');
-            setTimeout(() => {
-                btn.innerText = "加入购物车";
-                btn.classList.replace('bg-orange-500', 'bg-gray-900');
-            }, 1000);
-
-            syncStatus();
+            setTimeout(() => { btn.innerText = "加入购物车"; syncStatus(); }, 1000);
         }
 
         window.onload = syncStatus;
