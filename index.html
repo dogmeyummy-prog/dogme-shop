@@ -10,66 +10,83 @@
         :root { --dogme-theme: #FF8D36; }
         body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; overflow-x: hidden; }
         
-        /* 原有黑条 */
+        /* 来自 index(3) 的黑条 */
         .top-utility-bar { background: #2D3436; color: white; font-size: 11px; padding: 8px 48px; text-align: center; letter-spacing: 1px; font-weight: 700; }
         .nav-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; cursor: pointer; transition: all 0.3s ease; }
         
-        /* 🌟 增加的手机端适配：容器变为 Flex 布局 */
+        /* 核心布局容器 */
         .main-hero { 
             display: flex; 
             flex-direction: column; /* 手机端默认上下排 */
             padding: 20px;
-            gap: 40px;
+            gap: 30px;
         }
         
+        /* 手机端图片置顶与艺术圆角 (类似图片效果) */
+        .image-side { 
+            order: -1; 
+            width: 100%;
+            height: 380px; 
+            border-radius: 40px 120px 40px 40px; /* 非对称大圆角 */
+            overflow: hidden; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+            display: block;
+        }
+
         /* 电脑端恢复原样 */
         @media (min-width: 1024px) {
             .main-hero { flex-direction: row; align-items: center; padding: 60px 100px; gap: 80px; }
             .text-side { flex: 1; text-align: left !important; }
-            .image-side { flex: 1.2; height: 65vh; display: block !important; }
+            .image-side { 
+                flex: 1.2; 
+                height: 65vh; 
+                order: 1; 
+                border-radius: 60px; /* 电脑端恢复标准圆角 */
+            }
+            .image-side:hover { transform: translateY(-5px) rotate(1deg); transition: 0.5s; }
         }
-
-        /* 原有核心动画效果 */
-        .image-side { 
-            border-radius: 60px; overflow: hidden; 
-            box-shadow: 0 40px 80px rgba(0,0,0,0.08);
-            display: none; /* 手机端默认隐藏大图或缩小显示，根据需要开启 */
-        }
-        @media (min-width: 1024px) { .image-side { display: block; } }
 
         .active-press:active { transform: scale(0.95); }
-        .custom-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; border-radius: 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.1); text-align: center; z-index: 1000; width: 90%; max-width: 400px; }
+        
+        /* 弹窗样式 */
+        .custom-toast { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: white; padding: 40px; border-radius: 40px; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12); text-align: center; 
+            z-index: 1000; width: 85%; max-width: 400px;
+            border: 1px solid #f1f1f1;
+        }
     </style>
 </head>
 <body>
     <div class="top-utility-bar">FREE SHIPPING ON ORDERS OVER $99 📦</div>
 
-    <nav class="flex justify-between items-center px-8 py-6 lg:px-24">
+    <nav class="flex justify-between items-center px-6 py-6 lg:px-24">
         <h1 class="text-3xl font-black text-gray-900">Dogme.</h1>
         <div class="flex items-center gap-6">
             <div id="user-info-brief" class="hidden lg:flex items-center gap-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-50">
                 <div class="text-right">
-                    <div id="nav-user-name" class="text-[10px] font-black text-gray-900">GUEST</div>
-                    <div id="nav-user-rank" class="text-[9px] font-bold text-orange-500 uppercase tracking-tighter">LV1 NOVICE</div>
+                    <div id="nav-user-name" class="text-[10px] font-black text-gray-900 uppercase">Guest</div>
+                    <div id="nav-user-rank" class="text-[9px] font-bold text-orange-500 uppercase tracking-tighter">LV1 Novice</div>
                 </div>
             </div>
-            <img onclick="location.href='user.html'" id="nav-avatar-img" src="user.jpg" class="nav-avatar active-press" onerror="this.src='https://via.placeholder.com/44?text=🐾'">
+            <img onclick="location.href='user.html'" src="user.jpg" class="nav-avatar active-press shadow-sm" onerror="this.src='https://via.placeholder.com/44?text=🐾'">
         </div>
     </nav>
 
     <main class="main-hero">
-        <div class="text-side text-center">
-            <span class="inline-block bg-orange-100 text-orange-500 px-4 py-2 rounded-full text-[10px] font-black mb-6 uppercase tracking-widest">Global Snacks Direct 🇨🇦</span>
+        <div class="text-side text-left">
+            <span class="inline-block bg-orange-100 text-orange-500 px-4 py-2 rounded-full text-[10px] font-black mb-6 uppercase tracking-widest">Global Snacks 🇨🇦</span>
             <h2 class="text-5xl lg:text-8xl font-black text-gray-900 leading-[1.1] mb-8">
                 最好的味道<br><span class="text-orange-500">不再遥远.</span>
             </h2>
-            <p class="text-gray-400 font-bold mb-12 text-sm lg:text-lg max-w-xl mx-auto lg:mx-0">
+            <p class="text-gray-400 font-bold mb-10 text-sm lg:text-lg max-w-xl">
                 精选全球零食，直邮加拿大全境。<br>给挑剔的胃一个最温暖的拥抱。
             </p>
             
             <div class="flex flex-col lg:flex-row gap-4">
-                <button onclick="location.href='shopping.html'" class="px-12 py-6 bg-gray-900 text-white rounded-[30px] font-black text-sm active-press shadow-2xl shadow-gray-200">立即选购 🐾</button>
-                <button onclick="claimCoupon()" class="px-12 py-6 bg-white text-gray-900 border-2 border-gray-100 rounded-[30px] font-black text-sm active-press">领取 $20 礼券</button>
+                <button onclick="location.href='shopping.html'" class="px-12 py-5 bg-gray-900 text-white rounded-[25px] font-black text-sm active-press shadow-xl">立即选购 🐾</button>
+                <button onclick="claimCoupon()" class="px-12 py-5 bg-white text-gray-900 border-2 border-gray-100 rounded-[25px] font-black text-sm active-press">领取 $20 礼券</button>
             </div>
         </div>
 
@@ -79,15 +96,18 @@
     </main>
 
     <script>
+        // 等级同步逻辑
         function syncUserData() {
             const email = localStorage.getItem('dogme_user_email');
             if (email) {
-                document.getElementById('nav-user-name').innerText = email.split('@')[0].toUpperCase();
+                const name = email.split('@')[0].toUpperCase();
+                document.getElementById('nav-user-name').innerText = name;
                 const exp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
                 if (exp >= 100) document.getElementById('nav-user-rank').innerText = "LV2 ELITE";
             }
         }
 
+        // 优惠券领取逻辑
         function claimCoupon() {
             const isLogged = localStorage.getItem('dogme_user_logged');
             if (isLogged !== 'true') {
@@ -98,6 +118,7 @@
             showPopup({ icon: "🎉", title: "Success!", msg: "20% OFF Coupon added!", btnText: "Go Shop", action: () => { location.href = 'shopping.html'; } });
         }
 
+        // 弹窗通用函数
         function showPopup({ icon, title, msg, btnText, action }) {
             const toast = document.createElement('div');
             toast.className = 'custom-toast';
@@ -108,7 +129,10 @@
                 <button id="popup-action-btn" class="w-full py-4 bg-orange-500 text-white rounded-2xl font-black text-xs active-press shadow-lg shadow-orange-200">${btnText}</button>
             `;
             document.body.appendChild(toast);
-            document.getElementById('popup-action-btn').onclick = action;
+            document.getElementById('popup-action-btn').onclick = () => {
+                toast.remove();
+                action();
+            };
         }
 
         window.onload = syncUserData;
