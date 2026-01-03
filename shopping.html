@@ -82,6 +82,13 @@
         </div>
 
         <div class="flex items-center gap-2 md:gap-3">
+            <!-- 添加语言切换按钮 -->
+            <div class="flex bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden">
+                <button onclick="switchLanguage('zh')" id="lang-zh" class="px-2 md:px-3 py-1.5 md:py-2 text-[8px] md:text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-colors">中文</button>
+                <button onclick="switchLanguage('en')" id="lang-en" class="px-2 md:px-3 py-1.5 md:py-2 text-[8px] md:text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-colors">EN</button>
+                <button onclick="switchLanguage('fr')" id="lang-fr" class="px-2 md:px-3 py-1.5 md:py-2 text-[8px] md:text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-colors">FR</button>
+            </div>
+            
             <div id="rank-name-display" class="bg-gray-100 px-2.5 md:px-3 lg:px-4 py-1.5 md:py-2 rounded-xl md:rounded-2xl text-[8px] md:text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-wider md:tracking-widest">Level V1</div>
             
             <div onclick="location.href='checkout.html'" class="relative active-press cursor-pointer">
@@ -95,14 +102,15 @@
         </div>
     </nav>
 
-    <!-- 优化标题区域的响应式字体和间距 -->
+    <!-- 为标题和描述添加 data-t 翻译属性 -->
     <header class="max-w-6xl mx-auto mb-6 md:mb-10 lg:mb-12">
-        <h2 class="text-2xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-1 md:mb-2">全球货柜 🐾</h2>
-        <p class="text-gray-400 font-bold text-xs md:text-sm">精选全球零食，直邮加拿大全境。</p>
+        <h2 class="text-2xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-1 md:mb-2" data-t="shop_title">全球货柜 🐾</h2>
+        <p class="text-gray-400 font-bold text-xs md:text-sm" data-t="shop_subtitle">精选全球零食，直邮加拿大全境。🐾</p>
     </header>
 
     <!-- 产品网格容器，响应式列数 -->
     <main class="max-w-6xl mx-auto products-container">
+        <!-- 为产品名称和按钮添加 data-t 翻译属性 -->
         <div class="product-card flex flex-col items-center text-center">
             <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
                 <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍯</span>
@@ -110,7 +118,7 @@
             </div>
             <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Honey Butter</h3>
             <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$4.50</p>
-            <button onclick="addToCart('Honey Butter', 4.50, '🍯', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+            <button onclick="addToCart('Honey Butter', 4.50, '🍯', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
         </div>
 
         <div class="product-card flex flex-col items-center text-center">
@@ -120,7 +128,7 @@
             </div>
             <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Spicy Chips</h3>
             <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$3.99</p>
-            <button onclick="addToCart('Spicy Chips', 3.99, '🌶️', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+            <button onclick="addToCart('Spicy Chips', 3.99, '🌶️', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
         </div>
 
         <div class="product-card flex flex-col items-center text-center">
@@ -130,7 +138,7 @@
             </div>
             <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Chocolate Bar</h3>
             <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$5.50</p>
-            <button onclick="addToCart('Chocolate Bar', 5.50, '🍫', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+            <button onclick="addToCart('Chocolate Bar', 5.50, '🍫', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
         </div>
 
         <div class="product-card flex flex-col items-center text-center">
@@ -140,7 +148,7 @@
             </div>
             <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Mixed Nuts</h3>
             <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$6.99</p>
-            <button onclick="addToCart('Mixed Nuts', 6.99, '🥜', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+            <button onclick="addToCart('Mixed Nuts', 6.99, '🥜', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
         </div>
 
         <div class="product-card flex flex-col items-center text-center">
@@ -150,7 +158,7 @@
             </div>
             <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Butter Cookies</h3>
             <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$4.25</p>
-            <button onclick="addToCart('Butter Cookies', 4.25, '🍪', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+            <button onclick="addToCart('Butter Cookies', 4.25, '🍪', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
         </div>
 
         <div class="product-card flex flex-col items-center text-center">
@@ -160,7 +168,7 @@
             </div>
             <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Fruit Candy</h3>
             <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$2.99</p>
-            <button onclick="addToCart('Fruit Candy', 2.99, '🍬', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+            <button onclick="addToCart('Fruit Candy', 2.99, '🍬', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
         </div>
 
         <div class="product-card flex flex-col items-center text-center">
@@ -170,7 +178,7 @@
             </div>
             <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Energy Drink</h3>
             <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$3.50</p>
-            <button onclick="addToCart('Energy Drink', 3.50, '🥤', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+            <button onclick="addToCart('Energy Drink', 3.50, '🥤', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
         </div>
 
         <div class="product-card flex flex-col items-center text-center">
@@ -180,18 +188,35 @@
             </div>
             <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Caramel Popcorn</h3>
             <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$4.75</p>
-            <button onclick="addToCart('Caramel Popcorn', 4.75, '🍿', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+            <button onclick="addToCart('Caramel Popcorn', 4.75, '🍿', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
         </div>
     </main>
 
+    <!-- 引入集中式 i18n.js 文件 -->
+    <script src="i18n.js"></script>
+    
     <script>
+        function updateLanguageButtons() {
+            const lang = localStorage.getItem('dogme_lang') || 'zh';
+            ['zh', 'en', 'fr'].forEach(l => {
+                const btn = document.getElementById(`lang-${l}`);
+                if (l === lang) {
+                    btn.classList.add('bg-gray-900', 'text-white');
+                    btn.classList.remove('text-gray-400');
+                } else {
+                    btn.classList.remove('bg-gray-900', 'text-white');
+                    btn.classList.add('text-gray-400');
+                }
+            });
+        }
+
         function goToAccount() {
             const isLogged = localStorage.getItem('dogme_user_logged');
             if (isLogged === 'true') location.href = 'user.html';
             else { localStorage.removeItem('dogme_user_logged'); location.href = 'user.html'; }
         }
 
-        function syncStatus() {
+        window.syncStatus = function() {
             const cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
             document.getElementById('cart-count-badge').innerText = cart.length;
             const exp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
@@ -199,16 +224,37 @@
             document.getElementById('rank-name-display').innerText = `Level V${level > 9 ? 9 : level}`;
         }
 
-        function addToCart(name, price, emoji, btn) {
-            let cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
-            cart.push({ id: Date.now(), name, price, emoji });
-            localStorage.setItem('dogme_cart', JSON.stringify(cart));
-            localStorage.setItem('dogme_user_exp', parseInt(localStorage.getItem('dogme_user_exp') || '0') + 5);
-            btn.innerText = "已添加! ✨";
-            setTimeout(() => { btn.innerText = "加入购物车"; syncStatus(); }, 1000);
+        window.render = function() {
+            const lang = localStorage.getItem('dogme_lang') || 'zh';
+            const t = window.translations?.[lang] || window.translations?.['zh'];
+            if (!t) return;
+            
+            // 更新所有"加入购物车"按钮的文字
+            document.querySelectorAll('[data-t="btn_add"]').forEach(btn => {
+                const originalOnclick = btn.getAttribute('onclick');
+                if (originalOnclick && !originalOnclick.includes('Added!')) {
+                    btn.innerText = t.btn_add;
+                }
+            });
         }
 
-        window.onload = syncStatus;
+        window.translations = {
+            zh: {
+                btn_add: '加入购物车 +'
+            },
+            en: {
+                btn_add: 'Add to Cart +'
+            },
+            fr: {
+                btn_add: 'Ajouter au Panier +'
+            }
+        };
+
+        window.onload = function() {
+            syncStatus();
+            updateLanguageButtons();
+            render();
+        };
     </script>
 </body>
 </html>
