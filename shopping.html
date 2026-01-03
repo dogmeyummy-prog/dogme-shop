@@ -10,85 +10,184 @@
         body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; overflow-x: hidden; }
         .active-press:active { transform: scale(0.95); }
         
-        /* 🌟 增加的手机端适配：改为响应式网格 */
+        /* 优化响应式网格布局，手机端 2 列，平板 3 列，电脑 4 列 */
         .products-container {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 手机端 2 列 */
-            gap: 15px;
-            padding: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0;
+        }
+        @media (min-width: 768px) {
+            .products-container { grid-template-columns: repeat(3, 1fr); gap: 20px; }
         }
         @media (min-width: 1024px) {
-            .products-container { grid-template-columns: repeat(4, 1fr); gap: 30px; padding: 0; }
+            .products-container { grid-template-columns: repeat(4, 1fr); gap: 30px; }
         }
 
-        /* 原有样式 */
         .product-card {
-            background: white; border-radius: 25px; padding: 15px;
+            background: white; 
+            border-radius: 20px; 
+            padding: 12px;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(0,0,0,0.02);
         }
-        @media (min-width: 1024px) { .product-card { border-radius: 35px; padding: 24px; } }
+        @media (min-width: 1024px) { 
+            .product-card { border-radius: 35px; padding: 24px; } 
+        }
         .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
         
+        /* 响应式返回按钮大小 */
         .back-arrow-btn {
-            width: 44px; height: 44px; border-radius: 50%; background: white;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #f1f1f1;
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            background: white;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            border: 1px solid #f1f1f1;
             cursor: pointer;
         }
+        @media (min-width: 1024px) {
+            .back-arrow-btn { width: 44px; height: 44px; }
+        }
+        
         .shopping-car-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        .nav-avatar { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; cursor: pointer; }
+        
+        /* 响应式头像大小 */
+        .nav-avatar { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 10px; 
+            object-fit: cover; 
+            cursor: pointer; 
+        }
+        @media (min-width: 1024px) {
+            .nav-avatar { width: 44px; height: 44px; border-radius: 12px; }
+        }
     </style>
 </head>
-<body class="p-4 lg:p-8">
+<body class="p-3 md:p-6 lg:p-8">
 
-    <nav class="max-w-6xl mx-auto flex justify-between items-center mb-8 lg:mb-12">
-        <div class="flex items-center gap-4">
+    <!-- 优化导航栏间距和元素大小 -->
+    <nav class="max-w-6xl mx-auto flex justify-between items-center mb-6 md:mb-10 lg:mb-12">
+        <div class="flex items-center gap-3 lg:gap-4">
             <div onclick="location.href='index.html'" class="back-arrow-btn active-press">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform: translateX(-1px);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform: translateX(-1px);" class="lg:w-[22px] lg:h-[22px]">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
             </div>
-            <h1 class="text-xl lg:text-2xl font-black text-gray-900">Dogme.</h1>
+            <h1 class="text-lg md:text-xl lg:text-2xl font-black text-gray-900">Dogme.</h1>
         </div>
 
-        <div class="flex items-center gap-3">
-            <div id="rank-name-display" class="bg-gray-100 px-3 lg:px-4 py-2 rounded-2xl text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-widest">Level V1</div>
+        <div class="flex items-center gap-2 md:gap-3">
+            <div id="rank-name-display" class="bg-gray-100 px-2.5 md:px-3 lg:px-4 py-1.5 md:py-2 rounded-xl md:rounded-2xl text-[8px] md:text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-wider md:tracking-widest">Level V1</div>
             
-            <div onclick="location.href='pay.html'" class="relative active-press cursor-pointer">
+            <div onclick="location.href='checkout.html'" class="relative active-press cursor-pointer">
                 <div class="back-arrow-btn overflow-hidden">
                     <img src="shopping-car.jpg" class="shopping-car-img" onerror="this.src='https://via.placeholder.com/44?text=🛒'">
                 </div>
-                <div id="cart-count-badge" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full border-2 border-white font-black">0</div>
+                <div id="cart-count-badge" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[9px] md:text-[10px] px-1.5 md:px-2 py-0.5 rounded-full border-2 border-white font-black">0</div>
             </div>
 
             <img onclick="goToAccount()" src="user.jpg" class="nav-avatar" onerror="this.src='https://via.placeholder.com/44?text=🐾'">
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto mb-8 lg:mb-12">
-        <h2 class="text-3xl lg:text-5xl font-black text-gray-900 mb-2">全球货柜 🐾</h2>
-        <p class="text-gray-400 font-bold text-sm">精选全球零食，直邮加拿大全境。</p>
+    <!-- 优化标题区域的响应式字体和间距 -->
+    <header class="max-w-6xl mx-auto mb-6 md:mb-10 lg:mb-12">
+        <h2 class="text-2xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-1 md:mb-2">全球货柜 🐾</h2>
+        <p class="text-gray-400 font-bold text-xs md:text-sm">精选全球零食，直邮加拿大全境。</p>
     </header>
 
+    <!-- 产品网格容器，响应式列数 -->
     <main class="max-w-6xl mx-auto products-container">
         <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-[20px] lg:rounded-[25px] mb-4 flex items-center justify-center relative">
-                <span class="absolute top-3 left-3 text-lg">🍯</span>
-                <img src="https://via.placeholder.com/150?text=Calbee" class="w-24 lg:w-32 object-contain">
+            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
+                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍯</span>
+                <img src="https://via.placeholder.com/150?text=Calbee" class="w-20 md:w-24 lg:w-32 object-contain">
             </div>
-            <h3 class="font-black text-gray-900 text-sm lg:text-lg mb-1">Honey Butter</h3>
-            <p class="text-orange-500 font-black text-xs lg:text-base mb-4">$4.50</p>
-            <button onclick="addToCart('Honey Butter', 4.50, '🍯', this)" class="w-full py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] lg:text-xs active-press">加入购物车</button>
+            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Honey Butter</h3>
+            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$4.50</p>
+            <button onclick="addToCart('Honey Butter', 4.50, '🍯', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
         </div>
-        
-        </main>
+
+        <div class="product-card flex flex-col items-center text-center">
+            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
+                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🌶️</span>
+                <img src="https://via.placeholder.com/150?text=Spicy" class="w-20 md:w-24 lg:w-32 object-contain">
+            </div>
+            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Spicy Chips</h3>
+            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$3.99</p>
+            <button onclick="addToCart('Spicy Chips', 3.99, '🌶️', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+        </div>
+
+        <div class="product-card flex flex-col items-center text-center">
+            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
+                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍫</span>
+                <img src="https://via.placeholder.com/150?text=Chocolate" class="w-20 md:w-24 lg:w-32 object-contain">
+            </div>
+            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Chocolate Bar</h3>
+            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$5.50</p>
+            <button onclick="addToCart('Chocolate Bar', 5.50, '🍫', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+        </div>
+
+        <div class="product-card flex flex-col items-center text-center">
+            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
+                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🥜</span>
+                <img src="https://via.placeholder.com/150?text=Nuts" class="w-20 md:w-24 lg:w-32 object-contain">
+            </div>
+            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Mixed Nuts</h3>
+            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$6.99</p>
+            <button onclick="addToCart('Mixed Nuts', 6.99, '🥜', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+        </div>
+
+        <div class="product-card flex flex-col items-center text-center">
+            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
+                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍪</span>
+                <img src="https://via.placeholder.com/150?text=Cookies" class="w-20 md:w-24 lg:w-32 object-contain">
+            </div>
+            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Butter Cookies</h3>
+            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$4.25</p>
+            <button onclick="addToCart('Butter Cookies', 4.25, '🍪', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+        </div>
+
+        <div class="product-card flex flex-col items-center text-center">
+            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
+                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍬</span>
+                <img src="https://via.placeholder.com/150?text=Candy" class="w-20 md:w-24 lg:w-32 object-contain">
+            </div>
+            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Fruit Candy</h3>
+            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$2.99</p>
+            <button onclick="addToCart('Fruit Candy', 2.99, '🍬', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+        </div>
+
+        <div class="product-card flex flex-col items-center text-center">
+            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
+                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🥤</span>
+                <img src="https://via.placeholder.com/150?text=Drink" class="w-20 md:w-24 lg:w-32 object-contain">
+            </div>
+            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Energy Drink</h3>
+            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$3.50</p>
+            <button onclick="addToCart('Energy Drink', 3.50, '🥤', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+        </div>
+
+        <div class="product-card flex flex-col items-center text-center">
+            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
+                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍿</span>
+                <img src="https://via.placeholder.com/150?text=Popcorn" class="w-20 md:w-24 lg:w-32 object-contain">
+            </div>
+            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Caramel Popcorn</h3>
+            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$4.75</p>
+            <button onclick="addToCart('Caramel Popcorn', 4.75, '🍿', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press">加入购物车</button>
+        </div>
+    </main>
 
     <script>
-        // 保留原本所有的 JS 逻辑
         function goToAccount() {
             const isLogged = localStorage.getItem('dogme_user_logged');
-            if (isLogged === 'true') location.href = 'Log-in.html';
+            if (isLogged === 'true') location.href = 'user.html';
             else { localStorage.removeItem('dogme_user_logged'); location.href = 'user.html'; }
         }
 
