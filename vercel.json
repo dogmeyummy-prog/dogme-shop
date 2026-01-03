@@ -1,5 +1,55 @@
 {
   "version": 2,
   "buildCommand": "echo 'Static HTML site - no build needed'",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*\\.(js|css|jpg|jpeg|png|gif|svg|json|ico|html))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/login",
+      "dest": "/login.html"
+    },
+    {
+      "src": "/user",
+      "dest": "/user.html"
+    },
+    {
+      "src": "/shopping",
+      "dest": "/shopping.html"
+    },
+    {
+      "src": "/checkout",
+      "dest": "/checkout.html"
+    },
+    {
+      "src": "/promo",
+      "dest": "/promo.html"
+    },
+    {
+      "src": "/coupon",
+      "dest": "/coupon.html"
+    },
+    {
+      "src": "/pay",
+      "dest": "/pay.html"
+    },
+    {
+      "src": "/tracking",
+      "dest": "/tracking.html"
+    },
+    {
+      "src": "/order-history",
+      "dest": "/order-history.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1.html"
+    }
+  ]
 }
