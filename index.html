@@ -146,10 +146,12 @@
                 <button onclick="switchLanguage('fr')" class="px-1.5 md:px-2 py-1 rounded-full hover:bg-white transition-all">FR</button>
             </div>
 
-            <div onclick="navigateToUser()" class="relative cursor-pointer active-press">
+            <!-- 修复购物车图标点击事件，应该跳转到checkout.html -->
+            <div onclick="location.href='checkout.html'" class="relative cursor-pointer active-press">
                 <img src="shopping-car.jpg" class="nav-avatar border border-gray-100 shadow-sm" alt="Cart">
                 <div id="cart-count" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[9px] md:text-[10px] font-bold w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center border-2 border-white">0</div>
             </div>
+            <!-- 用户头像点击继续使用navigateToUser()函数 -->
             <img src="user.jpg" onclick="navigateToUser()" class="nav-avatar hover:ring-2 ring-orange-400" alt="User">
         </div>
     </nav>
