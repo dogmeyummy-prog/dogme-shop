@@ -15,139 +15,107 @@
             border: 1px solid rgba(0,0,0,0.02);
         }
         .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        .nav-icon-btn { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; cursor: pointer; transition: all 0.3s ease; border: 1px solid #f1f1f1; }
         
-        /* 返回箭头专属样式 */
+        /* 🌟 修正后的返回箭头样式 */
         .back-arrow-btn {
-            width: 44px; height: 44px; border-radius: 50%; background: white;
-            display: flex; items-center justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #f1f1f1;
-            cursor: pointer; transition: all 0.3s ease;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #f1f1f1;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .back-arrow-btn:hover { background: #f9f9f9; transform: translateX(-5px); }
+        .back-arrow-btn:hover { background: #f9f9f9; transform: translateX(-3px); }
         
-        .cart-particle { position: fixed; z-index: 1000; pointer-events: none; transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); }
+        .nav-icon-btn { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; cursor: pointer; transition: all 0.3s ease; }
+        .cart-badge { position: absolute; top: -5px; right: -5px; background: #FF8D36; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; border: 2px solid white; font-weight: 900; }
     </style>
 </head>
-<body class="p-6 md:p-12">
+<body class="p-6">
 
-    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-12">
+    <nav class="max-w-6xl mx-auto flex justify-between items-center mb-10">
         <div class="flex items-center gap-4">
             <div onclick="location.href='index.html'" class="back-arrow-btn active-press">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-gray-900"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform: translateX(-1px);">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
             </div>
-
-            <h1 class="text-3xl font-black tracking-tighter cursor-pointer ml-2" onclick="location.href='index.html'">Dogme.</h1>
-            
-            <div class="flex bg-gray-100 rounded-full p-1 shadow-inner text-[10px] font-black ml-4">
-                <button onclick="switchLanguage('zh')" class="px-2 py-1 rounded-full hover:bg-white transition-all">CN</button>
-                <button onclick="switchLanguage('en')" class="px-2 py-1 rounded-full hover:bg-white transition-all">EN</button>
-                <button onclick="switchLanguage('fr')" class="px-2 py-1 rounded-full hover:bg-white transition-all">FR</button>
+            <h1 class="text-2xl font-black text-gray-900">Dogme.</h1>
+            <div class="flex bg-gray-100 rounded-full p-1 text-[10px] font-black">
+                <button onclick="switchLang('zh')" class="px-2 py-1 rounded-full hover:bg-white transition-all">CN</button>
+                <button onclick="switchLang('en')" class="px-2 py-1 rounded-full hover:bg-white transition-all">EN</button>
+                <button onclick="switchLang('fr')" class="px-2 py-1 rounded-full hover:bg-white transition-all">FR</button>
             </div>
         </div>
-        
-        <div class="flex items-center gap-4">
-            <div class="hidden md:flex flex-col items-end mr-4">
-                <span id="rank-name-display" class="text-[10px] font-black uppercase tracking-widest text-gray-400">Loading...</span>
-                <div class="w-24 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
-                    <div id="exp-fill" class="h-full bg-orange-500 transition-all duration-1000" style="width: 0%"></div>
+
+        <div class="flex items-center gap-3">
+            <div id="rank-name-display" class="bg-gray-100 px-4 py-2 rounded-2xl text-[10px] font-black text-gray-400 uppercase tracking-widest">等级 V1</div>
+            <div onclick="location.href='pay.html'" class="relative active-press">
+                <div class="back-arrow-btn">
+                    <span class="text-xl">🛒</span>
                 </div>
+                <div id="cart-count-badge" class="cart-badge">0</div>
             </div>
-            <div onclick="location.href='checkout.html'" class="relative active-press" id="cart-target">
-                <img src="shopping-car.jpg" class="nav-icon-btn shadow-sm">
-                <div id="cart-count-badge" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</div>
-            </div>
-            <img src="user.jpg" onclick="location.href='user.html'" class="nav-icon-btn">
+            <img onclick="location.href='Log-in.html'" src="user.jpg" class="nav-icon-btn shadow-sm" onerror="this.src='https://via.placeholder.com/44?text=🐾'">
         </div>
     </nav>
 
-    <header class="max-w-7xl mx-auto mb-12">
-        <h2 data-t="shop_title" class="text-5xl font-black text-gray-900 mb-4">Global Snacks.</h2>
-        <p data-t="shop_subtitle" class="text-gray-400 font-bold">精选全球零食，直邮加拿大全境。🐾</p>
+    <header class="max-w-6xl mx-auto mb-12">
+        <h2 id="page-title" class="text-4xl font-black text-gray-900 mb-2">全球货柜 🐾</h2>
+        <p id="page-subtitle" class="text-gray-400 font-bold">精选全球零食，直邮加拿大全境。✨</p>
     </header>
 
-    <main id="product-grid" class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"></main>
+    <main class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="product-card flex flex-col items-center text-center">
+            <div class="w-full aspect-square bg-gray-50 rounded-[25px] mb-6 flex items-center justify-center relative overflow-hidden">
+                <span class="absolute top-4 left-4 text-xl">🍯</span>
+                <img src="https://via.placeholder.com/150?text=Calbee" alt="Product" class="w-32 h-32 object-contain">
+            </div>
+            <h3 class="font-black text-gray-900 text-lg mb-1">Calbee Honey Butter</h3>
+            <p class="text-orange-500 font-black mb-4">$4.50 <span class="text-[10px] text-gray-300">CAD</span></p>
+            <button onclick="addToCart('Calbee Honey Butter', 4.50, '🍯', this)" class="w-full py-4 bg-gray-900 text-white rounded-[20px] font-black text-xs active-press">加入购物车</button>
+        </div>
 
-    <script src="i18n.js"></script>
+        </main>
+
     <script>
-        const products = [
-            { id: 1, name: "Calbee Honey Butter", price: 4.50, emoji: "🍯", img: "snack1.jpg" },
-            { id: 2, name: "Lay's Truffle", price: 3.99, emoji: "🍄", img: "snack2.jpg" },
-            { id: 3, name: "Pocky Sakura", price: 2.50, emoji: "🌸", img: "snack3.jpg" },
-            { id: 4, name: "White Lover", price: 18.00, emoji: "❄️", img: "snack4.jpg" }
-        ];
-
-        window.render = function() {
-            const grid = document.getElementById('product-grid');
-            if(!grid) return;
-            const lang = localStorage.getItem('dogme_lang') || 'zh';
-            let btnText = 'ADD TO CART +';
-            if (typeof translations !== 'undefined' && translations[lang]) {
-                btnText = translations[lang]['btn_add'] || btnText;
-            }
-
-            grid.innerHTML = products.map(p => `
-                <div class="product-card group">
-                    <div class="relative h-64 mb-6 rounded-[25px] overflow-hidden bg-gray-50">
-                        <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='logo.jpg'">
-                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-sm">
-                            <span class="text-lg">${p.emoji}</span>
-                        </div>
-                    </div>
-                    <h3 class="font-black text-gray-900 text-xl mb-1">${p.name}</h3>
-                    <p class="text-orange-500 font-black mb-6">$${p.price.toFixed(2)} <span class="text-[10px] text-gray-300 ml-1">CAD</span></p>
-                    <button onclick="addToCart(event, '${p.name}', ${p.price}, '${p.emoji}')" 
-                            class="w-full py-4 bg-gray-50 text-gray-900 rounded-2xl font-black text-sm hover:bg-gray-900 hover:text-white transition-all active-press">
-                        ${btnText}
-                    </button>
-                </div>
-            `).join('');
-            syncStatus();
-        }
-
-        function addToCart(event, name, price, emoji) {
-            const btn = event.currentTarget;
-            const startRect = btn.getBoundingClientRect();
-            const targetRect = document.getElementById('cart-target').getBoundingClientRect();
-            
-            const particle = document.createElement('div');
-            particle.className = 'cart-particle text-2xl';
-            particle.innerHTML = emoji;
-            particle.style.left = startRect.left + (startRect.width/2) + 'px';
-            particle.style.top = startRect.top + 'px';
-            document.body.appendChild(particle);
-
-            requestAnimationFrame(() => {
-                const diffX = targetRect.left - startRect.left;
-                const diffY = targetRect.top - startRect.top;
-                particle.style.transform = `translate(${diffX}px, ${diffY}px) scale(0.5) rotate(360deg)`;
-                particle.style.opacity = '0';
-            });
-            setTimeout(() => { particle.remove(); syncStatus(); }, 800);
-
-            let cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
-            cart.push({ id: Date.now(), name, price, emoji });
-            localStorage.setItem('dogme_cart', JSON.stringify(cart));
-            localStorage.setItem('dogme_user_exp', parseFloat(localStorage.getItem('dogme_user_exp') || '0') + 2);
-        }
-
-        window.syncStatus = function() {
+        // 同步购物车状态
+        function syncStatus() {
             const cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
             const badge = document.getElementById('cart-count-badge');
             if(badge) badge.innerText = cart.length;
 
-            let currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
-            let level = Math.floor(currentExp / 100) + 1;
-            const lang = localStorage.getItem('dogme_lang') || 'zh';
-            const levelLabel = { 'zh': '等级', 'en': 'Level', 'fr': 'Niveau' }[lang];
-            
+            const currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
+            const level = Math.floor(currentExp / 100) + 1;
             const rankDisplay = document.getElementById('rank-name-display');
-            if(rankDisplay) rankDisplay.innerText = `${levelLabel} V${level > 9 ? 9 : level}`;
-            const expFill = document.getElementById('exp-fill');
-            if(expFill) expFill.style.width = (currentExp % 100) + '%';
+            if(rankDisplay) rankDisplay.innerText = `等级 V${level > 9 ? 9 : level}`;
         }
 
-        window.render();
+        function addToCart(name, price, emoji, btn) {
+            let cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
+            cart.push({ id: Date.now(), name, price, emoji });
+            localStorage.setItem('dogme_cart', JSON.stringify(cart));
+            
+            // 增加经验
+            let exp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
+            localStorage.setItem('dogme_user_exp', exp + 5);
+            
+            btn.innerText = "已添加! ✨";
+            btn.classList.replace('bg-gray-900', 'bg-orange-500');
+            setTimeout(() => {
+                btn.innerText = "加入购物车";
+                btn.classList.replace('bg-orange-500', 'bg-gray-900');
+            }, 1000);
+
+            syncStatus();
+        }
+
+        window.onload = syncStatus;
     </script>
 </body>
 </html>
