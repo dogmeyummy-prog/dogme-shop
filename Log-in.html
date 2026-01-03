@@ -183,7 +183,7 @@
                     
                     showToast(t.login_success || '登录成功！');
                     setTimeout(() => {
-                        window.location.href = 'profile.html';
+                        window.location.href = 'user.html';
                     }, 1000);
                 } else {
                     showToast(data.msg || t.login_verify_failed || '验证失败');
@@ -201,7 +201,7 @@
         window.onload = () => {
             const isLogged = localStorage.getItem('dogme_user_logged');
             if (isLogged === 'true') {
-                window.location.href = 'profile.html';
+                window.location.href = 'user.html';
                 return;
             }
             updateLanguageButtons();
