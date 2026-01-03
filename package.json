@@ -4,10 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "echo 'Static site - no build needed'",
-    "start": "next start",
-    "lint": "eslint ."
+    "build": "echo 'Static site ready'"
   },
   "dependencies": {
     "nodemailer": "7.0.12",
@@ -21,17 +18,15 @@
     "tailwind-merge": "3.4.0",
     "tailwindcss-animate": "1.0.7"
   },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.9",
-    "@types/node": "^22",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "postcss": "^8.5",
-    "tailwindcss": "^4.1.9",
-    "tw-animate-css": "1.3.3",
-    "typescript": "^5"
-  },
   "engines": {
     "node": "24.x"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@types/node": "25.0.3",
+    "typescript": "5.9.3",
+    "tailwindcss": "4.1.18",
+    "postcss": "8.5.6"
   }
 }
