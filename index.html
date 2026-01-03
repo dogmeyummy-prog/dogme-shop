@@ -146,11 +146,11 @@
                 <button onclick="switchLanguage('fr')" class="px-1.5 md:px-2 py-1 rounded-full hover:bg-white transition-all">FR</button>
             </div>
 
-            <div onclick="location.href='checkout.html'" class="relative cursor-pointer active-press">
+            <div onclick="navigateToUser()" class="relative cursor-pointer active-press">
                 <img src="shopping-car.jpg" class="nav-avatar border border-gray-100 shadow-sm" alt="Cart">
                 <div id="cart-count" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[9px] md:text-[10px] font-bold w-4 h-4 md:w-5 md:h-5 rounded-full flex items-center justify-center border-2 border-white">0</div>
             </div>
-            <img src="user.jpg" onclick="location.href='user.html'" class="nav-avatar hover:ring-2 ring-orange-400" alt="User">
+            <img src="user.jpg" onclick="navigateToUser()" class="nav-avatar hover:ring-2 ring-orange-400" alt="User">
         </div>
     </nav>
 
@@ -167,7 +167,7 @@
                 <div class="flex flex-col md:flex-row md:flex-wrap items-center gap-4 md:gap-5">
                     <button data-t="btn_buy" onclick="location.href='shopping.html'" class="w-full md:w-auto px-8 md:px-10 h-[60px] md:h-[68px] bg-gray-900 text-white rounded-2xl font-black text-base md:text-lg hover:bg-orange-600 shadow-xl active-press">立即购买 🛒</button>
                     
-                    <div id="home-user-badge" class="rank-inline-card w-full md:w-auto cursor-pointer active-press" onclick="location.href='user.html'">
+                    <div id="home-user-badge" class="rank-inline-card w-full md:w-auto cursor-pointer active-press" onclick="navigateToUser()">
                         <div class="flex items-center justify-between gap-4">
                             <span id="rank-name-text" data-t="rank_unlogged" class="text-xs md:text-[13px] font-black text-gray-800">未登录 🐾</span>
                             <span id="rank-level-tag" class="text-white text-[8px] md:text-[9px] font-black px-2 md:px-2.5 py-0.5 rounded-full bg-gray-300">V0</span>
@@ -224,10 +224,19 @@
             document.getElementById('cart-count').innerText = cart.length;
         }
 
+        function navigateToUser() {
+            const isLogged = localStorage.getItem('dogme_user_logged');
+            if (isLogged === 'true') {
+                location.href = 'user.html';
+            } else {
+                location.href = 'login.html';
+            }
+        }
+
         function handleClaim() {
             const isLogged = localStorage.getItem('dogme_user_logged');
             if (isLogged !== 'true') {
-                showPopup({ icon: "🔐", title: "Wait!", msg: "Please login first 🐾", btnText: "Login", action: () => { location.href = 'user.html'; } });
+                showPopup({ icon: "🔐", title: "Wait!", msg: "Please login first 🐾", btnText: "Login", action: () => { location.href = 'login.html'; } });
                 return;
             }
             localStorage.setItem('dogme_coupon_claimed', 'true');
