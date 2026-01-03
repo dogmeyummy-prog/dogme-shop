@@ -8,6 +8,30 @@
     {
       "source": "/api/service",
       "destination": "/api/server.js"
+    },
+    {
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/user",
+      "destination": "/user.html"
+    },
+    {
+      "source": "/shopping",
+      "destination": "/shopping.html"
+    },
+    {
+      "source": "/promo",
+      "destination": "/promo.html"
+    },
+    {
+      "source": "/checkout",
+      "destination": "/checkout.html"
+    },
+    {
+      "source": "/coupon",
+      "destination": "/coupon.html"
     }
   ]
 }
