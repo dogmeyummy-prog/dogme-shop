@@ -1,13 +1,18 @@
 {
-  "buildCommand": "echo 'Static HTML site'",
+  "version": 2,
+  "buildCommand": "echo 'Static HTML site - no build needed'",
   "outputDirectory": ".",
   "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [{ "source": "/api/service", "destination": "/api/server.js" }],
-  "routes": [
+  "functions": {
+    "api/server.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/api/service",
+      "destination": "/api/server.js"
     }
   ]
 }
