@@ -1,37 +1,5 @@
 {
   "version": 2,
   "buildCommand": "echo 'Static HTML site - no build needed'",
-  "outputDirectory": ".",
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    {
-      "source": "/api/service",
-      "destination": "/api/server.js"
-    },
-    {
-      "source": "/login",
-      "destination": "/login.html"
-    },
-    {
-      "source": "/user",
-      "destination": "/user.html"
-    },
-    {
-      "source": "/shopping",
-      "destination": "/shopping.html"
-    },
-    {
-      "source": "/promo",
-      "destination": "/promo.html"
-    },
-    {
-      "source": "/checkout",
-      "destination": "/checkout.html"
-    },
-    {
-      "source": "/coupon",
-      "destination": "/coupon.html"
-    }
-  ]
+  "outputDirectory": "."
 }
