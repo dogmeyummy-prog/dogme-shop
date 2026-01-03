@@ -3,154 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dogme Pay | 订单详情 🐾</title>
+    <title>Dogme | 支付 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Quicksand', sans-serif; background: #fdfcf9; }
-        .pay-card { background: white; border-radius: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        .active-press:active { transform: scale(0.95); }
-        .item-row { border-bottom: 1px dashed #f0f0f0; }
-        .success-anim { animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes scaleIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        body { font-family: 'Quicksand', sans-serif; }
+        .active-press:active { transform: scale(0.96); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
     </style>
 </head>
-<body class="min-h-screen py-10 px-6">
-
-    <div class="max-w-md mx-auto">
-        <div class="flex items-center gap-4 mb-8">
-            <button onclick="history.back()" class="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-gray-800 active-press border border-orange-50">❮</button>
-            <h2 class="text-2xl font-black text-gray-900 tracking-tight">确认订单</h2>
+<body class="bg-[#fdfcf9] min-h-screen">
+    <nav class="flex justify-between items-center px-4 md:px-6 lg:px-12 py-4 md:py-6 sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-orange-50">
+        <div class="flex items-center gap-2 md:gap-4">
+            <button onclick="location.href='checkout.html'" class="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50">❮</button>
+            <h1 class="text-lg md:text-2xl font-black text-gray-800 tracking-tighter" data-t="pay_title">支付</h1>
         </div>
+    </nav>
 
-        <div class="pay-card p-8 mb-6">
-            <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">您的购物清单 Items</h3>
-            
-            <div id="items-list" class="space-y-4 mb-8">
-                </div>
+    <main class="max-w-2xl mx-auto px-4 md:px-6 mt-6 md:mt-10">
+        <div class="bg-white rounded-[30px] md:rounded-[40px] p-6 md:p-10 shadow-lg border border-orange-50">
+            <div class="text-center mb-8 md:mb-10">
+                <div class="text-6xl md:text-8xl mb-4 md:mb-6 pulse">💳</div>
+                <h2 class="text-xl md:text-3xl font-black text-gray-800 mb-2 md:mb-3" data-t="pay_processing">正在处理支付</h2>
+                <p id="amount-display" class="text-3xl md:text-5xl font-black text-orange-500">$0.00</p>
+            </div>
 
-            <div class="bg-gray-50 rounded-[30px] p-6 space-y-3">
-                <div class="flex justify-between text-sm">
-                    <span class="font-bold text-gray-400">商品小计 (Subtotal)</span>
-                    <span id="subtotal-price" class="font-black text-gray-800">$0.00</span>
+            <div class="space-y-3 md:space-y-4 mb-6 md:mb-8">
+                <div class="flex items-center justify-between p-4 md:p-5 bg-gray-50 rounded-2xl md:rounded-3xl">
+                    <span class="font-bold text-sm md:text-base text-gray-600" data-t="pay_method">支付方式</span>
+                    <span class="font-black text-sm md:text-base text-gray-800">Stripe</span>
                 </div>
-                <div class="flex justify-between text-sm">
-                    <span class="font-bold text-gray-400">税费 Sales Tax (HST/GST)</span>
-                    <span id="tax-price" class="font-black text-gray-800">$0.00</span>
-                </div>
-                <div class="h-[1px] bg-gray-200 my-2"></div>
-                <div class="flex justify-between items-end">
-                    <span class="font-black text-gray-900">实付总额 (Total)</span>
-                    <h1 id="total-amount" class="text-3xl font-black text-orange-500 tracking-tighter">$0.00</h1>
+                <div class="flex items-center justify-between p-4 md:p-5 bg-gray-50 rounded-2xl md:rounded-3xl">
+                    <span class="font-bold text-sm md:text-base text-gray-600" data-t="pay_status">支付状态</span>
+                    <span class="font-black text-sm md:text-base text-green-500" data-t="pay_success">成功</span>
                 </div>
             </div>
-        </div>
 
-        <div class="space-y-4">
-            <button onclick="handleRealPay()" id="confirm-pay" class="w-full py-5 bg-gray-900 text-white rounded-[25px] font-black text-lg active-press shadow-xl shadow-gray-200">
-                🚀 立即真实支付
+            <button onclick="completePurchase()" class="w-full py-4 md:py-5 bg-gray-900 text-white rounded-2xl md:rounded-3xl font-black text-base md:text-lg active-press hover:bg-orange-600 transition-all" data-t="pay_complete">
+                完成购买
             </button>
-            <p class="text-center text-[10px] text-gray-300 font-bold uppercase tracking-widest">Powered by Stripe Security 🐾</p>
         </div>
-    </div>
+    </main>
 
-    <div id="success-overlay" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center hidden">
-        <div class="success-anim text-center">
-            <div class="text-8xl mb-6">✨</div>
-            <h2 class="text-3xl font-black text-gray-900 mb-2">支付完成!</h2>
-            <p id="exp-gain-msg" class="text-orange-500 font-bold mb-10">获得经验奖励 🐾</p>
-            <button onclick="location.href='index.html'" class="px-12 py-4 bg-gray-900 text-white rounded-2xl font-black active-press">回到主页</button>
-        </div>
-    </div>
-
+    <script src="i18n.js"></script>
     <script>
-        // 核心价格计算逻辑
-        window.onload = () => {
-            const cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
-            const itemsContainer = document.getElementById('items-list');
+        const amount = localStorage.getItem('dogme_pending_total') || '$0.00';
+        document.getElementById('amount-display').innerText = amount;
+
+        function completePurchase() {
+            const cart = JSON.parse(localStorage.getItem('dogme_cart')) || [];
+            const orderHistory = JSON.parse(localStorage.getItem('dogme_order_history')) || [];
             
-            if (cart.length === 0) {
-                itemsContainer.innerHTML = `<p class="text-gray-400 font-bold py-4">购物车是空的 🐾</p>`;
-                return;
-            }
-
-            // 1. 渲染商品
-            let totalAfterTax = 0;
-            itemsContainer.innerHTML = cart.map(item => {
-                totalAfterTax += item.price; // 假设存储的是税后价
-                return `
-                    <div class="flex justify-between items-center py-2 item-row">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-xl">🦴</div>
-                            <div>
-                                <span class="block font-black text-gray-800 text-sm">${item.name}</span>
-                                <span class="block text-[9px] text-gray-400 font-bold uppercase">Qty: 1</span>
-                            </div>
-                        </div>
-                        <span class="font-black text-gray-800">$${item.price.toFixed(2)}</span>
-                    </div>
-                `;
-            }).join('');
-
-            // 2. 拆解价格 (假设税率 13%)
-            const taxRate = 0.13;
-            // 原价 = 税后价 / (1 + 税率)
-            const subtotal = totalAfterTax / (1 + taxRate);
-            const taxAmount = totalAfterTax - subtotal;
-
-            document.getElementById('subtotal-price').innerText = `$${subtotal.toFixed(2)}`;
-            document.getElementById('tax-price').innerText = `$${taxAmount.toFixed(2)}`;
-            document.getElementById('total-amount').innerText = `$${totalAfterTax.toFixed(2)}`;
-        };
-
-        // 真实支付逻辑对接
-        async function handleRealPay() {
-            const btn = document.getElementById('confirm-pay');
-            const totalStr = document.getElementById('total-amount').innerText.replace('$', '');
-            const email = localStorage.getItem('dogme_user_email') || 'guest@dogme.com';
+            const newOrder = {
+                id: 'DGM' + Date.now(),
+                date: new Date().toLocaleDateString('zh-CN'),
+                timestamp: new Date().toISOString(),
+                items: cart,
+                total: parseFloat(amount.replace('$', '')),
+                status: 'COMPLETED',
+                statusColor: 'bg-green-500'
+            };
             
-            btn.innerText = "⚡️ 正在连接银行...";
-            btn.disabled = true;
-
-            try {
-                // 调用你在 server.js 中实现的接口
-                const response = await fetch('/api/create-checkout-session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        amount: parseFloat(totalStr),
-                        email: email
-                    })
-                });
-
-                const data = await response.json();
-                if (data.url) {
-                    window.location.href = data.url; // 跳转至 Stripe
-                } else {
-                    throw new Error("API Error");
-                }
-            } catch (e) {
-                alert("支付初始化失败，请检查网络或 Vercel 密钥配置 🐾");
-                btn.innerText = "🛒 立即支付";
-                btn.disabled = false;
-            }
-        }
-
-        // 检测支付返回结果
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('status') === 'success') {
-            const paidAmount = parseFloat(urlParams.get('amount') || '0');
-            localStorage.setItem('dogme_has_order', 'true');
+            orderHistory.push(newOrder);
+            localStorage.setItem('dogme_order_history', JSON.stringify(orderHistory));
             
-            // 经验奖励逻辑
-            let currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
-            localStorage.setItem('dogme_user_exp', currentExp + Math.floor(paidAmount));
+            // Add experience points
+            const currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
+            const earnedExp = Math.floor(newOrder.total * 2);
+            localStorage.setItem('dogme_user_exp', (currentExp + earnedExp).toString());
             
-            // 清理
+            // Clear cart
             localStorage.removeItem('dogme_cart');
+            localStorage.removeItem('dogme_pending_total');
             
-            document.getElementById('exp-gain-msg').innerText = `获得 +${Math.floor(paidAmount)} 经验值 🐾`;
-            document.getElementById('success-overlay').classList.remove('hidden');
+            alert(`购买成功！获得 ${earnedExp} 经验值 🐾`);
+            location.href = 'user.html';
         }
     </script>
 </body>
