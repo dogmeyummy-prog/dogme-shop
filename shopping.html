@@ -211,9 +211,7 @@
         }
 
         function goToAccount() {
-            const isLogged = localStorage.getItem('dogme_user_logged');
-            if (isLogged === 'true') location.href = 'user.html';
-            else { localStorage.removeItem('dogme_user_logged'); location.href = 'user.html'; }
+            location.href = 'user.html';
         }
 
         window.syncStatus = function() {
