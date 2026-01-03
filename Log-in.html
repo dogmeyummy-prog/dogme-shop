@@ -3,117 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dogme | 个人中心 🐾</title>
+    <title>Dogme | 登录 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; }
         .active-press:active { transform: scale(0.96); }
-        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); }
-        .progress-bar-fill { transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes subtlePulse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        .float-tag-animation { animation: subtlePulse 3s ease-in-out infinite; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .float-img { animation: float 4s ease-in-out infinite; }
     </style>
 </head>
 <body class="pb-20">
-    <nav class="flex justify-between items-center px-8 py-6 sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-orange-50">
-        <button onclick="location.href='index.html'" class="w-11 h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50">❮</button>
-        <h1 class="text-xl font-black text-gray-900 tracking-tighter">My Dogme.</h1>
-        <button onclick="handleLogout()" class="text-[10px] font-black text-gray-400 uppercase tracking-widest active-press">Logout</button>
+    <nav class="flex justify-between items-center px-6 md:px-8 py-4 md:py-6 sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-orange-50">
+        <button onclick="location.href='index.html'" class="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50">❮</button>
+        <h1 class="text-lg md:text-xl font-black text-gray-900 tracking-tighter" data-t="login_title">登录</h1>
+        <div class="flex bg-gray-100 rounded-xl overflow-hidden">
+            <button onclick="switchLanguage('zh')" id="lang-zh" class="px-2 py-1.5 text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-colors">中文</button>
+            <button onclick="switchLanguage('en')" id="lang-en" class="px-2 py-1.5 text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-colors">EN</button>
+            <button onclick="switchLanguage('fr')" id="lang-fr" class="px-2 py-1.5 text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-colors">FR</button>
+        </div>
     </nav>
 
-    <main class="max-w-md mx-auto px-6 mt-10">
-        <div class="glass-card rounded-[45px] p-10 text-center shadow-xl mb-8 relative overflow-hidden">
-            <div class="relative inline-block mb-6">
-                <img src="user.jpg" class="w-28 h-28 rounded-[35px] mx-auto border-4 border-white shadow-lg object-cover">
-                <div id="user-level-tag" class="absolute -bottom-2 -right-2 bg-gray-900 text-white text-[10px] font-black px-3 py-1 rounded-full border-2 border-white">V1</div>
+    <main class="max-w-md mx-auto px-4 md:px-6 mt-8 md:mt-16">
+        <div class="text-center mb-8 md:mb-12">
+            <div class="float-img inline-block mb-4 md:mb-6">
+                <div class="w-20 h-20 md:w-24 md:h-24 bg-orange-50 rounded-3xl md:rounded-[35px] flex items-center justify-center text-4xl md:text-5xl border-4 border-white shadow-xl">🐾</div>
             </div>
-            <h2 id="user-display-email" class="text-lg font-black text-gray-800 tracking-tight">载入中...</h2>
-            
-            <div class="mt-8 px-4 text-left">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Growth EXP</span>
-                    <span id="exp-count-text" class="text-[10px] font-black text-gray-800">0 / 100</span>
-                </div>
-                <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div id="exp-bar-fill" class="progress-bar-fill h-full bg-orange-500" style="width: 0%"></div>
-                </div>
-            </div>
+            <h2 class="text-2xl md:text-3xl font-black text-gray-900 mb-2" data-t="login_welcome">欢迎回来</h2>
+            <p class="text-sm md:text-base text-gray-400 font-bold" data-t="login_subtitle">输入邮箱登录您的 Dogme 账户</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <div onclick="location.href='coupon.html'" class="bg-white p-6 rounded-[35px] border border-orange-50 shadow-sm active-press cursor-pointer">
-                <span class="text-2xl block mb-2">🎟️</span>
-                <span class="font-black text-gray-800 block">我的优惠券</span>
-                <span id="coupon-status" class="text-[9px] font-bold text-gray-300 uppercase">尚未领取</span>
+        <div class="glass-card rounded-[35px] md:rounded-[45px] p-6 md:p-8 shadow-xl">
+            <!-- 邮箱输入 -->
+            <div class="mb-4 md:mb-6">
+                <label class="block text-xs md:text-sm font-black text-gray-700 mb-2 uppercase tracking-wider" data-t="login_email_label">邮箱地址</label>
+                <input 
+                    type="email" 
+                    id="email-input" 
+                    placeholder="your@email.com"
+                    class="w-full px-4 py-3 md:py-4 rounded-2xl md:rounded-3xl border-2 border-gray-100 focus:border-orange-500 focus:outline-none font-bold text-sm md:text-base"
+                >
             </div>
 
-            <div id="dynamic-order-btn">
-                <div onclick="location.href='index.html'" class="bg-gray-900 p-6 rounded-[35px] shadow-lg active-press cursor-pointer text-center h-full">
-                    <span class="text-2xl block mb-2">🛒</span>
-                    <span class="font-black text-white block">去购物</span>
-                    <span class="text-[9px] font-bold text-gray-500 uppercase">Shopping</span>
-                </div>
+            <!-- 验证码输入区域（初始隐藏）-->
+            <div id="code-section" class="mb-4 md:mb-6 hidden">
+                <label class="block text-xs md:text-sm font-black text-gray-700 mb-2 uppercase tracking-wider" data-t="login_code_label">验证码</label>
+                <input 
+                    type="text" 
+                    id="code-input" 
+                    placeholder="6位数字"
+                    maxlength="6"
+                    class="w-full px-4 py-3 md:py-4 rounded-2xl md:rounded-3xl border-2 border-gray-100 focus:border-orange-500 focus:outline-none font-bold text-sm md:text-base"
+                >
+                <p class="text-xs text-gray-400 mt-2 font-bold" data-t="login_code_hint">请检查您的邮箱，验证码5分钟内有效</p>
             </div>
-        </div>
 
-        <div onclick="location.href='tracking.html'" class="float-tag-animation w-full bg-white p-6 rounded-[40px] border border-orange-100 shadow-xl shadow-orange-100/50 flex items-center justify-between active-press cursor-pointer mb-8">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-orange-50 rounded-3xl flex items-center justify-center text-3xl">🚚</div>
-                <div class="text-left">
-                    <span class="block font-black text-gray-800 text-lg">查看物流</span>
-                    <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Track Packages</span>
-                </div>
-            </div>
-            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300">❯</div>
+            <!-- 主按钮 -->
+            <button 
+                id="main-btn" 
+                onclick="handleGetCode()"
+                class="w-full bg-gray-900 text-white py-3 md:py-4 rounded-2xl md:rounded-3xl font-black text-sm md:text-base uppercase tracking-wider active-press shadow-lg hover:bg-gray-800 transition-colors"
+                data-t="btn_get_code"
+            >
+                获取验证码
+            </button>
+
+            <!-- 提示信息 -->
+            <p class="text-center text-xs text-gray-400 mt-4 md:mt-6 font-bold" data-t="login_privacy_hint">
+                登录即表示您同意 Dogme 的服务条款与隐私政策
+            </p>
         </div>
     </main>
 
+    <!-- Toast 提示框 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-2xl hidden z-50"></div>
+
+    <script src="i18n.js"></script>
     <script>
-        window.onload = () => {
-            const isLogged = localStorage.getItem('dogme_user_logged');
-            const email = localStorage.getItem('dogme_user_email');
-            
-            if (isLogged !== 'true' || !email) {
-                window.location.replace('user.html');
+        let currentEmail = '';
+        let isCodeSent = false;
+
+        function updateLanguageButtons() {
+            const lang = localStorage.getItem('dogme_lang') || 'zh';
+            ['zh', 'en', 'fr'].forEach(l => {
+                const btn = document.getElementById(`lang-${l}`);
+                if (l === lang) {
+                    btn.classList.add('bg-gray-900', 'text-white');
+                    btn.classList.remove('text-gray-400');
+                } else {
+                    btn.classList.remove('bg-gray-900', 'text-white');
+                    btn.classList.add('text-gray-400');
+                }
+            });
+        }
+
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), duration);
+        }
+
+        async function handleGetCode() {
+            const email = document.getElementById('email-input').value.trim();
+            const lang = localStorage.getItem('dogme_lang') || 'zh';
+            const t = window.translations?.[lang] || window.translations?.['zh'];
+
+            if (!email || !/\S+@\S+\.\S+/.test(email)) {
+                showToast(t.login_email_invalid || '请输入有效的邮箱地址');
                 return;
             }
 
-            document.getElementById('user-display-email').innerText = email;
-            
-            // 1. 动态按钮逻辑
-            const hasOrder = localStorage.getItem('dogme_has_order');
-            if (hasOrder === 'true') {
-                document.getElementById('dynamic-order-btn').innerHTML = `
-                    <div onclick="location.href='order-history.html'" class="bg-orange-500 p-6 rounded-[35px] shadow-lg shadow-orange-200 active-press cursor-pointer text-center h-full">
-                        <span class="text-2xl block mb-2">📋</span>
-                        <span class="font-black text-white block">购买历史</span>
-                        <span class="text-[9px] font-bold text-orange-100 uppercase">Orders</span>
-                    </div>
-                `;
-            }
+            currentEmail = email;
+            const mainBtn = document.getElementById('main-btn');
+            mainBtn.disabled = true;
+            mainBtn.textContent = t.login_sending || '发送中...';
 
-            // 2. 状态同步
-            const currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
-            setTimeout(() => {
-                document.getElementById('exp-bar-fill').style.width = Math.min(currentExp, 100) + "%";
-                document.getElementById('exp-count-text').innerText = `${currentExp} / 100`;
-                if (currentExp >= 100) document.getElementById('user-level-tag').innerText = "V2";
-            }, 300);
+            try {
+                const response = await fetch('/api/service', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'send-code', email })
+                });
 
-            if (localStorage.getItem('dogme_coupon_claimed') === 'true') {
-                const status = document.getElementById('coupon-status');
-                status.innerText = "8.0折已激活";
-                status.classList.replace('text-gray-300', 'text-orange-500');
-            }
-        };
+                const data = await response.json();
 
-        function handleLogout() {
-            if(confirm("确定要退出登录吗？🐾")) {
-                localStorage.clear();
-                window.location.replace('index.html');
+                if (data.success) {
+                    showToast(t.login_code_sent || '验证码已发送到您的邮箱！');
+                    document.getElementById('code-section').classList.remove('hidden');
+                    mainBtn.textContent = t.btn_login || '开启 Dogme 之旅';
+                    mainBtn.setAttribute('data-t', 'btn_login');
+                    mainBtn.onclick = handleLogin;
+                    isCodeSent = true;
+                } else {
+                    showToast(t.login_send_failed || '发送失败，请稍后重试');
+                    mainBtn.disabled = false;
+                    mainBtn.textContent = t.btn_get_code || '获取验证码';
+                }
+            } catch (error) {
+                console.error('[v0] Send code error:', error);
+                showToast(t.login_network_error || '网络错误，请检查连接');
+                mainBtn.disabled = false;
+                mainBtn.textContent = t.btn_get_code || '获取验证码';
             }
         }
+
+        async function handleLogin() {
+            const code = document.getElementById('code-input').value.trim();
+            const lang = localStorage.getItem('dogme_lang') || 'zh';
+            const t = window.translations?.[lang] || window.translations?.['zh'];
+
+            if (!code || code.length !== 6) {
+                showToast(t.login_code_invalid || '请输入6位验证码');
+                return;
+            }
+
+            const mainBtn = document.getElementById('main-btn');
+            mainBtn.disabled = true;
+            mainBtn.textContent = t.login_verifying || '验证中...';
+
+            try {
+                const response = await fetch('/api/service', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        action: 'verify-code', 
+                        email: currentEmail, 
+                        code 
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('dogme_user_logged', 'true');
+                    localStorage.setItem('dogme_user_email', currentEmail);
+                    localStorage.setItem('dogme_user_exp', '0');
+                    
+                    showToast(t.login_success || '登录成功！');
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 1000);
+                } else {
+                    showToast(data.msg || t.login_verify_failed || '验证失败');
+                    mainBtn.disabled = false;
+                    mainBtn.textContent = t.btn_login || '开启 Dogme 之旅';
+                }
+            } catch (error) {
+                console.error('[v0] Verify code error:', error);
+                showToast(t.login_network_error || '网络错误，请检查连接');
+                mainBtn.disabled = false;
+                mainBtn.textContent = t.btn_login || '开启 Dogme 之旅';
+            }
+        }
+
+        window.onload = () => {
+            const isLogged = localStorage.getItem('dogme_user_logged');
+            if (isLogged === 'true') {
+                window.location.href = 'profile.html';
+                return;
+            }
+            updateLanguageButtons();
+        };
+
+        window.translations = translations;
     </script>
 </body>
 </html>
