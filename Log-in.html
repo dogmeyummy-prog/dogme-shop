@@ -121,7 +121,7 @@
             mainBtn.textContent = t.login_sending || '发送中...';
 
             try {
-                const response = await fetch('/api/service', {
+                const response = await fetch('/api/server', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action: 'send-code', email })
@@ -136,6 +136,7 @@
                     mainBtn.setAttribute('data-t', 'btn_login');
                     mainBtn.onclick = handleLogin;
                     isCodeSent = true;
+                    mainBtn.disabled = false;
                 } else {
                     showToast(t.login_send_failed || '发送失败，请稍后重试');
                     mainBtn.disabled = false;
@@ -164,7 +165,7 @@
             mainBtn.textContent = t.login_verifying || '验证中...';
 
             try {
-                const response = await fetch('/api/service', {
+                const response = await fetch('/api/server', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
@@ -205,6 +206,8 @@
                 return;
             }
             updateLanguageButtons();
+            const savedLang = localStorage.getItem('dogme_lang') || 'zh';
+            switchLanguage(savedLang);
         };
 
         window.translations = translations;
