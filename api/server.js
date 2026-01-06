@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
-const transporter = nodemailer.createTransport({
+const gmailTransporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 465,
     secure: true,
@@ -45,9 +45,6 @@ export default async function handler(req, res) {
         if (!email) return res.status(400).json({ success: false, msg: '邮箱缺失' });
         const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         if (!emailOk) return res.status(400).json({ success: false, msg: '邮箱格式不正确' });
-        if (!process.env.DOGME_GMAIL_USER || !process.env.DOGME_GMAIL_PASS) {
-            return res.status(500).json({ success: false, msg: '邮件服务未配置' });
-        }
         const now = Date.now();
         const last = lastSendAt[email] || 0;
         if (now - last < 60 * 1000) {
@@ -61,14 +58,7 @@ export default async function handler(req, res) {
             expires: Date.now() + 5 * 60 * 1000 
         };
 
-        try {
-            await transporter.verify();
-            await transporter.sendMail({
-                from: `"Dogme Security 🐾" <${process.env.DOGME_GMAIL_USER}>`,
-                to: email,
-                subject: `${generatedCode} 是您的 Dogme 登录验证码`,
-                // 🌟 美化后的邮件 HTML 模板
-                html: `
+        const htmlTpl = `
                 <div style="background-color: #fdfcf9; padding: 40px 20px; font-family: 'Quicksand', sans-serif; text-align: center;">
                     <div style="max-width: 400px; margin: 0 auto; background: white; border-radius: 40px; padding: 40px; border: 1px solid #f1f1f1; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
                         <div style="font-size: 50px; margin-bottom: 10px;">🐾</div>
@@ -90,12 +80,46 @@ export default async function handler(req, res) {
                         </div>
                     </div>
                 </div>
-                `
-            });
-            return res.status(200).json({ success: true });
-        } catch (e) {
-            return res.status(500).json({ success: false, msg: '邮件发送失败' });
+                `;
+
+        const providers = [];
+        if (process.env.DOGME_GMAIL_USER && process.env.DOGME_GMAIL_PASS) {
+            providers.push({ name: 'gmail', transporter: gmailTransporter, from: `"Dogme Security 🐾" <${process.env.DOGME_GMAIL_USER}>` });
         }
+        if (process.env.SENDGRID_API_KEY) {
+            const sg = nodemailer.createTransport({
+                host: 'smtp.sendgrid.net',
+                port: 465,
+                secure: true,
+                auth: { user: 'apikey', pass: process.env.SENDGRID_API_KEY }
+            });
+            providers.push({ name: 'sendgrid', transporter: sg, from: `"Dogme Security 🐾" <no-reply@dogme.shop>` });
+        }
+        if (providers.length === 0) {
+            return res.status(500).json({ success: false, msg: '邮件服务未配置' });
+        }
+        let sent = false;
+        let lastErr = null;
+        for (const p of providers) {
+            try {
+                await p.transporter.verify();
+                await p.transporter.sendMail({
+                    from: p.from,
+                    to: email,
+                    subject: `${generatedCode} 是您的 Dogme 登录验证码`,
+                    html: htmlTpl
+                });
+                sent = true;
+                break;
+            } catch (e) {
+                lastErr = e;
+            }
+        }
+        if (sent) return res.status(200).json({ success: true });
+        const code = (lastErr && (lastErr.code || lastErr.responseCode)) || 'UNKNOWN';
+        if (code === 'EAUTH' || code === 535) return res.status(500).json({ success: false, msg: '邮件认证失败' });
+        if (code === 'ETIMEDOUT' || code === 'ENOTFOUND') return res.status(500).json({ success: false, msg: '邮件服务网络异常' });
+        return res.status(500).json({ success: false, msg: '邮件发送失败' });
     }
 
     // --- 接口：验证码校验 ---
@@ -111,15 +135,35 @@ export default async function handler(req, res) {
 
     // --- 接口：SMTP 健康检查 ---
     if (url.includes('test-smtp')) {
-        try {
-            if (!process.env.DOGME_GMAIL_USER || !process.env.DOGME_GMAIL_PASS) {
-                return res.status(500).json({ success: false, msg: '邮件服务未配置' });
+        const results = [];
+        if (process.env.DOGME_GMAIL_USER && process.env.DOGME_GMAIL_PASS) {
+            try {
+                await gmailTransporter.verify();
+                results.push({ provider: 'gmail', ok: true });
+            } catch {
+                results.push({ provider: 'gmail', ok: false });
             }
-            await transporter.verify();
-            return res.status(200).json({ success: true });
-        } catch (e) {
-            return res.status(500).json({ success: false, msg: '邮件服务连接失败' });
+        } else {
+            results.push({ provider: 'gmail', ok: false });
         }
+        if (process.env.SENDGRID_API_KEY) {
+            const sg = nodemailer.createTransport({
+                host: 'smtp.sendgrid.net',
+                port: 465,
+                secure: true,
+                auth: { user: 'apikey', pass: process.env.SENDGRID_API_KEY }
+            });
+            try {
+                await sg.verify();
+                results.push({ provider: 'sendgrid', ok: true });
+            } catch {
+                results.push({ provider: 'sendgrid', ok: false });
+            }
+        } else {
+            results.push({ provider: 'sendgrid', ok: false });
+        }
+        const anyOk = results.some(r => r.ok);
+        return res.status(anyOk ? 200 : 500).json({ success: anyOk, results });
     }
 
     // --- 接口：创建 Stripe Checkout 会话 ---
