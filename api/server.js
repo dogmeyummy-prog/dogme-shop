@@ -106,5 +106,37 @@ export default async function handler(req, res) {
         return res.status(401).json({ success: false, msg: '验证码无效或已过期' });
     }
 
+    // --- 接口：创建 Stripe Checkout 会话 ---
+    if (url.includes('create-checkout-session')) {
+        const { amount, email } = body;
+        if (!amount) return res.status(400).json({ msg: '金额无效' });
+
+        try {
+            // 需要在 Stripe Dashboard 开启 Alipay 和 WeChat Pay
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card', 'alipay', 'wechat_pay'],
+                line_items: [{
+                    price_data: {
+                        currency: 'cad', // 或 cny，取决于你的业务
+                        product_data: {
+                            name: 'Dogme 零食订单',
+                            images: ['https://dogme.vercel.app/logo.png'], // 替换为真实 Logo URL
+                        },
+                        unit_amount: Math.round(amount * 100), // Stripe 单位为分
+                    },
+                    quantity: 1,
+                }],
+                mode: 'payment',
+                customer_email: email,
+                success_url: `${req.headers.origin || 'https://dogme.vercel.app'}/pay.html?status=success&amount=${amount}`,
+                cancel_url: `${req.headers.origin || 'https://dogme.vercel.app'}/pay.html?status=cancel`,
+            });
+            return res.status(200).json({ url: session.url });
+        } catch (e) {
+            console.error('Stripe Error:', e);
+            return res.status(500).json({ msg: e.message });
+        }
+    }
+
     return res.status(404).json({ msg: "Endpoint not found" });
 }

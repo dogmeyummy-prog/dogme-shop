@@ -47,10 +47,21 @@
         </div>
 
         <div class="space-y-4">
-            <button onclick="handleRealPay()" id="confirm-pay" class="w-full py-5 bg-gray-900 text-white rounded-[25px] font-black text-lg active-press shadow-xl shadow-gray-200">
-                🚀 立即真实支付
+            <button onclick="handleRealPay()" id="confirm-pay" class="w-full py-5 bg-gray-900 text-white rounded-[25px] font-black text-lg active-press shadow-xl shadow-gray-200 flex flex-col items-center justify-center gap-1">
+                <span>🚀 立即安全支付</span>
+                <span class="text-[10px] text-gray-400 font-normal opacity-80">支持卡 / 支付宝 / 微信 / PayPal</span>
             </button>
-            <p class="text-center text-[10px] text-gray-300 font-bold uppercase tracking-widest">Powered by Stripe Security 🐾</p>
+            
+            <div class="flex justify-center gap-4 opacity-50 grayscale hover:grayscale-0 transition-all duration-300">
+                <!-- 纯展示图标，实际支付由 Stripe 托管 -->
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png" alt="Alipay" class="h-6 w-auto" title="支付宝">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196566.png" alt="WeChat Pay" class="h-6 w-auto" title="微信支付">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196565.png" alt="PayPal" class="h-6 w-auto" title="PayPal">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196561.png" alt="Visa" class="h-6 w-auto" title="Visa">
+                <img src="https://cdn-icons-png.flaticon.com/512/196/196559.png" alt="Mastercard" class="h-6 w-auto" title="Mastercard">
+            </div>
+
+            <p class="text-center text-[10px] text-gray-300 font-bold uppercase tracking-widest mt-2">Powered by Stripe Security 🐾</p>
         </div>
     </div>
 
