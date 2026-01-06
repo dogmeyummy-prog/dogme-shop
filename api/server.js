@@ -83,13 +83,7 @@ export default async function handler(req, res) {
                 `;
 
     const providers = [];
-    if (process.env.DOGME_GMAIL_USER && process.env.DOGME_GMAIL_PASS) {
-      providers.push({
-        name: 'gmail',
-        transporter: gmailTransporter,
-        from: `"Dogme Security 🐾" <${process.env.DOGME_GMAIL_USER}>`
-      });
-    }
+    const brandFrom = process.env.SENDGRID_FROM || process.env.DOGME_GMAIL_USER || 'dogme.yummy@gmail.com';
     if (process.env.SENDGRID_API_KEY) {
       const sg = nodemailer.createTransport({
         host: 'smtp.sendgrid.net',
@@ -100,7 +94,14 @@ export default async function handler(req, res) {
       providers.push({
         name: 'sendgrid',
         transporter: sg,
-        from: `"Dogme Security 🐾" <${process.env.SENDGRID_FROM || 'no-reply@dogme.shop'}>`
+        from: `"Dogme Security 🐾" <${brandFrom}>`
+      });
+    }
+    if (process.env.DOGME_GMAIL_USER && process.env.DOGME_GMAIL_PASS) {
+      providers.push({
+        name: 'gmail',
+        transporter: gmailTransporter,
+        from: `"Dogme Security 🐾" <${process.env.DOGME_GMAIL_USER}>`
       });
     }
     if (providers.length === 0) {
@@ -116,7 +117,12 @@ export default async function handler(req, res) {
           to: email,
           replyTo: process.env.DOGME_GMAIL_USER || 'dogme.yummy@gmail.com',
           subject: `${generatedCode} 是您的 Dogme 登录验证码`,
-          html: htmlTpl
+          text: `您的登录验证码：${generatedCode}\n5分钟内有效。如非本人操作请忽略此邮件。\nDogme Canada © 2026`,
+          html: htmlTpl,
+          headers: {
+            'List-Unsubscribe': `<mailto:${process.env.DOGME_GMAIL_USER || 'dogme.yummy@gmail.com'}?subject=unsubscribe>`
+          },
+          messageId: `<dogme-${generatedCode}-${Date.now()}@${(brandFrom.split('@')[1] || 'dogme.shop')}>`
         });
         sent = true;
         break;

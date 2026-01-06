@@ -1,125 +1,202 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dogme | 个人中心 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; }
-        .active-press:active { transform: scale(0.96); }
-        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.5); }
-        .progress-bar-fill { transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes subtlePulse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        .float-tag-animation { animation: subtlePulse 3s ease-in-out infinite; }
+      body {
+        font-family: 'Quicksand', sans-serif;
+        background-color: #fdfcf9;
+      }
+      .active-press:active {
+        transform: scale(0.96);
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+      .progress-bar-fill {
+        transition: width 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      @keyframes subtlePulse {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-5px);
+        }
+      }
+      .float-tag-animation {
+        animation: subtlePulse 3s ease-in-out infinite;
+      }
     </style>
-</head>
-<body class="pb-20">
-    <nav class="flex justify-between items-center px-8 py-6 sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-orange-50">
-        <button onclick="location.href='index.html'" class="w-11 h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50">❮</button>
-        <h1 class="text-xl font-black text-gray-900 tracking-tighter">My Dogme.</h1>
-        <button onclick="handleLogout()" class="text-[10px] font-black text-gray-400 uppercase tracking-widest active-press">Logout</button>
+  </head>
+  <body class="pb-20">
+    <nav
+      class="flex justify-between items-center px-8 py-6 sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-orange-50"
+    >
+      <button
+        onclick="location.href = 'index.html'"
+        class="w-11 h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50"
+      >
+        ❮
+      </button>
+      <h1 class="text-xl font-black text-gray-900 tracking-tighter">My Dogme.</h1>
+      <button
+        onclick="handleLogout()"
+        class="text-[10px] font-black text-gray-400 uppercase tracking-widest active-press"
+      >
+        Logout
+      </button>
     </nav>
 
     <main class="max-w-md mx-auto px-6 mt-10">
-        <div class="glass-card rounded-[45px] p-10 text-center shadow-xl mb-8 relative overflow-hidden">
-            <div class="relative inline-block mb-6">
-                <img src="user.jpg" class="w-28 h-28 rounded-[35px] mx-auto border-4 border-white shadow-lg object-cover">
-                <div id="user-level-tag" class="absolute -bottom-2 -right-2 bg-gray-900 text-white text-[10px] font-black px-3 py-1 rounded-full border-2 border-white">V1</div>
-            </div>
-            <h2 id="user-display-email" class="text-lg font-black text-gray-800 tracking-tight">载入中...</h2>
-            
-            <div class="mt-8 px-4 text-left">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Growth EXP</span>
-                    <span id="exp-count-text" class="text-[10px] font-black text-gray-800">0 / 100</span>
-                </div>
-                <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div id="exp-bar-fill" class="progress-bar-fill h-full bg-orange-500" style="width: 0%"></div>
-                </div>
-            </div>
+      <div
+        class="glass-card rounded-[45px] p-10 text-center shadow-xl mb-8 relative overflow-hidden"
+      >
+        <div class="relative inline-block mb-6">
+          <img
+            src="user.jpg"
+            class="w-28 h-28 rounded-[35px] mx-auto border-4 border-white shadow-lg object-cover"
+          />
+          <div
+            id="user-level-tag"
+            class="absolute -bottom-2 -right-2 bg-gray-900 text-white text-[10px] font-black px-3 py-1 rounded-full border-2 border-white"
+          >
+            V1
+          </div>
+        </div>
+        <h2 id="user-display-email" class="text-lg font-black text-gray-800 tracking-tight">
+          载入中...
+        </h2>
+
+        <div class="mt-8 px-4 text-left">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest"
+              >Growth EXP</span
+            >
+            <span id="exp-count-text" class="text-[10px] font-black text-gray-800">0 / 100</span>
+          </div>
+          <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div
+              id="exp-bar-fill"
+              class="progress-bar-fill h-full bg-orange-500"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div
+          onclick="location.href = 'coupon.html'"
+          class="bg-white p-6 rounded-[35px] border border-orange-50 shadow-sm active-press cursor-pointer"
+        >
+          <span class="text-2xl block mb-2">🎟️</span>
+          <span class="font-black text-gray-800 block">我的优惠券</span>
+          <span id="coupon-status" class="text-[9px] font-bold text-gray-300 uppercase"
+            >尚未领取</span
+          >
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <div onclick="location.href='coupon.html'" class="bg-white p-6 rounded-[35px] border border-orange-50 shadow-sm active-press cursor-pointer">
-                <span class="text-2xl block mb-2">🎟️</span>
-                <span class="font-black text-gray-800 block">我的优惠券</span>
-                <span id="coupon-status" class="text-[9px] font-bold text-gray-300 uppercase">尚未领取</span>
-            </div>
-
-            <div id="dynamic-order-btn">
-                <div onclick="location.href='index.html'" class="bg-gray-900 p-6 rounded-[35px] shadow-lg active-press cursor-pointer text-center h-full">
-                    <span class="text-2xl block mb-2">🛒</span>
-                    <span class="font-black text-white block">去购物</span>
-                    <span class="text-[9px] font-bold text-gray-500 uppercase">Shopping</span>
-                </div>
-            </div>
+        <div id="dynamic-order-btn">
+          <div
+            onclick="location.href = 'index.html'"
+            class="bg-gray-900 p-6 rounded-[35px] shadow-lg active-press cursor-pointer text-center h-full"
+          >
+            <span class="text-2xl block mb-2">🛒</span>
+            <span class="font-black text-white block">去购物</span>
+            <span class="text-[9px] font-bold text-gray-500 uppercase">Shopping</span>
+          </div>
         </div>
+      </div>
 
-        <div onclick="location.href='tracking.html'" class="float-tag-animation w-full bg-white p-6 rounded-[40px] border border-orange-100 shadow-xl shadow-orange-100/50 flex items-center justify-between active-press cursor-pointer mb-8">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-orange-50 rounded-3xl flex items-center justify-center text-3xl">🚚</div>
-                <div class="text-left">
-                    <span class="block font-black text-gray-800 text-lg">查看物流</span>
-                    <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Track Packages</span>
-                </div>
-            </div>
-            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300">❯</div>
+      <div
+        onclick="location.href = 'tracking.html'"
+        class="float-tag-animation w-full bg-white p-6 rounded-[40px] border border-orange-100 shadow-xl shadow-orange-100/50 flex items-center justify-between active-press cursor-pointer mb-8"
+      >
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-orange-50 rounded-3xl flex items-center justify-center text-3xl">
+            🚚
+          </div>
+          <div class="text-left">
+            <span class="block font-black text-gray-800 text-lg">查看物流</span>
+            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest"
+              >Track Packages</span
+            >
+          </div>
         </div>
+        <div
+          class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-300"
+        >
+          ❯
+        </div>
+      </div>
     </main>
 
     <script>
-        window.onload = () => {
-            const isLogged = localStorage.getItem('dogme_user_logged');
-            const email = localStorage.getItem('dogme_user_email');
-            
-            if (isLogged !== 'true' || !email) {
-                window.location.replace('user.html');
-                return;
-            }
+      window.onload = () => {
+        const isLogged = localStorage.getItem('dogme_user_logged');
+        const email = localStorage.getItem('dogme_user_email');
 
-            document.getElementById('user-display-email').innerText = email;
-            
-            // 1. 动态按钮逻辑
-            const hasOrder = localStorage.getItem('dogme_has_order');
-            if (hasOrder === 'true') {
-                document.getElementById('dynamic-order-btn').innerHTML = `
+        if (isLogged !== 'true' || !email) {
+          window.location.replace('user.html');
+          return;
+        }
+
+        document.getElementById('user-display-email').innerText = email;
+
+        // 1. 动态按钮逻辑
+        const hasOrder = localStorage.getItem('dogme_has_order');
+        if (hasOrder === 'true') {
+          document.getElementById('dynamic-order-btn').innerHTML = `
                     <div onclick="location.href='order-history.html'" class="bg-orange-500 p-6 rounded-[35px] shadow-lg shadow-orange-200 active-press cursor-pointer text-center h-full">
                         <span class="text-2xl block mb-2">📋</span>
                         <span class="font-black text-white block">购买历史</span>
                         <span class="text-[9px] font-bold text-orange-100 uppercase">Orders</span>
                     </div>
                 `;
-            }
-
-            // 2. 状态同步
-            const currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
-            setTimeout(() => {
-                document.getElementById('exp-bar-fill').style.width = Math.min(currentExp, 100) + "%";
-                document.getElementById('exp-count-text').innerText = `${currentExp} / 100`;
-                if (currentExp >= 100) document.getElementById('user-level-tag').innerText = "V2";
-            }, 300);
-
-            if (localStorage.getItem('dogme_coupon_claimed') === 'true') {
-                const status = document.getElementById('coupon-status');
-                status.innerText = "8.0折已激活";
-                status.classList.replace('text-gray-300', 'text-orange-500');
-            }
-        };
-
-        function handleLogout() {
-            if(confirm("确定要退出登录吗？🐾")) {
-                localStorage.clear();
-                window.location.replace('index.html');
-            }
         }
+
+        // 2. 状态同步
+        const currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
+        setTimeout(() => {
+          document.getElementById('exp-bar-fill').style.width = Math.min(currentExp, 100) + '%';
+          document.getElementById('exp-count-text').innerText = `${currentExp} / 100`;
+          if (currentExp >= 100) document.getElementById('user-level-tag').innerText = 'V2';
+        }, 300);
+
+        if (localStorage.getItem('dogme_coupon_claimed') === 'true') {
+          const status = document.getElementById('coupon-status');
+          status.innerText = '8.0折已激活';
+          status.classList.replace('text-gray-300', 'text-orange-500');
+        }
+      };
+
+      function handleLogout() {
+        if (confirm('确定要退出登录吗？🐾')) {
+          localStorage.clear();
+          window.location.replace('index.html');
+        }
+      }
     </script>
 
     <!-- Vercel Speed Insights -->
     <script>
-        window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
     </script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
-</body>
+  </body>
 </html>

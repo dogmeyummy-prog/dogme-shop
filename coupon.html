@@ -1,180 +1,261 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dogme | 我的券包 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        /* 1. 基础样式 */
-        body { font-family: 'Quicksand', sans-serif; }
-        .active-press:active { transform: scale(0.96); }
+      /* 1. 基础样式 */
+      body {
+        font-family: 'Quicksand', sans-serif;
+      }
+      .active-press:active {
+        transform: scale(0.96);
+      }
 
-        /* 2. 优惠券剪裁效果 */
-        .coupon-card {
-            position: relative;
-            background: white;
-            border-radius: 30px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        .coupon-card::before, .coupon-card::after {
-            content: ''; position: absolute; width: 20px; height: 20px;
-            background: #fdfcf9; border-radius: 50%; top: 50%; transform: translateY(-50%);
-            z-index: 10;
-        }
-        .coupon-card::before { left: -10px; }
-        .coupon-card::after { right: -10px; }
+      /* 2. 优惠券剪裁效果 */
+      .coupon-card {
+        position: relative;
+        background: white;
+        border-radius: 30px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+      .coupon-card::before,
+      .coupon-card::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: #fdfcf9;
+        border-radius: 50%;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 10;
+      }
+      .coupon-card::before {
+        left: -10px;
+      }
+      .coupon-card::after {
+        right: -10px;
+      }
 
-        /* 3. 等级视觉氛围 */
-        .theme-v1-v2 { background: #f8f9fa; color: #2d3436; }
-        .theme-v6-v8 { background: linear-gradient(135deg, #6c5ce7 0%, #3a327a 100%); color: white; }
-        .theme-v9 { background: linear-gradient(135deg, #2d3436 0%, #000000 100%); color: white; }
-        .theme-v10 { background: linear-gradient(135deg, #f1c40f 0%, #d35400 100%); color: white; }
+      /* 3. 等级视觉氛围 */
+      .theme-v1-v2 {
+        background: #f8f9fa;
+        color: #2d3436;
+      }
+      .theme-v6-v8 {
+        background: linear-gradient(135deg, #6c5ce7 0%, #3a327a 100%);
+        color: white;
+      }
+      .theme-v9 {
+        background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+        color: white;
+      }
+      .theme-v10 {
+        background: linear-gradient(135deg, #f1c40f 0%, #d35400 100%);
+        color: white;
+      }
 
-        /* 4. 动态粒子 */
-        .particle {
-            position: absolute; width: 4px; height: 4px; border-radius: 50%;
-            background: currentColor; opacity: 0.3; pointer-events: none;
-            animation: float-up 3s infinite linear;
+      /* 4. 动态粒子 */
+      .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.3;
+        pointer-events: none;
+        animation: float-up 3s infinite linear;
+      }
+      @keyframes float-up {
+        0% {
+          transform: translateY(0);
+          opacity: 0.5;
         }
-        @keyframes float-up {
-            0% { transform: translateY(0); opacity: 0.5; }
-            100% { transform: translateY(-100px); opacity: 0; }
+        100% {
+          transform: translateY(-100px);
+          opacity: 0;
         }
+      }
 
-        .wing-icon { font-size: 20px; opacity: 0.8; }
+      .wing-icon {
+        font-size: 20px;
+        opacity: 0.8;
+      }
     </style>
-</head>
-<body class="bg-[#fdfcf9] min-h-screen pb-20">
-
-    <nav class="flex justify-between items-center px-8 py-6 sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-orange-50">
-        <button onclick="history.back()" class="w-11 h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50">❮</button>
-        <div class="flex flex-col items-center">
-            <h1 class="text-xl font-black text-gray-900 tracking-tighter">My Coupons.</h1>
-            <span id="rank-indicator" class="text-[9px] font-black text-orange-500 uppercase tracking-widest">Level V1</span>
-        </div>
-        <div class="w-11"></div>
+  </head>
+  <body class="bg-[#fdfcf9] min-h-screen pb-20">
+    <nav
+      class="flex justify-between items-center px-8 py-6 sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-orange-50"
+    >
+      <button
+        onclick="history.back()"
+        class="w-11 h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50"
+      >
+        ❮
+      </button>
+      <div class="flex flex-col items-center">
+        <h1 class="text-xl font-black text-gray-900 tracking-tighter">My Coupons.</h1>
+        <span
+          id="rank-indicator"
+          class="text-[9px] font-black text-orange-500 uppercase tracking-widest"
+          >Level V1</span
+        >
+      </div>
+      <div class="w-11"></div>
     </nav>
 
     <main class="max-w-md mx-auto px-6 mt-8">
-        
-        <div id="privilege-banner" class="p-6 rounded-[35px] mb-8 relative overflow-hidden transition-all duration-700">
-            <div id="particle-container" class="absolute inset-0"></div>
-            <div class="relative z-10 flex justify-between items-center">
-                <div>
-                    <h2 class="font-black text-lg">等级特权包</h2>
-                    <p id="privilege-desc" class="text-xs font-bold opacity-70">升级解锁更多高额神券</p>
-                </div>
-                <div class="flex gap-2">
-                    <span id="wing-l" class="wing-icon">🕊️</span>
-                    <span id="wing-r" class="wing-icon">🕊️</span>
-                </div>
-            </div>
+      <div
+        id="privilege-banner"
+        class="p-6 rounded-[35px] mb-8 relative overflow-hidden transition-all duration-700"
+      >
+        <div id="particle-container" class="absolute inset-0"></div>
+        <div class="relative z-10 flex justify-between items-center">
+          <div>
+            <h2 class="font-black text-lg">等级特权包</h2>
+            <p id="privilege-desc" class="text-xs font-bold opacity-70">升级解锁更多高额神券</p>
+          </div>
+          <div class="flex gap-2">
+            <span id="wing-l" class="wing-icon">🕊️</span>
+            <span id="wing-r" class="wing-icon">🕊️</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="coupon-list" class="space-y-6">
+        <div class="coupon-card shadow-sm border border-orange-100 flex items-center p-6">
+          <div class="flex-1 border-r-2 border-dashed border-gray-100 pr-6">
+            <span class="text-[10px] font-black text-orange-500 uppercase">Welcome Gift</span>
+            <h3 class="text-3xl font-black text-gray-800">8.0 <span class="text-sm">折</span></h3>
+            <p class="text-[10px] font-bold text-gray-400">全场满 $10 可用</p>
+          </div>
+          <div class="pl-6">
+            <button
+              onclick="location.href = 'shopping.html'"
+              class="bg-gray-900 text-white px-4 py-2 rounded-xl text-xs font-black active-press hover:bg-orange-500 transition-all"
+            >
+              去使用
+            </button>
+          </div>
         </div>
 
-        <div id="coupon-list" class="space-y-6">
-            <div class="coupon-card shadow-sm border border-orange-100 flex items-center p-6">
-                <div class="flex-1 border-r-2 border-dashed border-gray-100 pr-6">
-                    <span class="text-[10px] font-black text-orange-500 uppercase">Welcome Gift</span>
-                    <h3 class="text-3xl font-black text-gray-800">8.0 <span class="text-sm">折</span></h3>
-                    <p class="text-[10px] font-bold text-gray-400">全场满 $10 可用</p>
-                </div>
-                <div class="pl-6">
-                    <button onclick="location.href='shopping.html'" class="bg-gray-900 text-white px-4 py-2 rounded-xl text-xs font-black active-press hover:bg-orange-500 transition-all">去使用</button>
-                </div>
-            </div>
-
-            <div id="v6-exclusive" class="hidden coupon-card bg-indigo-600 text-white p-6 flex items-center shadow-xl">
-                <div class="flex-1 border-r-2 border-dashed border-white/20 pr-6">
-                    <span class="text-[10px] font-black text-yellow-300 uppercase">Elite Reward</span>
-                    <h3 class="text-2xl font-black">立减 $15</h3>
-                    <p class="text-[10px] font-bold opacity-70">V6 级以上专享</p>
-                </div>
-                <div class="pl-6">
-                    <button class="bg-white text-indigo-600 px-4 py-2 rounded-xl text-xs font-black active-press">领取</button>
-                </div>
-            </div>
-
-            <div id="v9-exclusive" class="hidden coupon-card bg-black text-white p-6 flex items-center shadow-2xl ring-2 ring-gray-800">
-                <div class="flex-1 border-r-2 border-dashed border-white/20 pr-6">
-                    <span class="text-[10px] font-black text-orange-500 uppercase">Legendary Privilege</span>
-                    <h3 class="text-3xl font-black text-white">8.0 <span class="text-sm">折</span></h3>
-                    <p class="text-[10px] font-bold opacity-70 mt-1">V9 永久特权：每笔订单自动享 2% 减免 ⚡</p>
-                </div>
-                <div class="pl-6 flex flex-col items-center">
-                    <span class="text-xl mb-1">👑</span>
-                    <span class="text-[9px] font-black text-orange-500">已激活</span>
-                </div>
-            </div>
+        <div
+          id="v6-exclusive"
+          class="hidden coupon-card bg-indigo-600 text-white p-6 flex items-center shadow-xl"
+        >
+          <div class="flex-1 border-r-2 border-dashed border-white/20 pr-6">
+            <span class="text-[10px] font-black text-yellow-300 uppercase">Elite Reward</span>
+            <h3 class="text-2xl font-black">立减 $15</h3>
+            <p class="text-[10px] font-bold opacity-70">V6 级以上专享</p>
+          </div>
+          <div class="pl-6">
+            <button
+              class="bg-white text-indigo-600 px-4 py-2 rounded-xl text-xs font-black active-press"
+            >
+              领取
+            </button>
+          </div>
         </div>
 
-        <p class="text-center text-gray-300 text-[10px] font-bold mt-12">—— 更多优惠活动请留意 Dogme 首页公告 ——</p>
+        <div
+          id="v9-exclusive"
+          class="hidden coupon-card bg-black text-white p-6 flex items-center shadow-2xl ring-2 ring-gray-800"
+        >
+          <div class="flex-1 border-r-2 border-dashed border-white/20 pr-6">
+            <span class="text-[10px] font-black text-orange-500 uppercase"
+              >Legendary Privilege</span
+            >
+            <h3 class="text-3xl font-black text-white">8.0 <span class="text-sm">折</span></h3>
+            <p class="text-[10px] font-bold opacity-70 mt-1">
+              V9 永久特权：每笔订单自动享 2% 减免 ⚡
+            </p>
+          </div>
+          <div class="pl-6 flex flex-col items-center">
+            <span class="text-xl mb-1">👑</span>
+            <span class="text-[9px] font-black text-orange-500">已激活</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-center text-gray-300 text-[10px] font-bold mt-12">
+        —— 更多优惠活动请留意 Dogme 首页公告 ——
+      </p>
     </main>
 
     <script>
-        function updateCouponPage() {
-            const exp = parseInt(localStorage.getItem('dogme_user_exp') || "0");
-            const level = Math.min(Math.floor(exp / 10) + 1, 10);
-            
-            const banner = document.getElementById('privilege-banner');
-            const indicator = document.getElementById('rank-indicator');
-            const wingL = document.getElementById('wing-l');
-            const wingR = document.getElementById('wing-r');
-            const pDesc = document.getElementById('privilege-desc');
+      function updateCouponPage() {
+        const exp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
+        const level = Math.min(Math.floor(exp / 10) + 1, 10);
 
-            indicator.innerText = `Level V${level}`;
+        const banner = document.getElementById('privilege-banner');
+        const indicator = document.getElementById('rank-indicator');
+        const wingL = document.getElementById('wing-l');
+        const wingR = document.getElementById('wing-r');
+        const pDesc = document.getElementById('privilege-desc');
 
-            if (level <= 2) {
-                banner.classList.add('theme-v1-v2');
-                wingL.style.display = wingR.style.display = 'none';
-            } else {
-                wingL.style.display = wingR.style.display = 'block';
-                if (level <= 5) {
-                    banner.classList.add('theme-v6-v8');
-                    pDesc.innerText = "您已解锁进阶券包 🐾";
-                } else if (level <= 8) {
-                    banner.classList.add('theme-v6-v8');
-                    document.getElementById('v6-exclusive').classList.remove('hidden');
-                    pDesc.innerText = "尊贵 Dogme 正在享受特权 🕊️";
-                } else if (level === 9) {
-                    banner.classList.add('theme-v9');
-                    document.getElementById('v6-exclusive').classList.remove('hidden');
-                    document.getElementById('v9-exclusive').classList.remove('hidden');
-                    pDesc.innerText = "至尊黑暗，统领全场 🌌";
-                } else {
-                    banner.classList.add('theme-v10');
-                    document.getElementById('v6-exclusive').classList.remove('hidden');
-                    document.getElementById('v9-exclusive').classList.remove('hidden');
-                    wingL.innerText = wingR.innerText = '👑';
-                    pDesc.innerText = "传奇降临，优惠已达巅峰 ✨";
-                }
-            }
+        indicator.innerText = `Level V${level}`;
+
+        if (level <= 2) {
+          banner.classList.add('theme-v1-v2');
+          wingL.style.display = wingR.style.display = 'none';
+        } else {
+          wingL.style.display = wingR.style.display = 'block';
+          if (level <= 5) {
+            banner.classList.add('theme-v6-v8');
+            pDesc.innerText = '您已解锁进阶券包 🐾';
+          } else if (level <= 8) {
+            banner.classList.add('theme-v6-v8');
+            document.getElementById('v6-exclusive').classList.remove('hidden');
+            pDesc.innerText = '尊贵 Dogme 正在享受特权 🕊️';
+          } else if (level === 9) {
+            banner.classList.add('theme-v9');
+            document.getElementById('v6-exclusive').classList.remove('hidden');
+            document.getElementById('v9-exclusive').classList.remove('hidden');
+            pDesc.innerText = '至尊黑暗，统领全场 🌌';
+          } else {
+            banner.classList.add('theme-v10');
+            document.getElementById('v6-exclusive').classList.remove('hidden');
+            document.getElementById('v9-exclusive').classList.remove('hidden');
+            wingL.innerText = wingR.innerText = '👑';
+            pDesc.innerText = '传奇降临，优惠已达巅峰 ✨';
+          }
         }
+      }
 
-        function createParticles() {
-            const container = document.getElementById('particle-container');
-            setInterval(() => {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.bottom = '0px';
-                container.appendChild(p);
-                setTimeout(() => p.remove(), 3000);
-            }, 400);
-        }
+      function createParticles() {
+        const container = document.getElementById('particle-container');
+        setInterval(() => {
+          const p = document.createElement('div');
+          p.className = 'particle';
+          p.style.left = Math.random() * 100 + '%';
+          p.style.bottom = '0px';
+          container.appendChild(p);
+          setTimeout(() => p.remove(), 3000);
+        }, 400);
+      }
 
-        window.onload = () => {
-            updateCouponPage();
-            createParticles();
-        };
+      window.onload = () => {
+        updateCouponPage();
+        createParticles();
+      };
     </script>
 
     <!-- Vercel Speed Insights -->
     <script>
-        window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
     </script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
-</body>
+  </body>
 </html>
