@@ -107,7 +107,11 @@
                     body: JSON.stringify({ email })
                 });
                 if (res.ok) { showToast("验证码已发出 ✨"); startTimer(); }
-                else { showToast("发送失败，请检查邮箱"); btn.innerText = "获取"; btn.disabled = false; }
+                else {
+                    const data = await res.json().catch(() => ({}));
+                    showToast(data.msg || "发送失败，请检查邮箱配置");
+                    btn.innerText = "获取"; btn.disabled = false;
+                }
             } catch (e) { showToast("连接云端失败 ⚠️"); btn.innerText = "重试"; btn.disabled = false; }
         }
 

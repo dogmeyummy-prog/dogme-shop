@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/api/send-code", "destination": "/api/server" },
     { "source": "/api/verify-code", "destination": "/api/server" },
+    { "source": "/api/test-smtp", "destination": "/api/server" },
     { "source": "/api/create-checkout-session", "destination": "/api/server" }
   ]
 }

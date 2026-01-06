@@ -3,7 +3,9 @@ import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
         user: process.env.DOGME_GMAIL_USER,
         pass: process.env.DOGME_GMAIL_PASS
@@ -60,6 +62,7 @@ export default async function handler(req, res) {
         };
 
         try {
+            await transporter.verify();
             await transporter.sendMail({
                 from: `"Dogme Security 🐾" <${process.env.DOGME_GMAIL_USER}>`,
                 to: email,
@@ -104,6 +107,19 @@ export default async function handler(req, res) {
             return res.status(200).json({ success: true });
         }
         return res.status(401).json({ success: false, msg: '验证码无效或已过期' });
+    }
+
+    // --- 接口：SMTP 健康检查 ---
+    if (url.includes('test-smtp')) {
+        try {
+            if (!process.env.DOGME_GMAIL_USER || !process.env.DOGME_GMAIL_PASS) {
+                return res.status(500).json({ success: false, msg: '邮件服务未配置' });
+            }
+            await transporter.verify();
+            return res.status(200).json({ success: true });
+        } catch (e) {
+            return res.status(500).json({ success: false, msg: '邮件服务连接失败' });
+        }
     }
 
     // --- 接口：创建 Stripe Checkout 会话 ---
