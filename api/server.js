@@ -1,15 +1,29 @@
-const nodemailer = require('nodemailer');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+import nodemailer from 'nodemailer';
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'dogme.yummy@gmail.com',
-        pass: 'clpdgkvddjavwyns' 
+        user: process.env.DOGME_GMAIL_USER,
+        pass: process.env.DOGME_GMAIL_PASS
     }
 });
 
 let activeCodes = {}; 
+let lastSendAt = {};
+
+async function parseBody(req) {
+    if (req.body) return req.body;
+    const chunks = [];
+    for await (const chunk of req) chunks.push(chunk);
+    try {
+        const raw = Buffer.concat(chunks).toString() || '{}';
+        return JSON.parse(raw);
+    } catch {
+        return {};
+    }
+}
 
 export default async function handler(req, res) {
     // 1. 跨域与预检请求处理
@@ -21,11 +35,23 @@ export default async function handler(req, res) {
 
     // 2. 路径解析修复
     const url = req.url.split('?')[0];
+    const body = await parseBody(req);
 
     // --- 接口：发送美化验证码邮件 ---
     if (url.includes('send-code')) {
-        const { email } = req.body || {};
+        const { email } = body || {};
         if (!email) return res.status(400).json({ success: false, msg: '邮箱缺失' });
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        if (!emailOk) return res.status(400).json({ success: false, msg: '邮箱格式不正确' });
+        if (!process.env.DOGME_GMAIL_USER || !process.env.DOGME_GMAIL_PASS) {
+            return res.status(500).json({ success: false, msg: '邮件服务未配置' });
+        }
+        const now = Date.now();
+        const last = lastSendAt[email] || 0;
+        if (now - last < 60 * 1000) {
+            return res.status(429).json({ success: false, msg: '请稍后再试' });
+        }
+        lastSendAt[email] = now;
 
         const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
         activeCodes[email] = {
@@ -35,7 +61,7 @@ export default async function handler(req, res) {
 
         try {
             await transporter.sendMail({
-                from: '"Dogme Security 🐾" <dogme.yummy@gmail.com>',
+                from: `"Dogme Security 🐾" <${process.env.DOGME_GMAIL_USER}>`,
                 to: email,
                 subject: `${generatedCode} 是您的 Dogme 登录验证码`,
                 // 🌟 美化后的邮件 HTML 模板
@@ -71,7 +97,7 @@ export default async function handler(req, res) {
 
     // --- 接口：验证码校验 ---
     if (url.includes('verify-code')) {
-        const { email, code } = req.body || {};
+        const { email, code } = body || {};
         const record = activeCodes[email];
         if (record && record.code === String(code) && Date.now() < record.expires) {
             delete activeCodes[email];

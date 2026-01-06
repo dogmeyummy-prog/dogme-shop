@@ -96,7 +96,7 @@
 
         async function handleSendCode() {
             const email = document.getElementById('login-email').value.trim();
-            if (!email.includes('@')) return showToast("请输入有效的邮箱 🐾");
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast("请输入有效的邮箱 🐾");
             const btn = document.getElementById('send-code-btn');
             btn.innerText = "..."; btn.disabled = true;
 
