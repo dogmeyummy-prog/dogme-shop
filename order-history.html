@@ -1,149 +1,241 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dogme | 订单历史 🐾</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dogme | 购买历史 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="测试版.css" />
     <style>
-        body { font-family: 'Quicksand', sans-serif; }
-        .order-card { transition: all 0.3s ease; }
-        .order-card:hover { transform: translateY(-5px); }
-        .active-press:active { transform: scale(0.96); }
-        .delete-btn { opacity: 0.3; transition: 0.2s; }
-        .order-card:hover .delete-btn { opacity: 1; }
+      .order-card {
+        transition: all 0.3s ease;
+      }
+      .order-card:hover {
+        transform: translateY(-5px);
+      }
+      .status-tag {
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 1px;
+      }
+      .active-press:active {
+        transform: scale(0.96);
+      }
+      .delete-btn {
+        opacity: 0.3;
+        transition: 0.2s;
+      }
+      .order-card:hover .delete-btn {
+        opacity: 1;
+      }
+
+      .empty-state-img {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 30px;
+        margin: 0 auto 24px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        animation: float 4s infinite ease-in-out;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      /* 再次购买按钮样式：保持正式与卡通的平衡 */
+      .reorder-btn {
+        background: #ff8d36;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: 800;
+        transition: all 0.3s var(--spring);
+        border: 2px solid #ff8d36;
+      }
+      .reorder-btn:hover {
+        background: white;
+        color: #ff8d36;
+        box-shadow: 0 4px 12px rgba(255, 141, 54, 0.2);
+      }
     </style>
-</head>
-<body class="bg-[#fdfcf9] min-h-screen pb-20">
-    <nav class="flex justify-between items-center px-4 md:px-6 lg:px-12 py-4 md:py-6 sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-orange-50">
-        <div class="flex items-center gap-2 md:gap-4">
-            <button onclick="location.href='user.html'" class="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50">❮</button>
-            <h1 class="text-lg md:text-2xl font-black text-gray-900 tracking-tighter" data-t="order_history_title">订单历史</h1>
-        </div>
-        <div class="text-orange-500 font-bold">🐾</div>
+  </head>
+  <body class="bg-[#fdfcf9] min-h-screen pb-20">
+    <nav
+      class="flex justify-between items-center px-8 py-6 sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-orange-50"
+    >
+      <div class="flex items-center gap-4">
+        <button
+          onclick="history.back()"
+          class="w-11 h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50"
+        >
+          ❮
+        </button>
+        <h1 class="text-2xl font-black text-gray-900 tracking-tighter">Order History.</h1>
+      </div>
+      <div class="text-orange-500 font-bold">🐾</div>
     </nav>
 
-    <main class="max-w-3xl mx-auto px-4 md:px-6 mt-6 md:mt-10">
-        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-10">
-            <div class="bg-gray-900 p-4 md:p-6 rounded-[25px] md:rounded-[30px] text-white shadow-lg">
-                <p class="text-[8px] md:text-[10px] font-black opacity-60 uppercase tracking-widest" data-t="order_total_spent">Total Spent</p>
-                <p id="stat-total" class="text-xl md:text-2xl font-black mt-1">$0.00</p>
-            </div>
-            <div class="bg-white p-4 md:p-6 rounded-[25px] md:rounded-[30px] border border-orange-50 shadow-sm">
-                <p class="text-[8px] md:text-[10px] font-black text-orange-500 uppercase tracking-widest" data-t="order_count">Orders</p>
-                <p id="stat-count" class="text-xl md:text-2xl font-black text-gray-800 mt-1">0</p>
-            </div>
+    <main class="max-w-3xl mx-auto px-6 mt-10">
+      <div class="grid grid-cols-2 gap-4 mb-10">
+        <div class="bg-gray-900 p-6 rounded-[30px] text-white shadow-lg">
+          <p class="text-[10px] font-black opacity-60 uppercase tracking-widest">Total Spent</p>
+          <p id="stat-total" class="text-2xl font-black mt-1">$0.00</p>
         </div>
-
-        <div id="order-container" class="space-y-4 md:space-y-6"></div>
-
-        <div id="no-orders" class="hidden text-center py-12 md:py-20">
-            <div class="text-6xl md:text-8xl mb-4 md:mb-6">📦</div>
-            <h2 class="text-lg md:text-xl font-bold text-gray-400" data-t="order_no_orders">还没有任何订单记录</h2>
-            <button onclick="location.href='shopping.html'" class="mt-4 md:mt-6 px-6 md:px-8 py-2.5 md:py-3 bg-orange-500 text-white rounded-xl md:rounded-2xl font-black text-sm md:text-base active-press shadow-lg" data-t="order_start_shopping">去购物</button>
+        <div class="bg-white p-6 rounded-[30px] border border-orange-50 shadow-sm">
+          <p class="text-[10px] font-black text-orange-500 uppercase tracking-widest">Orders</p>
+          <p id="stat-count" class="text-2xl font-black text-gray-800 mt-1">0</p>
         </div>
+      </div>
+
+      <div id="order-container" class="space-y-6"></div>
+
+      <div id="no-orders" class="hidden text-center py-20">
+        <img src="order-history.jpg" class="empty-state-img" alt="No Orders" />
+        <h2 class="text-xl font-bold text-gray-400">还没有任何订单记录哦</h2>
+        <button
+          onclick="location.href = 'shopping.html'"
+          class="mt-6 px-8 py-3 bg-orange-500 text-white rounded-2xl font-black active-press shadow-lg"
+        >
+          去开启第一单
+        </button>
+      </div>
     </main>
 
-    <script src="i18n.js"></script>
     <script>
-        function loadOrders() {
-            return JSON.parse(localStorage.getItem('dogme_order_history')) || [];
+      const MAX_STORAGE_DAYS = 30;
+
+      function loadOrders() {
+        let orders = JSON.parse(localStorage.getItem('dogme_order_history')) || [];
+        const now = new Date();
+        orders = orders.filter((order) => {
+          const orderDate = new Date(order.timestamp || order.date);
+          return Math.ceil(Math.abs(now - orderDate) / (1000 * 60 * 60 * 24)) <= MAX_STORAGE_DAYS;
+        });
+        return orders;
+      }
+
+      // 新功能：再次购买逻辑
+      function reorder(orderId) {
+        const orders = loadOrders();
+        const order = orders.find((o) => o.id === orderId);
+
+        if (order) {
+          let currentCart = JSON.parse(localStorage.getItem('dogme_cart')) || [];
+          // 将旧订单中的商品逐个加入当前购物车
+          order.items.forEach((item) => {
+            currentCart.push({
+              id: Date.now() + Math.random(),
+              name: item.name,
+              price: item.price,
+              emoji: item.emoji
+            });
+          });
+
+          localStorage.setItem('dogme_cart', JSON.stringify(currentCart));
+          alert('已将该订单的所有商品重新加入购物车！🐾');
+          location.href = 'shopping-car.html'; // 跳转至购物车页面
+        }
+      }
+
+      function deleteOrder(orderId) {
+        if (confirm('确定要删除这笔订单记录吗？🐾')) {
+          let orders = JSON.parse(localStorage.getItem('dogme_order_history')) || [];
+          orders = orders.filter((o) => o.id !== orderId);
+          localStorage.setItem('dogme_order_history', JSON.stringify(orders));
+          renderOrders();
+        }
+      }
+
+      function renderOrders() {
+        const container = document.getElementById('order-container');
+        const noOrders = document.getElementById('no-orders');
+        const displayData = loadOrders();
+
+        if (displayData.length === 0) {
+          container.innerHTML = '';
+          noOrders.classList.remove('hidden');
+          document.getElementById('stat-total').innerText = `$0.00`;
+          document.getElementById('stat-count').innerText = `0`;
+          return;
         }
 
-        function reorder(orderId) {
-            const orders = loadOrders();
-            const order = orders.find(o => o.id === orderId);
-            
-            if (order) {
-                let currentCart = JSON.parse(localStorage.getItem('dogme_cart')) || [];
-                order.items.forEach(item => {
-                    currentCart.push({
-                        id: Date.now() + Math.random(), 
-                        name: item.name, 
-                        price: item.price, 
-                        emoji: item.emoji
-                    });
-                });
-                
-                localStorage.setItem('dogme_cart', JSON.stringify(currentCart));
-                alert('已将该订单的所有商品重新加入购物车！🐾');
-                location.href = 'checkout.html';
-            }
-        }
+        noOrders.classList.add('hidden');
+        let grandTotal = 0;
 
-        function deleteOrder(orderId) {
-            if(confirm('确定要删除这笔订单记录吗？🐾')) {
-                let orders = loadOrders();
-                orders = orders.filter(o => o.id !== orderId);
-                localStorage.setItem('dogme_order_history', JSON.stringify(orders));
-                renderOrders();
-            }
-        }
-
-        function renderOrders() {
-            const container = document.getElementById('order-container');
-            const noOrders = document.getElementById('no-orders');
-            const orders = loadOrders();
-
-            if (orders.length === 0) {
-                container.innerHTML = '';
-                noOrders.classList.remove('hidden');
-                document.getElementById('stat-total').innerText = `$0.00`;
-                document.getElementById('stat-count').innerText = `0`;
-                return;
-            }
-
-            noOrders.classList.add('hidden');
-            let grandTotal = 0;
-            
-            container.innerHTML = orders.map(order => {
-                grandTotal += order.total;
-                return `
-                    <div class="order-card bg-white rounded-[25px] md:rounded-[35px] shadow-sm border border-orange-50 overflow-hidden">
-                        <div class="px-4 md:px-8 py-3 md:py-4 bg-gray-50/50 flex justify-between items-center border-b border-gray-100">
-                            <div class="flex items-center gap-2 md:gap-3">
+        container.innerHTML = displayData
+          .map((order) => {
+            grandTotal += order.total;
+            return `
+                    <div class="order-card bg-white rounded-[35px] shadow-sm border border-orange-50 overflow-hidden">
+                        <div class="px-8 py-4 bg-gray-50/50 flex justify-between items-center border-b border-gray-100">
+                            <div class="flex items-center gap-3">
                                 <div>
-                                    <p class="text-[8px] md:text-[10px] font-black text-gray-400 uppercase tracking-tighter">Order ID: ${order.id}</p>
-                                    <p class="text-[10px] md:text-xs font-bold text-gray-600">${order.date}</p>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-tighter">Order ID: ${order.id}</p>
+                                    <p class="text-xs font-bold text-gray-600">${order.date}</p>
                                 </div>
-                                <button onclick="deleteOrder('${order.id}')" class="delete-btn text-gray-300 hover:text-red-500 text-xs md:text-sm">🗑️</button>
+                                <button onclick="deleteOrder('${order.id}')" class="delete-btn text-gray-300 hover:text-red-500 text-sm">🗑️</button>
                             </div>
-                            <span class="text-[8px] md:text-[10px] font-black px-2 md:px-3 py-1 rounded-full text-white ${order.statusColor || 'bg-green-500'}">${order.status}</span>
+                            <span class="status-tag px-3 py-1 rounded-full text-white ${order.statusColor || 'bg-green-500'}">${order.status}</span>
                         </div>
                         
-                        <div class="p-4 md:p-8">
-                            <div class="space-y-3 md:space-y-4">
-                                ${order.items.map(item => `
+                        <div class="p-8">
+                            <div class="space-y-4">
+                                ${order.items
+                                  .map(
+                                    (item) => `
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2 md:gap-3">
-                                            <span class="text-xl md:text-2xl">${item.emoji}</span>
-                                            <span class="font-bold text-xs md:text-sm text-gray-700">${item.name}</span>
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-2xl">${item.emoji}</span>
+                                            <span class="font-bold text-gray-700">${item.name}</span>
                                         </div>
-                                        <span class="font-bold text-xs md:text-sm text-gray-400">$${item.price.toFixed(2)}</span>
+                                        <span class="font-bold text-gray-400">$${item.price.toFixed(2)}</span>
                                     </div>
-                                `).join('')}
+                                `
+                                  )
+                                  .join('')}
                             </div>
 
-                            <div class="mt-6 md:mt-8 pt-4 md:pt-6 border-t border-dashed border-gray-100 flex justify-between items-center">
+                            <div class="mt-8 pt-6 border-t border-dashed border-gray-100 flex justify-between items-center">
                                 <div>
-                                    <span class="text-xs md:text-sm font-black text-gray-800 block" data-t="order_total">总计</span>
-                                    <span class="text-xl md:text-2xl font-black text-orange-500">$${order.total.toFixed(2)}</span>
+                                    <span class="text-sm font-black text-gray-800 block">最终支付金额</span>
+                                    <span class="text-2xl font-black text-orange-500">$${order.total.toFixed(2)}</span>
                                 </div>
-                                <button onclick="reorder('${order.id}')" class="px-3 md:px-4 py-2 md:py-2.5 bg-orange-500 text-white rounded-xl md:rounded-2xl text-[10px] md:text-xs font-black active-press hover:bg-orange-600 transition-all" data-t="order_reorder">
-                                    再次购买
-                                </button>
+                                <button onclick="reorder('${order.id}')" class="reorder-btn active-press">再次购买 ＋</button>
                             </div>
                         </div>
                     </div>
                 `;
-            }).reverse().join('');
+          })
+          .reverse()
+          .join('');
 
-            document.getElementById('stat-total').innerText = `$${grandTotal.toFixed(2)}`;
-            document.getElementById('stat-count').innerText = orders.length;
-        }
+        document.getElementById('stat-total').innerText = `$${grandTotal.toFixed(2)}`;
+        document.getElementById('stat-count').innerText = displayData.length;
+      }
 
-        window.onload = renderOrders;
+      window.onload = renderOrders;
     </script>
-</body>
+
+    <!-- Vercel Speed Insights -->
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+  </body>
 </html>

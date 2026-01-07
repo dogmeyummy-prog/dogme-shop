@@ -1,110 +1,221 @@
-import nodemailer from "nodemailer"
-import Stripe from "stripe"
+import nodemailer from 'nodemailer';
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
-// 这里的环境变量请在 Vercel 控制台配置，或者直接替换为你的 Key（不建议硬编码）
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "")
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
+const gmailTransporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
-    user: "dogme.yummy@gmail.com",
-    pass: "clpdgkvddjavwyns", // 🔑 确保这是 16 位 App Password
-  },
-})
+    user: process.env.DOGME_GMAIL_USER,
+    pass: process.env.DOGME_GMAIL_PASS
+  }
+});
 
-// 验证码内存存储（Vercel 免费版函数会有冷启动重置，但对于验证码足够了）
-const activeCodes = {}
+let activeCodes = {};
+let lastSendAt = {};
+
+async function parseBody(req) {
+  if (req.body) return req.body;
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  try {
+    const raw = Buffer.concat(chunks).toString() || '{}';
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
 
 export default async function handler(req, res) {
-  // 跨域处理
-  res.setHeader("Access-Control-Allow-Origin", "*")
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS")
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type")
+  // 1. 跨域与预检请求处理
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === "OPTIONS") return res.status(200).end()
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const body = req.body || {}
-  const action = body.action
+  // 2. 路径解析修复
+  const url = req.url.split('?')[0];
+  const body = await parseBody(req);
 
-  // --- 接口 1：发送美化验证码邮件 ---
-  if (action === "send-code") {
-    const { email } = body
-    if (!email) return res.status(400).json({ success: false, msg: "Email is required" })
+  // --- 接口：发送美化验证码邮件 ---
+  if (url.includes('send-code')) {
+    const { email } = body || {};
+    if (!email) return res.status(400).json({ success: false, msg: '邮箱缺失' });
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!emailOk) return res.status(400).json({ success: false, msg: '邮箱格式不正确' });
+    const now = Date.now();
+    const last = lastSendAt[email] || 0;
+    if (now - last < 60 * 1000) {
+      return res.status(429).json({ success: false, msg: '请稍后再试' });
+    }
+    lastSendAt[email] = now;
 
-    const code = Math.floor(100000 + Math.random() * 900000).toString()
-    activeCodes[email] = { code, expires: Date.now() + 300000 } // 5分钟有效
+    const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+    activeCodes[email] = {
+      code: generatedCode,
+      expires: Date.now() + 5 * 60 * 1000
+    };
 
-    try {
-      await transporter.sendMail({
-        from: '"Dogme Security 🐾" <dogme.yummy@gmail.com>',
-        to: email,
-        subject: `[Dogme] 您的登录验证码是 ${code}`,
-        // 🌟 深度美化的邮件模板
-        html: `
-                <div style="background-color: #fdfcf9; padding: 50px 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center;">
-                    <div style="max-width: 450px; margin: 0 auto; background: #ffffff; border-radius: 40px; padding: 40px; box-shadow: 0 15px 35px rgba(255,141,54,0.05); border: 1px solid #f1f1f1;">
-                        <div style="font-size: 50px; margin-bottom: 20px;">🐾</div>
-                        <h2 style="color: #1a1a1a; margin: 0; font-size: 24px; font-weight: 900;">欢迎来到 Dogme.</h2>
-                        <p style="color: #a0a0a0; font-size: 14px; margin-top: 10px; font-weight: 600;">您的全球美味之旅即将开启</p>
+    const htmlTpl = `
+                <div style="background-color: #fdfcf9; padding: 40px 20px; font-family: 'Quicksand', sans-serif; text-align: center;">
+                    <div style="max-width: 400px; margin: 0 auto; background: white; border-radius: 40px; padding: 40px; border: 1px solid #f1f1f1; box-shadow: 0 10px 30px rgba(0,0,0,0.02);">
+                        <div style="font-size: 50px; margin-bottom: 10px;">🐾</div>
+                        <h1 style="color: #1a1a1a; font-size: 28px; margin: 0; font-weight: 900;">Dogme.</h1>
+                        <p style="color: #a0a0a0; font-size: 14px; font-weight: bold; margin-top: 5px;">全球精选美味零食</p>
                         
-                        <div style="background: #FFF9F5; border: 2px dashed #FF8D36; border-radius: 25px; padding: 30px; margin: 30px 0;">
-                            <p style="color: #FF8D36; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; margin-top: 0;">您的登录验证码</p>
-                            <span style="font-size: 42px; font-weight: 900; color: #1a1a1a; letter-spacing: 8px;">${code}</span>
+                        <div style="margin: 30px 0; padding: 20px; background: #fff8f3; border-radius: 25px;">
+                            <p style="color: #FF8D36; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;">您的登录验证码</p>
+                            <span style="font-size: 42px; font-weight: 900; color: #1a1a1a; letter-spacing: 8px;">${generatedCode}</span>
                         </div>
                         
-                        <p style="color: #636E72; font-size: 13px; line-height: 1.6; margin-bottom: 0;">
-                            验证码将在 <b>5 分钟</b> 后过期。<br>
-                            为了您的账户安全，请勿将此代码转发给他人。
+                        <p style="color: #666; font-size: 13px; line-height: 1.6;">
+                            请在 5 分钟内输入此验证码以开启您的 Dogme 之旅。<br>
+                            如果这不是您本人操作，请忽略此邮件。
                         </p>
+                        
+                        <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                            <p style="color: #ccc; font-size: 10px; font-weight: bold; text-transform: uppercase;">Dogme Canada © 2026</p>
+                        </div>
                     </div>
-                    <p style="color: #bdc3c7; font-size: 11px; margin-top: 30px;">© 2026 Dogme Shop. All rights reserved.</p>
-                </div>`,
-      })
-      return res.status(200).json({ success: true })
-    } catch (e) {
-      console.error("Mail Error:", e)
-      return res.status(500).json({ success: false, msg: "邮件服务异常: " + e.message })
+                </div>
+                `;
+
+    const providers = [];
+    const brandFrom = process.env.SENDGRID_FROM || process.env.DOGME_GMAIL_USER || 'dogme.yummy@gmail.com';
+    if (process.env.SENDGRID_API_KEY) {
+      const sg = nodemailer.createTransport({
+        host: 'smtp.sendgrid.net',
+        port: 465,
+        secure: true,
+        auth: { user: 'apikey', pass: process.env.SENDGRID_API_KEY }
+      });
+      providers.push({
+        name: 'sendgrid',
+        transporter: sg,
+        from: `"Dogme Security 🐾" <${brandFrom}>`
+      });
     }
+    if (process.env.DOGME_GMAIL_USER && process.env.DOGME_GMAIL_PASS) {
+      providers.push({
+        name: 'gmail',
+        transporter: gmailTransporter,
+        from: `"Dogme Security 🐾" <${process.env.DOGME_GMAIL_USER}>`
+      });
+    }
+    if (providers.length === 0) {
+      return res.status(500).json({ success: false, msg: '邮件服务未配置' });
+    }
+    let sent = false;
+    let lastErr = null;
+    for (const p of providers) {
+      try {
+        await p.transporter.verify();
+        await p.transporter.sendMail({
+          from: p.from,
+          to: email,
+          replyTo: process.env.DOGME_GMAIL_USER || 'dogme.yummy@gmail.com',
+          subject: `${generatedCode} 是您的 Dogme 登录验证码`,
+          text: `您的登录验证码：${generatedCode}\n5分钟内有效。如非本人操作请忽略此邮件。\nDogme Canada © 2026`,
+          html: htmlTpl,
+          headers: {
+            'List-Unsubscribe': `<mailto:${process.env.DOGME_GMAIL_USER || 'dogme.yummy@gmail.com'}?subject=unsubscribe>`
+          },
+          messageId: `<dogme-${generatedCode}-${Date.now()}@${(brandFrom.split('@')[1] || 'dogme.shop')}>`
+        });
+        sent = true;
+        break;
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+    if (sent) return res.status(200).json({ success: true });
+    const code = (lastErr && (lastErr.code || lastErr.responseCode)) || 'UNKNOWN';
+    if (code === 'EAUTH' || code === 535)
+      return res.status(500).json({ success: false, msg: '邮件认证失败' });
+    if (code === 'ETIMEDOUT' || code === 'ENOTFOUND')
+      return res.status(500).json({ success: false, msg: '邮件服务网络异常' });
+    return res.status(500).json({ success: false, msg: '邮件发送失败' });
   }
 
-  // --- 接口 2：验证验证码 ---
-  if (action === "verify-code") {
-    const { email, code } = body
-    const record = activeCodes[email]
-
+  // --- 接口：验证码校验 ---
+  if (url.includes('verify-code')) {
+    const { email, code } = body || {};
+    const record = activeCodes[email];
     if (record && record.code === String(code) && Date.now() < record.expires) {
-      delete activeCodes[email] // 验证成功后立即失效，提高安全性
-      return res.status(200).json({ success: true })
+      delete activeCodes[email];
+      return res.status(200).json({ success: true });
     }
-    return res.status(401).json({ success: false, msg: "验证码错误或已过期 ❌" })
+    return res.status(401).json({ success: false, msg: '验证码无效或已过期' });
   }
 
-  // --- 接口 3：Stripe 支付会话 ---
-  if (action === "create-checkout-session") {
+  // --- 接口：SMTP 健康检查 ---
+  if (url.includes('test-smtp')) {
+    const results = [];
+    if (process.env.DOGME_GMAIL_USER && process.env.DOGME_GMAIL_PASS) {
+      try {
+        await gmailTransporter.verify();
+        results.push({ provider: 'gmail', ok: true });
+      } catch {
+        results.push({ provider: 'gmail', ok: false });
+      }
+    } else {
+      results.push({ provider: 'gmail', ok: false });
+    }
+    if (process.env.SENDGRID_API_KEY) {
+      const sg = nodemailer.createTransport({
+        host: 'smtp.sendgrid.net',
+        port: 465,
+        secure: true,
+        auth: { user: 'apikey', pass: process.env.SENDGRID_API_KEY }
+      });
+      try {
+        await sg.verify();
+        results.push({ provider: 'sendgrid', ok: true });
+      } catch {
+        results.push({ provider: 'sendgrid', ok: false });
+      }
+    } else {
+      results.push({ provider: 'sendgrid', ok: false });
+    }
+    const anyOk = results.some((r) => r.ok);
+    return res.status(anyOk ? 200 : 500).json({ success: anyOk, results });
+  }
+
+  // --- 接口：创建 Stripe Checkout 会话 ---
+  if (url.includes('create-checkout-session')) {
+    const { amount, email } = body;
+    if (!amount) return res.status(400).json({ msg: '金额无效' });
+
     try {
-      const { amount, email: customerEmail } = body
+      // 需要在 Stripe Dashboard 开启 Alipay 和 WeChat Pay
       const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
+        payment_method_types: ['card', 'alipay', 'wechat_pay'],
         line_items: [
           {
             price_data: {
-              currency: "cad",
-              product_data: { name: "Dogme 订单结算 🐾" },
-              unit_amount: Math.round(amount * 100),
+              currency: 'cad', // 或 cny，取决于你的业务
+              product_data: {
+                name: 'Dogme 零食订单',
+                images: ['https://dogme.vercel.app/logo.png'] // 替换为真实 Logo URL
+              },
+              unit_amount: Math.round(amount * 100) // Stripe 单位为分
             },
-            quantity: 1,
-          },
+            quantity: 1
+          }
         ],
-        mode: "payment",
-        customer_email: customerEmail,
-        success_url: `${req.headers.origin}/pay.html?status=success&amount=${amount}`,
-        cancel_url: `${req.headers.origin}/pay.html?status=cancel`,
-      })
-      return res.status(200).json({ url: session.url })
+        mode: 'payment',
+        customer_email: email,
+        success_url: `${req.headers.origin || 'https://dogme.vercel.app'}/pay.html?status=success&amount=${amount}`,
+        cancel_url: `${req.headers.origin || 'https://dogme.vercel.app'}/pay.html?status=cancel`
+      });
+      return res.status(200).json({ url: session.url });
     } catch (e) {
-      return res.status(500).json({ error: e.message })
+      console.error('Stripe Error:', e);
+      return res.status(500).json({ msg: e.message });
     }
   }
 
-  return res.status(404).json({ msg: "未识别的操作", received: action })
+  return res.status(404).json({ msg: 'Endpoint not found' });
 }

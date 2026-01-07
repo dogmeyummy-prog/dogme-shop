@@ -2,31 +2,11 @@
   "name": "dogme-shop",
   "version": "1.1.0",
   "type": "module",
-  "private": true,
-  "scripts": {
-    "build": "echo 'Static site ready'"
-  },
   "dependencies": {
-    "nodemailer": "7.0.12",
-    "stripe": "20.1.0",
-    "next": "16.1.1",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "class-variance-authority": "0.7.1",
-    "clsx": "2.1.1",
-    "lucide-react": "0.562.0",
-    "tailwind-merge": "3.4.0",
-    "tailwindcss-animate": "1.0.7"
+    "nodemailer": "^6.9.0",
+    "stripe": "^14.0.0"
   },
   "engines": {
     "node": "24.x"
-  },
-  "devDependencies": {
-    "@types/react": "19.2.7",
-    "@types/react-dom": "19.2.3",
-    "@types/node": "25.0.3",
-    "typescript": "5.9.3",
-    "tailwindcss": "4.1.18",
-    "postcss": "8.5.6"
   }
 }

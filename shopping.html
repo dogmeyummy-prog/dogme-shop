@@ -1,258 +1,261 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dogme Shop | 全球货柜 🐾</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; overflow-x: hidden; }
-        .active-press:active { transform: scale(0.95); }
-        
-        /* 优化响应式网格布局，手机端 2 列，平板 3 列，电脑 4 列 */
-        .products-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding: 0;
-        }
-        @media (min-width: 768px) {
-            .products-container { grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        }
-        @media (min-width: 1024px) {
-            .products-container { grid-template-columns: repeat(4, 1fr); gap: 30px; }
-        }
+      body {
+        font-family: 'Quicksand', sans-serif;
+        background-color: #fdfcf9;
+        overflow-x: hidden;
+      }
+      .active-press:active {
+        transform: scale(0.95);
+      }
+      .product-card {
+        background: white;
+        border-radius: 35px;
+        padding: 24px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(0, 0, 0, 0.02);
+      }
+      .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+      }
+      .nav-icon-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        object-fit: cover;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid #f1f1f1;
+      }
 
-        .product-card {
-            background: white; 
-            border-radius: 20px; 
-            padding: 12px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-        @media (min-width: 1024px) { 
-            .product-card { border-radius: 35px; padding: 24px; } 
-        }
-        .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
-        
-        /* 响应式返回按钮大小 */
-        .back-arrow-btn {
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            background: white;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
-            border: 1px solid #f1f1f1;
-            cursor: pointer;
-        }
-        @media (min-width: 1024px) {
-            .back-arrow-btn { width: 44px; height: 44px; }
-        }
-        
-        .shopping-car-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        
-        /* 响应式头像大小 */
-        .nav-avatar { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 10px; 
-            object-fit: cover; 
-            cursor: pointer; 
-        }
-        @media (min-width: 1024px) {
-            .nav-avatar { width: 44px; height: 44px; border-radius: 12px; }
-        }
+      /* 返回箭头专属样式 */
+      .back-arrow-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f1f1f1;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .back-arrow-btn:hover {
+        background: #f9f9f9;
+        transform: translateX(-5px);
+      }
+
+      .cart-particle {
+        position: fixed;
+        z-index: 1000;
+        pointer-events: none;
+        transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+      }
     </style>
-</head>
-<body class="p-3 md:p-6 lg:p-8">
-
-    <!-- 优化导航栏间距和元素大小 -->
-    <nav class="max-w-6xl mx-auto flex justify-between items-center mb-6 md:mb-10 lg:mb-12">
-        <div class="flex items-center gap-3 lg:gap-4">
-            <div onclick="location.href='index.html'" class="back-arrow-btn active-press">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform: translateX(-1px);" class="lg:w-[22px] lg:h-[22px]">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-            </div>
-            <h1 class="text-lg md:text-xl lg:text-2xl font-black text-gray-900">Dogme.</h1>
+  </head>
+  <body class="p-6 md:p-12">
+    <nav class="max-w-7xl mx-auto flex justify-between items-center mb-12">
+      <div class="flex items-center gap-4">
+        <div onclick="location.href = 'index.html'" class="back-arrow-btn active-press">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="text-gray-900"
+          >
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
         </div>
 
-        <div class="flex items-center gap-2 md:gap-3">
-            <!-- 添加语言切换按钮 -->
-            <div class="flex bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden">
-                <button onclick="switchLanguage('zh')" id="lang-zh" class="px-2 md:px-3 py-1.5 md:py-2 text-[8px] md:text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-colors">中文</button>
-                <button onclick="switchLanguage('en')" id="lang-en" class="px-2 md:px-3 py-1.5 md:py-2 text-[8px] md:text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-colors">EN</button>
-                <button onclick="switchLanguage('fr')" id="lang-fr" class="px-2 md:px-3 py-1.5 md:py-2 text-[8px] md:text-[9px] lg:text-[10px] font-black uppercase tracking-wider transition-colors">FR</button>
-            </div>
-            
-            <div id="rank-name-display" class="bg-gray-100 px-2.5 md:px-3 lg:px-4 py-1.5 md:py-2 rounded-xl md:rounded-2xl text-[8px] md:text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-wider md:tracking-widest">Level V1</div>
-            
-            <div onclick="location.href='checkout.html'" class="relative active-press cursor-pointer">
-                <div class="back-arrow-btn overflow-hidden">
-                    <img src="shopping-car.jpg" class="shopping-car-img" onerror="this.src='https://via.placeholder.com/44?text=🛒'">
-                </div>
-                <div id="cart-count-badge" class="absolute -top-1 -right-1 bg-orange-500 text-white text-[9px] md:text-[10px] px-1.5 md:px-2 py-0.5 rounded-full border-2 border-white font-black">0</div>
-            </div>
+        <h1
+          class="text-3xl font-black tracking-tighter cursor-pointer ml-2"
+          onclick="location.href = 'index.html'"
+        >
+          Dogme.
+        </h1>
 
-            <img onclick="goToAccount()" src="user.jpg" class="nav-avatar" onerror="this.src='https://via.placeholder.com/44?text=🐾'">
+        <div class="flex bg-gray-100 rounded-full p-1 shadow-inner text-[10px] font-black ml-4">
+          <button
+            onclick="switchLanguage('zh')"
+            class="px-2 py-1 rounded-full hover:bg-white transition-all"
+          >
+            CN
+          </button>
+          <button
+            onclick="switchLanguage('en')"
+            class="px-2 py-1 rounded-full hover:bg-white transition-all"
+          >
+            EN
+          </button>
+          <button
+            onclick="switchLanguage('fr')"
+            class="px-2 py-1 rounded-full hover:bg-white transition-all"
+          >
+            FR
+          </button>
         </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="hidden md:flex flex-col items-end mr-4">
+          <span
+            id="rank-name-display"
+            class="text-[10px] font-black uppercase tracking-widest text-gray-400"
+            >Loading...</span
+          >
+          <div class="w-24 h-1.5 bg-gray-100 rounded-full mt-1 overflow-hidden">
+            <div
+              id="exp-fill"
+              class="h-full bg-orange-500 transition-all duration-1000"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+        <div
+          onclick="location.href = 'checkout.html'"
+          class="relative active-press"
+          id="cart-target"
+        >
+          <img src="shopping-car.jpg" class="nav-icon-btn shadow-sm" />
+          <div
+            id="cart-count-badge"
+            class="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white"
+          >
+            0
+          </div>
+        </div>
+        <img src="user.jpg" onclick="location.href = 'user.html'" class="nav-icon-btn" />
+      </div>
     </nav>
 
-    <!-- 为标题和描述添加 data-t 翻译属性 -->
-    <header class="max-w-6xl mx-auto mb-6 md:mb-10 lg:mb-12">
-        <h2 class="text-2xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-1 md:mb-2" data-t="shop_title">全球货柜 🐾</h2>
-        <p class="text-gray-400 font-bold text-xs md:text-sm" data-t="shop_subtitle">精选全球零食，直邮加拿大全境。🐾</p>
+    <header class="max-w-7xl mx-auto mb-12">
+      <h2 data-t="shop_title" class="text-5xl font-black text-gray-900 mb-4">Global Snacks.</h2>
+      <p data-t="shop_subtitle" class="text-gray-400 font-bold">精选全球零食，直邮加拿大全境。🐾</p>
     </header>
 
-    <!-- 产品网格容器，响应式列数 -->
-    <main class="max-w-6xl mx-auto products-container">
-        <!-- 为产品名称和按钮添加 data-t 翻译属性 -->
-        <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
-                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍯</span>
-                <img src="https://via.placeholder.com/150?text=Calbee" class="w-20 md:w-24 lg:w-32 object-contain">
-            </div>
-            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Honey Butter</h3>
-            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$4.50</p>
-            <button onclick="addToCart('Honey Butter', 4.50, '🍯', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
-        </div>
+    <main
+      id="product-grid"
+      class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+    ></main>
 
-        <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
-                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🌶️</span>
-                <img src="https://via.placeholder.com/150?text=Spicy" class="w-20 md:w-24 lg:w-32 object-contain">
-            </div>
-            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Spicy Chips</h3>
-            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$3.99</p>
-            <button onclick="addToCart('Spicy Chips', 3.99, '🌶️', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
-        </div>
-
-        <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
-                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍫</span>
-                <img src="https://via.placeholder.com/150?text=Chocolate" class="w-20 md:w-24 lg:w-32 object-contain">
-            </div>
-            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Chocolate Bar</h3>
-            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$5.50</p>
-            <button onclick="addToCart('Chocolate Bar', 5.50, '🍫', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
-        </div>
-
-        <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
-                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🥜</span>
-                <img src="https://via.placeholder.com/150?text=Nuts" class="w-20 md:w-24 lg:w-32 object-contain">
-            </div>
-            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Mixed Nuts</h3>
-            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$6.99</p>
-            <button onclick="addToCart('Mixed Nuts', 6.99, '🥜', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
-        </div>
-
-        <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
-                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍪</span>
-                <img src="https://via.placeholder.com/150?text=Cookies" class="w-20 md:w-24 lg:w-32 object-contain">
-            </div>
-            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Butter Cookies</h3>
-            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$4.25</p>
-            <button onclick="addToCart('Butter Cookies', 4.25, '🍪', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
-        </div>
-
-        <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
-                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍬</span>
-                <img src="https://via.placeholder.com/150?text=Candy" class="w-20 md:w-24 lg:w-32 object-contain">
-            </div>
-            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Fruit Candy</h3>
-            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$2.99</p>
-            <button onclick="addToCart('Fruit Candy', 2.99, '🍬', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
-        </div>
-
-        <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
-                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🥤</span>
-                <img src="https://via.placeholder.com/150?text=Drink" class="w-20 md:w-24 lg:w-32 object-contain">
-            </div>
-            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Energy Drink</h3>
-            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$3.50</p>
-            <button onclick="addToCart('Energy Drink', 3.50, '🥤', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
-        </div>
-
-        <div class="product-card flex flex-col items-center text-center">
-            <div class="w-full aspect-square bg-gray-50 rounded-2xl lg:rounded-[25px] mb-3 lg:mb-4 flex items-center justify-center relative">
-                <span class="absolute top-2 left-2 lg:top-3 lg:left-3 text-base lg:text-lg">🍿</span>
-                <img src="https://via.placeholder.com/150?text=Popcorn" class="w-20 md:w-24 lg:w-32 object-contain">
-            </div>
-            <h3 class="font-black text-gray-900 text-xs md:text-sm lg:text-lg mb-1">Caramel Popcorn</h3>
-            <p class="text-orange-500 font-black text-xs md:text-sm lg:text-base mb-3 lg:mb-4">$4.75</p>
-            <button onclick="addToCart('Caramel Popcorn', 4.75, '🍿', this)" class="w-full py-2.5 md:py-3 lg:py-4 bg-gray-900 text-white rounded-xl lg:rounded-[20px] font-black text-[10px] md:text-xs active-press" data-t="btn_add">加入购物车 +</button>
-        </div>
-    </main>
-
-    <!-- 引入集中式 i18n.js 文件 -->
     <script src="i18n.js"></script>
-    
     <script>
-        function updateLanguageButtons() {
-            const lang = localStorage.getItem('dogme_lang') || 'zh';
-            ['zh', 'en', 'fr'].forEach(l => {
-                const btn = document.getElementById(`lang-${l}`);
-                if (l === lang) {
-                    btn.classList.add('bg-gray-900', 'text-white');
-                    btn.classList.remove('text-gray-400');
-                } else {
-                    btn.classList.remove('bg-gray-900', 'text-white');
-                    btn.classList.add('text-gray-400');
-                }
-            });
+      const products = [
+        { id: 1, name: 'Calbee Honey Butter', price: 4.5, emoji: '🍯', img: 'snack1.jpg' },
+        { id: 2, name: "Lay's Truffle", price: 3.99, emoji: '🍄', img: 'snack2.jpg' },
+        { id: 3, name: 'Pocky Sakura', price: 2.5, emoji: '🌸', img: 'snack3.jpg' },
+        { id: 4, name: 'White Lover', price: 18.0, emoji: '❄️', img: 'snack4.jpg' }
+      ];
+
+      window.render = function () {
+        const grid = document.getElementById('product-grid');
+        if (!grid) return;
+        const lang = localStorage.getItem('dogme_lang') || 'zh';
+        let btnText = 'ADD TO CART +';
+        if (typeof translations !== 'undefined' && translations[lang]) {
+          btnText = translations[lang]['btn_add'] || btnText;
         }
 
-        function goToAccount() {
-            location.href = 'user.html';
-        }
+        grid.innerHTML = products
+          .map(
+            (p) => `
+                <div class="product-card group">
+                    <div class="relative h-64 mb-6 rounded-[25px] overflow-hidden bg-gray-50">
+                        <img src="${p.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='logo.jpg'">
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-sm">
+                            <span class="text-lg">${p.emoji}</span>
+                        </div>
+                    </div>
+                    <h3 class="font-black text-gray-900 text-xl mb-1">${p.name}</h3>
+                    <p class="text-orange-500 font-black mb-6">$${p.price.toFixed(2)} <span class="text-[10px] text-gray-300 ml-1">CAD</span></p>
+                    <button onclick="addToCart(event, '${p.name}', ${p.price}, '${p.emoji}')" 
+                            class="w-full py-4 bg-gray-50 text-gray-900 rounded-2xl font-black text-sm hover:bg-gray-900 hover:text-white transition-all active-press">
+                        ${btnText}
+                    </button>
+                </div>
+            `
+          )
+          .join('');
+        syncStatus();
+      };
 
-        window.syncStatus = function() {
-            const cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
-            document.getElementById('cart-count-badge').innerText = cart.length;
-            const exp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
-            const level = Math.floor(exp / 100) + 1;
-            document.getElementById('rank-name-display').innerText = `Level V${level > 9 ? 9 : level}`;
-        }
+      function addToCart(event, name, price, emoji) {
+        const btn = event.currentTarget;
+        const startRect = btn.getBoundingClientRect();
+        const targetRect = document.getElementById('cart-target').getBoundingClientRect();
 
-        window.render = function() {
-            const lang = localStorage.getItem('dogme_lang') || 'zh';
-            const t = window.translations?.[lang] || window.translations?.['zh'];
-            if (!t) return;
-            
-            // 更新所有"加入购物车"按钮的文字
-            document.querySelectorAll('[data-t="btn_add"]').forEach(btn => {
-                const originalOnclick = btn.getAttribute('onclick');
-                if (originalOnclick && !originalOnclick.includes('Added!')) {
-                    btn.innerText = t.btn_add;
-                }
-            });
-        }
+        const particle = document.createElement('div');
+        particle.className = 'cart-particle text-2xl';
+        particle.innerHTML = emoji;
+        particle.style.left = startRect.left + startRect.width / 2 + 'px';
+        particle.style.top = startRect.top + 'px';
+        document.body.appendChild(particle);
 
-        window.translations = {
-            zh: {
-                btn_add: '加入购物车 +'
-            },
-            en: {
-                btn_add: 'Add to Cart +'
-            },
-            fr: {
-                btn_add: 'Ajouter au Panier +'
-            }
-        };
+        requestAnimationFrame(() => {
+          const diffX = targetRect.left - startRect.left;
+          const diffY = targetRect.top - startRect.top;
+          particle.style.transform = `translate(${diffX}px, ${diffY}px) scale(0.5) rotate(360deg)`;
+          particle.style.opacity = '0';
+        });
+        setTimeout(() => {
+          particle.remove();
+          syncStatus();
+        }, 800);
 
-        window.onload = function() {
-            syncStatus();
-            updateLanguageButtons();
-            render();
+        let cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
+        cart.push({ id: Date.now(), name, price, emoji });
+        localStorage.setItem('dogme_cart', JSON.stringify(cart));
+        localStorage.setItem(
+          'dogme_user_exp',
+          parseFloat(localStorage.getItem('dogme_user_exp') || '0') + 2
+        );
+      }
+
+      window.syncStatus = function () {
+        const cart = JSON.parse(localStorage.getItem('dogme_cart') || '[]');
+        const badge = document.getElementById('cart-count-badge');
+        if (badge) badge.innerText = cart.length;
+
+        let currentExp = parseInt(localStorage.getItem('dogme_user_exp') || '0');
+        let level = Math.floor(currentExp / 100) + 1;
+        const lang = localStorage.getItem('dogme_lang') || 'zh';
+        const levelLabel = { zh: '等级', en: 'Level', fr: 'Niveau' }[lang];
+
+        const rankDisplay = document.getElementById('rank-name-display');
+        if (rankDisplay) rankDisplay.innerText = `${levelLabel} V${level > 9 ? 9 : level}`;
+        const expFill = document.getElementById('exp-fill');
+        if (expFill) expFill.style.width = (currentExp % 100) + '%';
+      };
+
+      window.render();
+    </script>
+
+    <!-- Vercel Speed Insights -->
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
         };
     </script>
-</body>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+  </body>
 </html>

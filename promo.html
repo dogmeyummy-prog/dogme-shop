@@ -1,220 +1,250 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dogme Promo | 限时秒杀 ⏳</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root { --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        body { font-family: 'Quicksand', sans-serif; background-color: #fdfcf9; }
-        
-        .active-press:active { transform: scale(0.96); }
+      :root {
+        --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      body {
+        font-family: 'Quicksand', sans-serif;
+        background-color: #fdfcf9;
+      }
 
-        .nav-box-sync {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: white;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            transition: all 0.3s var(--spring);
-            cursor: pointer;
-        }
-        @media (min-width: 768px) { .nav-box-sync { width: 44px; height: 44px; } }
+      .active-press:active {
+        transform: scale(0.96);
+      }
 
-        .sync-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+      /* 导航栏组件：确保购物车和用户图标物理尺寸一致 */
+      .nav-box-sync {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: all 0.3s var(--spring);
+        cursor: pointer;
+      }
 
-        .exp-container {
-            width: 40px;
-            height: 6px;
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-            margin-top: 6px;
-            overflow: hidden;
-        }
-        @media (min-width: 768px) { .exp-container { width: 44px; } }
-        
-        #exp-bar {
-            width: 0%;
-            height: 100%;
-            background: #FF8D36;
-            transition: width 0.8s var(--spring);
-        }
+      .sync-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-        .promo-card {
-            background: white;
-            border-radius: 30px;
-            border: 1px solid #F3F4F6;
-            transition: all 0.4s var(--spring);
-        }
-        @media (min-width: 1024px) { .promo-card { border-radius: 40px; } }
-        .promo-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(255,141,54,0.1); }
+      /* 经验进度条：放在头像下方 */
+      .exp-container {
+        width: 44px;
+        height: 6px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+        margin-top: 6px;
+        overflow: hidden;
+      }
+      #exp-bar {
+        width: 0%;
+        height: 100%;
+        background: #ff8d36;
+        transition: width 0.8s var(--spring);
+      }
 
-        .countdown-box { background: #FFF5F0; color: #FF8D36; border-radius: 12px; padding: 4px 12px; font-weight: 800; font-size: 0.75rem; }
-        .urgent { color: #EF4444; animation: pulse 1s infinite; }
-        @keyframes pulse { 50% { opacity: 0.6; } }
+      /* 促销卡片样式 */
+      .promo-card {
+        background: white;
+        border-radius: 40px;
+        border: 1px solid #f3f4f6;
+        transition: all 0.4s var(--spring);
+      }
+      .promo-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 60px rgba(255, 141, 54, 0.1);
+      }
+
+      .countdown-box {
+        background: #fff5f0;
+        color: #ff8d36;
+        border-radius: 12px;
+        padding: 4px 12px;
+        font-weight: 800;
+        font-size: 0.75rem;
+      }
+      .urgent {
+        color: #ef4444;
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        50% {
+          opacity: 0.6;
+        }
+      }
     </style>
-</head>
-<body class="min-h-screen pb-20">
+  </head>
+  <body class="min-h-screen pb-20">
+    <nav
+      class="flex justify-between items-center px-10 py-6 sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-orange-50"
+    >
+      <div class="flex items-center gap-4">
+        <button
+          onclick="location.href = 'index.html'"
+          class="w-11 h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50"
+        >
+          ❮
+        </button>
+        <h1 class="text-2xl font-black text-gray-800 tracking-tighter">限时折扣</h1>
+      </div>
 
-    <!-- 添加语言切换和响应式优化 -->
-    <nav class="flex justify-between items-center px-6 md:px-10 py-4 md:py-6 sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-orange-50">
-        <div class="flex items-center gap-2 md:gap-4">
-            <button onclick="location.href='index.html'" class="w-10 h-10 md:w-11 md:h-11 rounded-2xl bg-white shadow-sm flex items-center justify-center text-orange-500 active-press border border-orange-50">❮</button>
-            <h1 class="text-lg md:text-2xl font-black text-gray-800 tracking-tighter" data-t="promo_title">限时折扣</h1>
+      <div class="flex items-start gap-5">
+        <div onclick="location.href = 'checkout.html'" class="relative active-press mt-0">
+          <div class="nav-box-sync hover:ring-2 ring-orange-400">
+            <img src="shopping-car.jpg" class="sync-img" alt="Cart" />
+          </div>
+          <span
+            id="cart-count"
+            class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white hidden"
+            >0</span
+          >
         </div>
-        
-        <div class="flex items-start gap-2 md:gap-5">
-            <div class="flex bg-gray-100 rounded-xl overflow-hidden">
-                <button onclick="switchLanguage('zh')" id="lang-zh" class="px-2 py-1.5 text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-colors">中文</button>
-                <button onclick="switchLanguage('en')" id="lang-en" class="px-2 py-1.5 text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-colors">EN</button>
-                <button onclick="switchLanguage('fr')" id="lang-fr" class="px-2 py-1.5 text-[8px] md:text-[9px] font-black uppercase tracking-wider transition-colors">FR</button>
-            </div>
-            
-            <div onclick="location.href='checkout.html'" class="relative active-press mt-0">
-                <div class="nav-box-sync hover:ring-2 ring-orange-400">
-                    <img src="shopping-car.jpg" class="sync-img" alt="Cart">
-                </div>
-                <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full border-2 border-white hidden">0</span>
-            </div>
 
-            <div class="flex flex-col items-center">
-                <!-- Fixed incorrect file name from Log-in.html to user.html -->
-                <div class="nav-box-sync active-press hover:ring-2 ring-orange-400" onclick="location.href='user.html'">
-                    <img src="user.jpg" class="sync-img" alt="User">
-                </div>
-                <div class="exp-container">
-                    <div id="exp-bar"></div>
-                </div>
-            </div>
+        <div class="flex flex-col items-center">
+          <div
+            class="nav-box-sync active-press hover:ring-2 ring-orange-400"
+            onclick="location.href = 'Log-in.html'"
+          >
+            <img src="user.jpg" class="sync-img" alt="User" />
+          </div>
+          <div class="exp-container">
+            <div id="exp-bar"></div>
+          </div>
         </div>
+      </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 md:px-6 mt-8 md:mt-12">
-        <div id="promo-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        </div>
+    <main class="max-w-7xl mx-auto px-6 mt-12">
+      <div id="promo-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
-    <!-- 引入 i18n.js -->
-    <script src="i18n.js"></script>
-    
     <script>
-        let userExp = parseInt(localStorage.getItem('dogme_user_exp')) || 0;
-        
-        function updateLanguageButtons() {
-            const lang = localStorage.getItem('dogme_lang') || 'zh';
-            ['zh', 'en', 'fr'].forEach(l => {
-                const btn = document.getElementById(`lang-${l}`);
-                if (l === lang) {
-                    btn.classList.add('bg-gray-900', 'text-white');
-                    btn.classList.remove('text-gray-400');
-                } else {
-                    btn.classList.remove('bg-gray-900', 'text-white');
-                    btn.classList.add('text-gray-400');
-                }
-            });
-        }
+      let userExp = parseInt(localStorage.getItem('dogme_user_exp')) || 0;
 
-        function updateExpDisplay() {
-            const bar = document.getElementById('exp-bar');
-            bar.style.width = (userExp % 100) + '%';
-        }
+      function updateExpDisplay() {
+        const bar = document.getElementById('exp-bar');
+        bar.style.width = (userExp % 100) + '%';
+      }
 
-        function getPromoItems() {
-            const lang = localStorage.getItem('dogme_lang') || 'zh';
-            const t = window.translations?.[lang] || window.translations?.['zh'];
-            return [
-                { id: 101, nameKey: "promo_honey_chips", emoji: "🥔", price: 4.50, oldPrice: 6.00, endTime: Date.now() + 172800000 },
-                { id: 102, nameKey: "promo_milk_candy", emoji: "🍬", price: 3.20, oldPrice: 5.00, endTime: Date.now() + 86400000 },
-                { id: 103, nameKey: "promo_spicy_noodle", emoji: "🍜", price: 8.50, oldPrice: 12.00, endTime: Date.now() + 3600000 }
-            ];
+      const promoItems = [
+        {
+          id: 101,
+          name: '蜂蜜黄油薯片',
+          emoji: '🥔',
+          price: 4.5,
+          oldPrice: 6.0,
+          endTime: Date.now() + 172800000
+        },
+        {
+          id: 102,
+          name: '悠哈特浓奶糖',
+          emoji: '🍬',
+          price: 3.2,
+          oldPrice: 5.0,
+          endTime: Date.now() + 86400000
+        },
+        {
+          id: 103,
+          name: '三养火鸡面',
+          emoji: '🍜',
+          price: 8.5,
+          oldPrice: 12.0,
+          endTime: Date.now() + 3600000
         }
+      ];
 
-        function renderPromos() {
-            const grid = document.getElementById('promo-grid');
-            const lang = localStorage.getItem('dogme_lang') || 'zh';
-            const t = window.translations?.[lang] || window.translations?.['zh'];
-            const promoItems = getPromoItems();
-            
-            grid.innerHTML = promoItems.map(item => `
-                <div class="promo-card p-6 md:p-10 flex flex-col items-center text-center relative">
-                    <div class="mb-4 md:mb-6">
-                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2" data-t="promo_ends_in">ENDS IN</span>
-                        <div id="timer-${item.id}" class="countdown-box" data-t="promo_loading">Loading...</div>
+      function renderPromos() {
+        const grid = document.getElementById('promo-grid');
+        grid.innerHTML = promoItems
+          .map(
+            (item) => `
+                <div class="promo-card p-10 flex flex-col items-center text-center relative">
+                    <div class="mb-6">
+                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">ENDS IN</span>
+                        <div id="timer-${item.id}" class="countdown-box">Loading...</div>
                     </div>
-                    <div class="text-6xl md:text-8xl my-4 md:my-6 transform hover:scale-110 transition-transform">${item.emoji}</div>
-                    <h3 class="text-lg md:text-xl font-black text-gray-800">${t[item.nameKey]}</h3>
-                    <div class="mt-3 md:mt-4 flex items-center justify-center gap-2 md:gap-3">
-                        <span class="text-2xl md:text-3xl font-black text-orange-500">$${item.price.toFixed(2)}</span>
-                        <span class="text-gray-300 line-through font-bold text-xs md:text-sm">$${item.oldPrice.toFixed(2)}</span>
+                    <div class="text-8xl my-6 transform hover:scale-110 transition-transform">${item.emoji}</div>
+                    <h3 class="text-xl font-black text-gray-800">${item.name}</h3>
+                    <div class="mt-4 flex items-center justify-center gap-3">
+                        <span class="text-3xl font-black text-orange-500">$${item.price.toFixed(2)}</span>
+                        <span class="text-gray-300 line-through font-bold text-sm">$${item.oldPrice.toFixed(2)}</span>
                     </div>
-                    <button onclick="addToCart('${t[item.nameKey]}', ${item.price}, '${item.emoji}')" class="mt-6 md:mt-10 w-full py-3 md:py-5 bg-gray-900 text-white rounded-[20px] md:rounded-[25px] font-black text-sm md:text-base active-press shadow-xl" data-t="promo_buy_now">立即抢购</button>
+                    <button onclick="addToCart('${item.name}', ${item.price}, '${item.emoji}')" class="mt-10 w-full py-5 bg-gray-900 text-white rounded-[25px] font-black active-press shadow-xl">立即抢购</button>
                 </div>
-            `).join('');
-        }
+            `
+          )
+          .join('');
+      }
 
-        function updateCountdowns() {
-            const promoItems = getPromoItems();
-            const lang = localStorage.getItem('dogme_lang') || 'zh';
-            const t = window.translations?.[lang] || window.translations?.['zh'];
-            
-            promoItems.forEach(item => {
-                const distance = item.endTime - Date.now();
-                const el = document.getElementById(`timer-${item.id}`);
-                if (!el) return;
-                if (distance < 0) { 
-                    el.innerText = t.promo_expired || "EXPIRED"; 
-                    return; 
-                }
-                const h = Math.floor((distance % 86400000) / 3600000);
-                const m = Math.floor((distance % 3600000) / 60000);
-                const s = Math.floor((distance % 60000) / 1000);
-                el.innerText = `${h}h ${m}m ${s}s`;
-                if (distance < 3600000) el.classList.add('urgent');
-            });
-        }
+      function updateCountdowns() {
+        promoItems.forEach((item) => {
+          const distance = item.endTime - Date.now();
+          const el = document.getElementById(`timer-${item.id}`);
+          if (!el) return;
+          if (distance < 0) {
+            el.innerText = 'EXPIRED';
+            return;
+          }
+          const h = Math.floor((distance % 86400000) / 3600000);
+          const m = Math.floor((distance % 3600000) / 60000);
+          const s = Math.floor((distance % 60000) / 1000);
+          el.innerText = `${h}h ${m}m ${s}s`;
+          if (distance < 3600000) el.classList.add('urgent');
+        });
+      }
 
-        function updateCartCount() {
-            const cart = JSON.parse(localStorage.getItem('dogme_cart')) || [];
-            const badge = document.getElementById('cart-count');
-            badge.innerText = cart.length;
-            badge.style.display = cart.length > 0 ? 'block' : 'none';
-        }
+      function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('dogme_cart')) || [];
+        const badge = document.getElementById('cart-count');
+        badge.innerText = cart.length;
+        badge.style.display = cart.length > 0 ? 'block' : 'none';
+      }
 
-        function addToCart(name, price, emoji) {
-            let cart = JSON.parse(localStorage.getItem('dogme_cart')) || [];
-            cart.push({ id: Date.now(), name, price, emoji });
-            localStorage.setItem('dogme_cart', JSON.stringify(cart));
-            updateCartCount();
-            userExp += 10;
-            localStorage.setItem('dogme_user_exp', userExp);
-            updateExpDisplay();
-            
-            const lang = localStorage.getItem('dogme_lang') || 'zh';
-            const t = window.translations?.[lang] || window.translations?.['zh'];
-            alert(`${t.promo_added}${name}${t.promo_added_suffix}`);
-        }
+      function addToCart(name, price, emoji) {
+        let cart = JSON.parse(localStorage.getItem('dogme_cart')) || [];
+        cart.push({ id: Date.now(), name, price, emoji });
+        localStorage.setItem('dogme_cart', JSON.stringify(cart));
+        updateCartCount();
+        userExp += 10;
+        localStorage.setItem('dogme_user_exp', userExp);
+        updateExpDisplay();
+        alert(`抢购成功！${name} 已放入清单 🐾`);
+      }
 
-        window.translations = translations;
+      window.onload = () => {
+        renderPromos();
+        updateCountdowns();
+        updateCartCount();
+        updateExpDisplay();
+        setInterval(updateCountdowns, 1000);
+      };
+    </script>
 
-        window.onload = () => {
-            renderPromos();
-            updateCountdowns();
-            updateCartCount();
-            updateExpDisplay();
-            updateLanguageButtons();
-            setInterval(updateCountdowns, 1000);
+    <!-- Vercel Speed Insights -->
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
         };
     </script>
-</body>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+  </body>
 </html>

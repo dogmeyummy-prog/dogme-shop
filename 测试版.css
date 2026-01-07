@@ -1,60 +1,98 @@
 /* Dogme 品牌视觉系统 v12.0 🐾 */
 
 :root {
-    --dogme-primary: #FF8D36;
-    --dogme-bg: #FFFBF2;
-    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dogme-primary: #ff8d36;
+  --dogme-bg: #fffbf2;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* 1. 基础重置 & 彻底去黑框 */
 * {
-    margin: 0; padding: 0; box-sizing: border-box;
-    font-family: 'Quicksand', sans-serif;
-    outline: none !important;
-    -webkit-tap-highlight-color: transparent;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Quicksand', sans-serif;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
 }
 
-body { background-color: var(--dogme-bg); overflow-x: hidden; }
+body {
+  background-color: var(--dogme-bg);
+  overflow-x: hidden;
+}
 
 /* 2. 主页等级标签动效 */
 #home-user-badge.show {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* 3. 生日全站装饰 */
 .birthday-mode {
-    background: linear-gradient(135deg, #fff5f5 0%, #fff9e6 50%, #ffe4e1 100%) !important;
+  background: linear-gradient(135deg, #fff5f5 0%, #fff9e6 50%, #ffe4e1 100%) !important;
 }
 .birthday-mode::before {
-    content: '🎂 🍰 🎈 🍭 🎂';
-    position: fixed; top: 15px; width: 100%; text-align: center;
-    font-size: 24px; z-index: 100; opacity: 0.6; animation: float 4s infinite;
+  content: '🎂 🍰 🎈 🍭 🎂';
+  position: fixed;
+  top: 15px;
+  width: 100%;
+  text-align: center;
+  font-size: 24px;
+  z-index: 100;
+  opacity: 0.6;
+  animation: float 4s infinite;
 }
 
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
 
 /* 4. 组件规范 (彻底移除外框) */
-button, input, .cart-box, .bg-gray-900 {
-    border: none !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+button,
+input,
+.cart-box,
+.bg-gray-900 {
+  border: none !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
 .nav-link {
-    font-weight: 700; color: #4b5563; position: relative; transition: 0.3s;
+  font-weight: 700;
+  color: #4b5563;
+  position: relative;
+  transition: 0.3s;
 }
-.nav-link:hover { color: var(--dogme-primary); transform: translateY(-2px); }
+.nav-link:hover {
+  color: var(--dogme-primary);
+  transform: translateY(-2px);
+}
 
 .animated-bg {
-    background: linear-gradient(135deg, #FFFBF2 0%, #FFF5E6 50%, #FFECD2 100%);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
+  background: linear-gradient(135deg, #fffbf2 0%, #fff5e6 50%, #ffecd2 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
 }
 @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
-.active-press { transition: 0.2s var(--spring); }
-.active-press:active { transform: scale(0.92); }
+.active-press {
+  transition: 0.2s var(--spring);
+}
+.active-press:active {
+  transform: scale(0.92);
+}
