@@ -130,7 +130,10 @@ export default async function handler(req, res) {
         lastErr = e;
       }
     }
-    if (sent) return res.status(200).json({ success: true });
+    const diag = (process.env.VERCEL_ENV === 'preview') || (process.env.DOGME_DIAG === 'true');
+    if (sent) {
+      return res.status(200).json(diag ? { success: true, test_code: generatedCode } : { success: true });
+    }
     const code = (lastErr && (lastErr.code || lastErr.responseCode)) || 'UNKNOWN';
     if (code === 'EAUTH' || code === 535)
       return res.status(500).json({ success: false, msg: '邮件认证失败' });
